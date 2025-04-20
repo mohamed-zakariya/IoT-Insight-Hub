@@ -1,0 +1,107 @@
+<div class="signup-wrapper" [class.signup-mode]="isSignupMode">
+  <div class="signup-inner-container">
+    <div class="panel left-panel" [class.slide-right]="isSignupMode">
+      <!-- Conditional image rendering based on mode -->
+      <img *ngIf="isSignupMode; else signupImage" src="assets/93.png" alt="Signin Graphic" />
+      <ng-template #signupImage>
+        <img src="assets/94.png" alt="Signup Graphic" />
+      </ng-template>
+      
+      <div class="panel-content">
+        <h2>{{ isSignupMode ? 'Join Us!' : 'New Here?' }}</h2>
+        <p>
+          {{ isSignupMode
+            ? 'Create your account to manage your IoT devices and get real-time insights.'
+            : 'Sign up to start monitoring your IoT devices in real time and explore data-driven insights.' }}
+        </p>
+        <button class="main-button" (click)="toggleMode()">
+          {{ isSignupMode ? 'SIGN IN' : 'CREATE ACCOUNT' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="panel right-panel" [class.slide-left]="isSignupMode">
+      <div class="panel-content" >
+        <h2>
+          {{ isSignupMode ? 'Create Your Account' : 'Welcome Back to IoT Dashboard' }}
+        </h2>
+
+        <div class="social-icons" *ngIf="!isSignupMode">
+          <button><i class="fab fa-facebook-f"></i></button>
+          <button><i class="fab fa-google"></i></button>
+          <button><i class="fab fa-linkedin-in"></i></button>
+        </div>
+
+        <p class="small-text">
+          {{
+            isSignupMode
+              ? 'or sign up using your email'
+              : 'or sign in using your email and password'
+          }}
+        </p>
+
+        <form [formGroup]="isSignupMode ? authFormSignup : authFormLogin" (ngSubmit)="onSubmit()">
+          
+          <!-- First Name input -->
+          <div class="input-group" *ngIf="isSignupMode">
+            <!-- <i class="fas fa-user"></i> -->
+            <input type="text" placeholder="First Name" formControlName="firstName" />
+          </div>
+          <div class="error" *ngIf="f['firstName']?.touched && f['firstName']?.invalid">
+            <small *ngIf="f['firstName'].errors?.['required']">First Name is required.</small>
+            <small *ngIf="f['firstName'].errors?.['minlength']">Enter a valid First Name.</small>
+          </div>
+
+          <!-- Last Name input -->
+          <div class="input-group" *ngIf="isSignupMode">
+            <!-- <i class="fas fa-user"></i> -->
+            <input type="text" placeholder="Last Name" formControlName="lastName" />
+          </div>
+          <div class="error" *ngIf="f['lastName']?.touched && f['lastName']?.invalid">
+            <small *ngIf="f['lastName'].errors?.['required']">Last Name is required.</small>
+            <small *ngIf="f['lastName'].errors?.['minlength']">Enter a valid Last Name.</small>
+          </div>
+
+
+          <!-- Date of Birth input -->
+          <div class="input-group" *ngIf="isSignupMode">
+            <i class="fa-regular fa-calendar"></i>
+            <input type="date" placeholder="Date of Birth" formControlName="dob" />
+          </div>
+          <div class="error" *ngIf="(f['dob']?.touched || submitted) && f['dob']?.invalid">
+            <small *ngIf="f['dob'].errors?.['required']">Date of birth is required</small>
+            <small *ngIf="f['dob'].errors?.['invalidAge']">You must be between 1 and 120 years old</small>
+          </div>
+
+
+
+          <!-- Email input -->
+          <div class="input-group">
+            <i class="fas fa-envelope"></i>
+            <input type="email" placeholder="Email" formControlName="email" />
+          </div>
+          <div class="error" *ngIf="(f['email']?.touched || submitted) && f['email']?.invalid">
+            <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
+            <small *ngIf="f['email'].errors?.['email']">Enter a valid email address.</small>
+          </div>
+
+          <!-- Password input -->
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Password" formControlName="password" />
+          </div>
+          <div class="error" *ngIf="f['password'].invalid && (f['password'].touched || f['password'].dirty || submitted)">
+            <small *ngIf="f['password'].errors?.['required']">Password is required</small>
+            <small *ngIf="f['password'].errors?.['minlength']"> Password must be at least 6 characters</small>
+            <small *ngIf="!f['password'].errors?.['required'] && f['password'].errors?.['whitespace']">Password cannot be just spaces</small>
+            
+          </div>
+
+          <button class="main-button" type="submit">
+            {{ isSignupMode ? 'SIGN UP' : 'SIGN IN' }}
+          </button>          
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

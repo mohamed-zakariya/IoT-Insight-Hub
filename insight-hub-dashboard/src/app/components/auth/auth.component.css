@@ -118,7 +118,7 @@
   .main-button {
     width: 100%;
     padding: 12px;
-    background-color: #4f59ff;
+    background-color: #24253b;
     color: white;
     font-weight: bold;
     border: none;
@@ -128,13 +128,14 @@
   }
   
   .main-button:hover {
-    background-color: #0948bd;
+    background-color: #040404;
     color: #fff;
   }
   
   
   .input-group {
     position: relative;
+    width: 100%;
   }
   
   .input-group i {
@@ -142,14 +143,16 @@
     top: 50%;
     left: 16px;
     transform: translateY(-50%);
-    color: #999;
+    color: #888;
     font-size: 16px;
     pointer-events: none;
+    z-index: 1;
   }
   
-  .input-group input {
-    width: 85%;
-    padding: 14px 16px 14px 44px;
+  .input-group input,
+  .input-group input[type="date"] {
+    width: 100%;
+    padding: 14px 16px 14px 44px; /* extra left padding for icon */
     border: none;
     border-radius: 30px;
     background-color: #f5f5f5;
@@ -158,6 +161,7 @@
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: box-shadow 0.3s, background-color 0.3s;
   }
+  
   
   .input-group input:focus {
     background-color: #fff;
@@ -203,4 +207,89 @@
     }
 
   }
+
+  .signup-inner-container {
+    position: relative;
+    width: 90vw;
+    max-width: 1000px;
+    height: 70vh;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+  }
   
+  .panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    padding: 40px;
+    box-sizing: border-box;
+    transition: transform 0.6s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  
+  .left-panel {
+    left: 0;
+    background: linear-gradient(to bottom, #4f59ff, #2e90fa);
+    color: white;
+    z-index: 1;
+  }
+  
+  .right-panel {
+    right: 0;
+    background: #fff;
+    z-index: 2;
+  }
+  
+  /* Slide effect */
+  .slide-right {
+    transform: translateX(100%);
+    z-index: 3;
+  }
+  
+  .slide-left {
+    transform: translateX(-100%);
+    z-index: 1;
+  }
+  
+  .panel-content {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* auth.component.css */
+  .error {
+    color: #e74c3c;
+    font-size: 0.8rem;
+    margin-top: 4px;
+  }
+
+
+  .input-group {
+    position: relative;
+    /* margin-bottom: 5px; */
+  }
+  
+  .input-group i {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #888;
+  }
+  
+  .dob-picker {
+    padding: 10px 10px 10px 35px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+
+

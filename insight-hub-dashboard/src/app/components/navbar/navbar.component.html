@@ -1,0 +1,24 @@
+<!-- Hamburger Button -->
+<button class="hamburger" (click)="toggleSidebar()">☰</button>
+
+<!-- Navbar -->
+<nav class="navbar" [class.show]="sidebarVisible">
+  <div class="navbar-elements">
+    <img src="assets/profile.jpeg" alt="Profile" class="profile-img" />
+    <span style="color: white;">Mohamed</span>
+
+    <a routerLink="/home">
+      <i class="fa-solid fa-house"></i> Dashboard
+    </a>
+    <a>About</a>
+  </div>
+
+  <div class="settings">
+    <a routerLink="/profile">
+      <i class="fa-solid fa-gear"></i> Settings
+    </a>
+    <a>
+      <i class="fa-solid fa-right-from-bracket"></i> Logout
+    </a>
+  </div>
+</nav>
