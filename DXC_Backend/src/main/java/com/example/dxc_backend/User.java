@@ -27,17 +27,17 @@ public class User {
     private String username;
 
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String age;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String current_postion;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String location;
 
-    @Column(nullable = false)
-    private String desc;
+    @Column(nullable = true)
+    private String description;
 
 
 }

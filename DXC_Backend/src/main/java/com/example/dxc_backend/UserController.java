@@ -91,6 +91,7 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @Operation(summary = "Update the password  ", description = "Updates using the id and options not all to enter and check the old new password ")
     @PutMapping("/{id}/password")
     public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody PasswordUpdateRequest request) {
         userService.updatePassword(id, request.getOldPassword(), request.getNewPassword());

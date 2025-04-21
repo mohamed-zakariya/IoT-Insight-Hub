@@ -52,7 +52,7 @@ public class UserService {
             if (userDetails.getAge() != null) user.setAge(userDetails.getAge());
             if (userDetails.getCurrent_postion() != null) user.setCurrent_postion(userDetails.getCurrent_postion());
             if (userDetails.getLocation() != null) user.setLocation(userDetails.getLocation());
-            if (userDetails.getDesc() != null) user.setDesc(userDetails.getDesc());
+            if (userDetails.getDescription() != null) user.setDescription(userDetails.getDescription());
 
             return userRepository.save(user);
         } else {
