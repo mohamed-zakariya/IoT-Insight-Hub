@@ -15,11 +15,11 @@
     background-color: #fff;
     border-radius: 20px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
+    /* overflow: hidden; */
   }
   
   .left-panel {
-    flex: 1;
+    flex: 2;
     background: linear-gradient(to bottom, #4f59ff, #2e90fa);
     color: white;
     text-align: center;
@@ -27,8 +27,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-  
+    /* overflow: visible; */
+
   }
   
   .left-panel img {
@@ -56,6 +56,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    /* overflow: visible; */
+
   }
   
   .right-panel h2 {
@@ -135,8 +137,10 @@
   
   .input-group {
     position: relative;
-    width: 100%;
+    overflow: visible !important; /* Allow tooltips to escape */
+    z-index: 1; /* Ensure it's above the form background */
   }
+  
   
   .input-group i {
     position: absolute;
@@ -216,7 +220,7 @@
     background-color: #fff;
     border-radius: 20px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
+    overflow: visible;
   }
   
   .panel {
@@ -225,7 +229,7 @@
     height: 100%;
     padding: 40px;
     box-sizing: border-box;
-    transition: transform 0.6s ease;
+    transition: transform 1s ease;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -261,18 +265,16 @@
     text-align: center;
   }
 
-  /* auth.component.css */
-  .error {
-    color: #e74c3c;
-    font-size: 0.8rem;
-    margin-top: 4px;
+  .panel-content p{
+    margin: 15px auto;
   }
 
 
   .input-group {
     position: relative;
-    /* margin-bottom: 5px; */
+    overflow: visible;
   }
+  
   
   .input-group i {
     position: absolute;
@@ -280,6 +282,7 @@
     left: 10px;
     transform: translateY(-50%);
     color: #888;
+    
   }
   
   .dob-picker {
@@ -291,5 +294,138 @@
     box-sizing: border-box;
   }
   
+  
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
 
 
+  /* the left panned validations */
+
+/* Tooltip below and right-aligned */
+.tooltip-error-left,
+.tooltip-error-right {
+  position: absolute;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 9999 !important;
+  max-width: 240px;
+}
+
+.tooltip-error-left {
+  top: 50%;
+  left: -12px;
+  transform: translate(-100%, -50%);
+  background-color: #be4b49;
+  color: white;
+}
+
+.tooltip-error-left::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid #be4b49;
+}
+
+.tooltip-error-right {
+  top: 50%;
+  right: -12px;
+  transform: translate(100%, -50%);
+  background-color: #be4b49;
+  color: white;
+}
+
+.tooltip-error-right::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -6px;
+  transform: translateY(-50%);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid #be4b49;
+}
+
+  
+
+  .tooltip-error-left,
+  .tooltip-error-right {
+    display: inline-block;
+    pointer-events: auto;
+  }
+
+  
+  /* Hide date icon in Chrome, Safari, Edge, and Opera */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
+/* For Firefox */
+/* input[type="date"] {
+  -moz-appearance: textfield;
+} */
+
+/* Optional: prevent outline in some browsers when clicked */
+input[type="date"]:focus {
+  outline: none;
+}
+
+
+@media (max-width: 768px) {
+  .signup-container {
+    flex-direction: column;
+    height: auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    transition: transform 1s ease;
+  }
+
+  .left-panel {
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+
+  .right-panel {
+    top: 100%;
+    left: 0;
+    z-index: 2;
+  }
+
+  .slide-up {
+    transform: translateY(-100%);
+    z-index: 3;
+  }
+
+  .slide-down {
+    transform: translateY(100%);
+    z-index: 1;
+  }
+
+  .left-panel,
+  .right-panel {
+    transform: none !important; /* override horizontal styles */
+  }
+}

@@ -12,14 +12,25 @@
     <div class="profile-form">
       <div class="input-group">
         <label>First name</label>
-        <input type="text" value="Alvian" />
+        <input type="text" [value]="user.firstName" />
       </div>
   
       <div class="input-group">
         <label>Last name</label>
-        <input type="text" value="Putra" />
+        <input type="text" [value]="user.lastName" />
       </div>
   
+
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" value="alvian@example.com" readonly class="readonly-dark" />
+      </div>
+
+      <div class="input-group">
+        <label>Age</label>
+        <input type="text" value="25" name="age" readonly class="readonly-dark" />
+      </div>
+      
       <div class="input-group">
         <label>Current position</label>
         <input type="text" value="Interaction Designer at GoPay" />
@@ -30,10 +41,7 @@
         <input type="text" value="Pontianak, Indonesia" />
       </div>
   
-      <div class="input-group">
-        <label>Age</label>
-        <input type="text" value="25" name="age" readonly class="readonly-dark" />
-      </div>
+      
       
 
       <div class="input-group full">

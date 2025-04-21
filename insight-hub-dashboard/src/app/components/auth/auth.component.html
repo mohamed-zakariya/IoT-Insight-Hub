@@ -26,10 +26,10 @@
           {{ isSignupMode ? 'Create Your Account' : 'Welcome Back to IoT Dashboard' }}
         </h2>
 
-        <div class="social-icons" *ngIf="!isSignupMode">
-          <button><i class="fab fa-facebook-f"></i></button>
-          <button><i class="fab fa-google"></i></button>
-          <button><i class="fab fa-linkedin-in"></i></button>
+        <div class="social-icons" >
+          <button><i class="fab fa-facebook-f" style="color: blue;"></i></button>
+          <button><i class="fab fa-google" style="color: red;"></i></button>
+          <button><i class="fab fa-discord" style="color: darkblue;"></i></button>
         </div>
 
         <p class="small-text">
@@ -44,22 +44,26 @@
           
           <!-- First Name input -->
           <div class="input-group" *ngIf="isSignupMode">
-            <!-- <i class="fas fa-user"></i> -->
-            <input type="text" placeholder="First Name" formControlName="firstName" />
+            <input
+              type="text"
+              formControlName="firstName"
+              placeholder="First name"
+            />
+            <div class="tooltip-error-left" *ngIf="f['firstName']?.touched && f['firstName']?.invalid">
+              <span *ngIf="f['firstName'].errors?.['required']">What's your name?</span>
+              <span *ngIf="f['firstName'].errors?.['minlength']">Please enter a valid name.</span>
+            </div>
           </div>
-          <div class="error" *ngIf="f['firstName']?.touched && f['firstName']?.invalid">
-            <small *ngIf="f['firstName'].errors?.['required']">First Name is required.</small>
-            <small *ngIf="f['firstName'].errors?.['minlength']">Enter a valid First Name.</small>
-          </div>
+          
 
           <!-- Last Name input -->
           <div class="input-group" *ngIf="isSignupMode">
             <!-- <i class="fas fa-user"></i> -->
             <input type="text" placeholder="Last Name" formControlName="lastName" />
-          </div>
-          <div class="error" *ngIf="f['lastName']?.touched && f['lastName']?.invalid">
-            <small *ngIf="f['lastName'].errors?.['required']">Last Name is required.</small>
-            <small *ngIf="f['lastName'].errors?.['minlength']">Enter a valid Last Name.</small>
+            <div class="tooltip-error-left" *ngIf="f['lastName']?.touched && f['lastName']?.invalid">
+              <span *ngIf="f['lastName'].errors?.['required']">Last Name is required.</span>
+              <span *ngIf="f['lastName'].errors?.['minlength']">Enter a valid Last Name.</span>
+            </div>
           </div>
 
 
@@ -67,34 +71,33 @@
           <div class="input-group" *ngIf="isSignupMode">
             <i class="fa-regular fa-calendar"></i>
             <input type="date" placeholder="Date of Birth" formControlName="dob" />
+            <div class="tooltip-error-left" *ngIf="(f['dob']?.touched || submitted) && f['dob']?.invalid">
+              <small *ngIf="f['dob'].errors?.['required']">Date of birth is required</small>
+              <small *ngIf="f['dob'].errors?.['invalidAge']">You must be between 1 and 120 years old</small>
+            </div>
           </div>
-          <div class="error" *ngIf="(f['dob']?.touched || submitted) && f['dob']?.invalid">
-            <small *ngIf="f['dob'].errors?.['required']">Date of birth is required</small>
-            <small *ngIf="f['dob'].errors?.['invalidAge']">You must be between 1 and 120 years old</small>
-          </div>
-
 
 
           <!-- Email input -->
           <div class="input-group">
             <i class="fas fa-envelope"></i>
             <input type="email" placeholder="Email" formControlName="email" />
-          </div>
-          <div class="error" *ngIf="(f['email']?.touched || submitted) && f['email']?.invalid">
-            <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
-            <small *ngIf="f['email'].errors?.['email']">Enter a valid email address.</small>
+            <div class="tooltip-error-left" *ngIf="(f['email']?.touched || submitted) && f['email']?.invalid">
+              <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
+              <small *ngIf="f['email'].errors?.['email']">Enter a valid email address.</small>
+            </div>
           </div>
 
-          <!-- Password input -->
+
+          <!-- Password input --> 
           <div class="input-group">
             <i class="fas fa-lock"></i>
             <input type="password" placeholder="Password" formControlName="password" />
-          </div>
-          <div class="error" *ngIf="f['password'].invalid && (f['password'].touched || f['password'].dirty || submitted)">
-            <small *ngIf="f['password'].errors?.['required']">Password is required</small>
-            <small *ngIf="f['password'].errors?.['minlength']"> Password must be at least 6 characters</small>
-            <small *ngIf="!f['password'].errors?.['required'] && f['password'].errors?.['whitespace']">Password cannot be just spaces</small>
-            
+            <div class="tooltip-error-left" *ngIf="f['password'].invalid && (f['password'].touched || f['password'].dirty || submitted)">
+              <small *ngIf="f['password'].errors?.['required']">Password is required</small>
+              <small *ngIf="f['password'].errors?.['minlength']"> Password must be at least 6 characters</small>
+              <small *ngIf="!f['password'].errors?.['required'] && f['password'].errors?.['whitespace']">Password cannot be just spaces</small>
+            </div>
           </div>
 
           <button class="main-button" type="submit">

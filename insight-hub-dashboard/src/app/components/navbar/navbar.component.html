@@ -1,24 +1,57 @@
 <!-- Hamburger Button -->
-<button class="hamburger" (click)="toggleSidebar()">☰</button>
+<button class="hamburger" *ngIf="!sidebarVisible" (click)="toggleSidebar()">☰</button>
 
-<!-- Navbar -->
+<!-- Sidebar Navbar -->
 <nav class="navbar" [class.show]="sidebarVisible">
-  <div class="navbar-elements">
-    <img src="assets/profile.jpeg" alt="Profile" class="profile-img" />
-    <span style="color: white;">Mohamed</span>
+  <button class="close-btn" *ngIf="sidebarVisible" (click)="toggleSidebar()">✖</button>
+  <div class="navbar-top">
+    <div class="brand">📊 Insight Hub</div>
 
-    <a routerLink="/home">
-      <i class="fa-solid fa-house"></i> Dashboard
-    </a>
-    <a>About</a>
+    <div class="nav-section">
+      <a routerLink="/home" routerLinkActive="active">
+        <i class="fa-solid fa-table-columns"></i> Dashboard
+      </a>
+      <a routerLink="/environmental" routerLinkActive="active">
+        <i class="fa-solid fa-leaf"></i> Environmental
+      </a>
+      <a routerLink="/traffic" routerLinkActive="active">
+        <i class="fa-solid fa-car"></i> Traffic
+      </a>
+      <!-- <a routerLink="/analytics" routerLinkActive="active">
+        <i class="fa-solid fa-chart-line"></i> Analytics
+      </a>
+      <a routerLink="/map" routerLinkActive="active">
+        <i class="fa-solid fa-map"></i> Map View
+      </a>
+      <a routerLink="/alerts" routerLinkActive="active">
+        <i class="fa-solid fa-triangle-exclamation"></i> Alerts
+      </a> -->
+    </div>
+
+    <div class="nav-section">
+      <div class="section-title">SYSTEM</div>
+    
+      <a routerLink="/profile" routerLinkActive="active">
+        <i class="fa-solid fa-user"></i> Profile
+      </a>
+    
+      <a routerLink="/profile/settings" routerLinkActive="active">
+        <i class="fa-solid fa-gear"></i> Settings
+      </a>
+    
+      <a routerLink="/help" routerLinkActive="active">
+        <i class="fa-solid fa-circle-info"></i> Help & Support
+      </a>
+    
+      <a (click)="signOut()" class="signout-link" style="cursor: pointer;">
+        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+      </a>
+    </div>
+    
   </div>
 
-  <div class="settings">
-    <a routerLink="/profile">
-      <i class="fa-solid fa-gear"></i> Settings
-    </a>
-    <a>
-      <i class="fa-solid fa-right-from-bracket"></i> Logout
-    </a>
+  <div class="system-status">
+    <div class="status-dot"></div>
+    <span>All systems operational</span>
   </div>
 </nav>

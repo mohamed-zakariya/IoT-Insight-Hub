@@ -11,6 +11,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { __values } from 'tslib';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-auth',
@@ -25,8 +26,10 @@ export class AuthComponent implements OnInit {
   isSignupMode: boolean = false;
   authFormLogin!: FormGroup;
   authFormSignup!: FormGroup;
+  
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router:Router) {}
+  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router:Router, private authService: AuthService ) {}
+
 
   toggleMode() {
     this.isSignupMode = !this.isSignupMode;
@@ -63,6 +66,8 @@ export class AuthComponent implements OnInit {
   
 
   ngOnInit(): void {
+
+    
     this.authFormLogin = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6), this.noWhitespaceValidator]],
@@ -115,15 +120,29 @@ export class AuthComponent implements OnInit {
   };
   
 
-    if (form.value.email === allowedUser.email && form.value.password === allowedUser.password) {
-      console.log('Login matched. Redirecting to Home...');
-      this.router.navigate(['/home']);
-    } else {
-      console.log('Invalid credentials');
-      // You can also show a message on the UI
-    }
+    // if (form.value.email === allowedUser.email && form.value.password === allowedUser.password) {
+    //   console.log('Login matched. Redirecting to Home...');
+    //   this.router.navigate(['/home']);
+    // } else {
+    //   console.log('Invalid credentials');
+    //   // You can also show a message on the UI
+    // }
 
     console.log("submitted", form.value)
+
+    // In your component or service after successful login
+    this.authService.login(form.value).subscribe({
+      next: (response) => {
+        localStorage.setItem('auth_token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        this.router.navigate(['/home']);
+      },
+      error: (err) => {
+        console.error('Login failed', err);
+      }
+    });
+    
+    
   }
 
   // onSubmit() {
@@ -169,6 +188,9 @@ export class AuthComponent implements OnInit {
     return age;
   }
   
+
+
+
   
   
 }

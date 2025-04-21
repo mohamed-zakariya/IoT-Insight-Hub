@@ -1,173 +1,191 @@
-/* Profile Wrapper - Full width responsive layout */
+/* Main Wrapper */
 .profile-wrapper {
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    width: 100%;
-    max-width: 1200px;
-    height: 100%;
-    margin: 40px auto;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    box-sizing: border-box;
+  background: white;
+  padding: 4px 40px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 10px auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* Heading */
+.profile-wrapper h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Header with image + buttons */
+.profile-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.profile-pic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn.outline {
+  background: transparent;
+  border: 1px solid #8e62fe;
+  color: #8e62fe;
+}
+
+.btn.outline:hover {
+  background-color: #f3ebff;
+}
+
+.btn.outline.danger {
+  border-color: #f13e3e;
+  color: #f13e3e;
+}
+
+.btn.outline.danger:hover {
+  background-color: #ffecec;
+}
+
+.btn.primary {
+  background-color: #8e62fe;
+  color: white;
+  border: none;
+}
+
+.btn.primary:hover {
+  background-color: #774ed9;
+}
+
+/* Form Layout */
+.profile-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #555;
+}
+
+.input-group input,
+.input-group textarea {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border 0.3s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: #8e62fe;
+  outline: none;
+}
+
+.input-group.full {
+  grid-column: span 2;
+}
+
+/* Password Section */
+.password-section {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.password-section h3 {
+  font-size: 1.4rem;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.password-section .input-group {
+  max-width: 400px;
+}
+
+/* Actions */
+.profile-actions,
+.password-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+/* Readonly Styling */
+.readonly-dark {
+  background-color: #e0e0e0;
+  color: #333;
+  cursor: not-allowed;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .profile-wrapper {
+    padding: 30px 20px;
+    margin: 10px;
   }
-  
-  /* Heading */
-  .profile-wrapper h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-    color: #333;
+
+  .input-group.full {
+    grid-column: span 1;
   }
-  
-  /* Header with profile image + buttons */
-  .profile-header {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin-bottom: 30px;
-  }
-  
-  .profile-pic {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
+
   .profile-buttons {
-    display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 10px;
   }
-  
-  /* Grid Form Layout */
-  .profile-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-  }
-  
-  .input-group {
-    display: flex;
+}
+
+@media (max-width: 576px) {
+  .profile-header {
     flex-direction: column;
+    align-items: flex-start;
   }
-  
-  .input-group label {
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: #555;
-  }
-  
-  .input-group input,
-  .input-group textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border 0.3s;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .input-group input:focus,
-  .input-group textarea:focus {
-    border-color: #8e62fe;
-    outline: none;
-  }
-  
-  .input-group.full {
-    grid-column: span 2;
-  }
-  
-  /* Password Section */
-  .password-section {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
-  }
-  
-  .password-section h3 {
-    font-size: 1.4rem;
-    color: #444;
-    margin-bottom: 20px;
-  }
-  
-  .password-section .input-group {
-    max-width: 400px;
-  }
-  
-  /* Buttons */
+
   .profile-actions,
   .password-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 15px;
-    margin-top: 30px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
   }
-  
-  .btn {
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s ease;
+
+  .profile-buttons {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
   }
-  
-  .btn.outline {
-    background: transparent;
-    border: 1px solid #8e62fe;
-    color: #8e62fe;
+
+  .password-section .input-group {
+    max-width: 100%;
   }
-  
-  .btn.outline:hover {
-    background-color: #f3ebff;
-  }
-  
-  .btn.outline.danger {
-    border-color: #f13e3e;
-    color: #f13e3e;
-  }
-  
-  .btn.outline.danger:hover {
-    background-color: #ffecec;
-  }
-  
-  .btn.primary {
-    background-color: #8e62fe;
-    color: white;
-    border: none;
-  }
-  
-  .btn.primary:hover {
-    background-color: #774ed9;
-  }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 768px) {
-    .profile-form {
-      grid-template-columns: 1fr;
-    }
-  
-    .input-group.full {
-      grid-column: span 1;
-    }
-  
-    .profile-actions,
-    .password-actions {
-      flex-direction: column;
-      align-items: stretch;
-    }
-  
-    .profile-buttons {
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-  }
-  .readonly-dark {
-    background-color: #e0e0e0;  /* light gray background */
-    color: #333;                /* darker text */
-    cursor: not-allowed;
-  }
-  
+}
