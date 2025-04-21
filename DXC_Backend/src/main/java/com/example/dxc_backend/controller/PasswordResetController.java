@@ -1,5 +1,6 @@
-package com.example.dxc_backend;
+package com.example.dxc_backend.controller;
 
+import com.example.dxc_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,5 +1,9 @@
-package com.example.dxc_backend;
+package com.example.dxc_backend.service;
 
+import com.example.dxc_backend.model.PasswordResetOTP;
+import com.example.dxc_backend.repository.PasswordResetOTPRepository;
+import com.example.dxc_backend.model.User;
+import com.example.dxc_backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

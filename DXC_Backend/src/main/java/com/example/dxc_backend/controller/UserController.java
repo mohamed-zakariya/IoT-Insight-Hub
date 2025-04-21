@@ -1,6 +1,9 @@
-package com.example.dxc_backend;
+package com.example.dxc_backend.controller;
 
+import com.example.dxc_backend.model.User;
+import com.example.dxc_backend.repository.UserRepository;
 import com.example.dxc_backend.dto.PasswordUpdateRequest;
+import com.example.dxc_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

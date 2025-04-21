@@ -1,4 +1,4 @@
-package com.example.dxc_backend;
+package com.example.dxc_backend.service;
 
 import org.springframework.stereotype.Service;
 
