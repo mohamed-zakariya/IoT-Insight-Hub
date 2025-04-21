@@ -4,14 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired private UserRepository userRepository;
+    @Autowired private PasswordResetOTPRepository otpRepository;
+    @Autowired private EmailService emailService;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -23,17 +26,14 @@ public class UserService {
     }
 
     public User createUser(User user) {
-        // Check if a user with the same email exists
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new IllegalArgumentException("A user with this email already exists.");
         }
 
-        // Check if a user with the same name exists
         if (userRepository.findByUsername(user.getFirstName()) != null) {
             throw new IllegalArgumentException("A user with this name already exists.");
         }
 
-        // Save and return the user
         return userRepository.save(user);
     }
 
@@ -43,7 +43,6 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
 
-            // Update only provided fields
             if (userDetails.getFirstName() != null) user.setFirstName(userDetails.getFirstName());
             if (userDetails.getLastName() != null) user.setLastName(userDetails.getLastName());
             if (userDetails.getEmail() != null) user.setEmail(userDetails.getEmail());
@@ -66,9 +65,7 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
 
-
             if (user.getPassword().equals(oldPassword)) {
-
                 user.setPassword(newPassword);
                 userRepository.save(user);
             } else {
@@ -79,14 +76,40 @@ public class UserService {
         }
     }
 
-
-
-
-
-
-
-
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    // 🔐 Forgot Password: Send OTP
+    public void sendOtpToEmail(String email) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) throw new RuntimeException("User not found");
+
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        LocalDateTime expiry = LocalDateTime.now().plusMinutes(5);
+
+        PasswordResetOTP existing = otpRepository.findByEmail(email);
+        if (existing != null) otpRepository.delete(existing);
+
+        PasswordResetOTP otpRecord = new PasswordResetOTP(email, otp, expiry);
+        otpRepository.save(otpRecord);
+
+        emailService.sendEmail(email, "Your OTP Code", "Your OTP is: " + otp);
+    }
+
+    // 🔐 Forgot Password: Verify OTP & Reset Password
+    public boolean verifyOtpAndResetPassword(String email, String otp, String newPassword) {
+        PasswordResetOTP otpRecord = otpRepository.findByEmail(email);
+        if (otpRecord == null || !otpRecord.getOtp().equals(otp) || otpRecord.isExpired()) {
+            return false;
+        }
+
+        User user = userRepository.findByEmail(email);
+        if (user == null) return false;
+
+        user.setPassword(newPassword); // you can hash this if needed
+        userRepository.save(user);
+        otpRepository.delete(otpRecord);
+        return true;
     }
 }
