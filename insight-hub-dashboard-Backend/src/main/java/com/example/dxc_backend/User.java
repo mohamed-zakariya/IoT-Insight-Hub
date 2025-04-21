@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Entity
 @Data
+@Table(name = "User")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,4 +22,7 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private String username;
 }

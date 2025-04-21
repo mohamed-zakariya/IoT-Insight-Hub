@@ -54,7 +54,7 @@ public class UserController {
         String username = credentials.get("username");
         String password = credentials.get("password");
 
-        User user = userRepository.findByFirstName(username);
+        User user = userRepository.findByUsername(username);
 
         if (user == null || !user.getPassword().equals(password)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");

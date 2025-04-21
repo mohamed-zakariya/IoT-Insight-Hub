@@ -1,0 +1,5 @@
+Host: sql8.freesqldatabase.com
+Database name: sql8774445
+Database user: sql8774445
+Database password: GmNgl69ZW9
+Port number: 3306

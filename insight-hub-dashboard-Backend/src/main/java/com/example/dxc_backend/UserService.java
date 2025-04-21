@@ -26,7 +26,7 @@ public class UserService {
         }
 
         // Check if a user with the same name exists
-        if (userRepository.findByFirstName(user.getFirstName()) != null) {
+        if (userRepository.findByUsername(user.getFirstName()) != null) {
             throw new IllegalArgumentException("A user with this name already exists.");
         }
 
