@@ -23,6 +23,21 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false , unique = true)
     private String username;
+
+
+    @Column(nullable = false)
+    private String age;
+
+    @Column(nullable = false)
+    private String current_postion;
+
+    @Column(nullable = false)
+    private String location;
+
+    @Column(nullable = false)
+    private String desc;
+
+
 }

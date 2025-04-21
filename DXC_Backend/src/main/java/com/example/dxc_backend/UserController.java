@@ -1,5 +1,6 @@
 package com.example.dxc_backend;
 
+import com.example.dxc_backend.dto.PasswordUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +83,22 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @Operation(summary = "Update up ", description = "Updates using the id and options not all to enter  ")
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        User updatedUser = userService.updateUser(id, userDetails);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody PasswordUpdateRequest request) {
+        userService.updatePassword(id, request.getOldPassword(), request.getNewPassword());
+        return ResponseEntity.ok("Password updated successfully");
+    }
+
+
+
 
 
 }

@@ -4,24 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9585b4e9-5298-4f5e-9a92-af99f29bcefa" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/.gitattributes" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/.mvn/wrapper/maven-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/src/main/java/com/example/dxc_backend/DxcBackendApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/src/main/java/com/example/dxc_backend/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/src/main/java/com/example/dxc_backend/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/src/main/java/com/example/dxc_backend/UserRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/src/main/java/com/example/dxc_backend/UserService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/src/main/resources/static/data.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard-Backend/src/test/java/com/example/dxc_backend/DxcBackendApplicationTests.java" beforeDir="false" />
-    </list>
+    <list default="true" id="9585b4e9-5298-4f5e-9a92-af99f29bcefa" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -42,23 +25,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;Spring Boot.DxcBackendApplication.executor&quot;: &quot;Debug&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;BackEnd&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Github_repos/IoT-Insight-Hub&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.DxcBackendApplication.executor": "Debug",
+    "git-widget-placeholder": "BackEnd",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/Github_repos/IoT-Insight-Hub",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="DxcBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -93,6 +77,7 @@
       <workItem from="1745231206376" duration="104000" />
       <workItem from="1745231318529" duration="124000" />
       <workItem from="1745233839078" duration="183000" />
+      <workItem from="1745241444246" duration="152000" />
     </task>
     <servers />
   </component>

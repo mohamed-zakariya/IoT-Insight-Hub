@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -35,6 +36,55 @@ public class UserService {
         // Save and return the user
         return userRepository.save(user);
     }
+
+    public User updateUser(Long id, User userDetails) {
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            // Update only provided fields
+            if (userDetails.getFirstName() != null) user.setFirstName(userDetails.getFirstName());
+            if (userDetails.getLastName() != null) user.setLastName(userDetails.getLastName());
+            if (userDetails.getEmail() != null) user.setEmail(userDetails.getEmail());
+            if (userDetails.getPassword() != null) user.setPassword(userDetails.getPassword());
+            if (userDetails.getUsername() != null) user.setUsername(userDetails.getUsername());
+            if (userDetails.getAge() != null) user.setAge(userDetails.getAge());
+            if (userDetails.getCurrent_postion() != null) user.setCurrent_postion(userDetails.getCurrent_postion());
+            if (userDetails.getLocation() != null) user.setLocation(userDetails.getLocation());
+            if (userDetails.getDesc() != null) user.setDesc(userDetails.getDesc());
+
+            return userRepository.save(user);
+        } else {
+            throw new RuntimeException("User not found with ID: " + id);
+        }
+    }
+
+    public void updatePassword(Long id, String oldPassword, String newPassword) {
+        Optional<User> optionalUser = userRepository.findById(id);
+
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+
+            if (user.getPassword().equals(oldPassword)) {
+
+                user.setPassword(newPassword);
+                userRepository.save(user);
+            } else {
+                throw new RuntimeException("Old password is incorrect");
+            }
+        } else {
+            throw new RuntimeException("User not found with ID: " + id);
+        }
+    }
+
+
+
+
+
+
+
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
