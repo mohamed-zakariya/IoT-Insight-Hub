@@ -9,27 +9,53 @@ import {
   AbstractControl,
   ValidationErrors,
   ReactiveFormsModule,
+  ValidatorFn,
 } from '@angular/forms';
 import { __values } from 'tslib';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth_service/auth.service';
+import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { CustomValidators } from '../../shared/validators/custom-validators';
+import { UserService } from '../../services/user_service/user.service';
+import { User } from '../../models/user';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LoadingSpinnerComponent],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css'],
 })
 
 export class AuthComponent implements OnInit {
   mode: 'login' | 'signup' = 'login';
-  isSignupMode: boolean = false;
+  isSignupMode: boolean = true;
   authFormLogin!: FormGroup;
   authFormSignup!: FormGroup;
-  
+  forgotPasswordForm!: FormGroup;
+  otpForm!: FormGroup;
+  loading = false;
+  forgetPassword=false;
+  showPassword: boolean = false;
+  step = 1;
+  emailNotFound = false;
+  verifiedUser: any = null;
+  otpControls = ['c0','c1','c2','c3','c4','c5'];
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute, private router:Router, private authService: AuthService ) {}
 
+
+
+  constructor(private fb: FormBuilder, private route: ActivatedRoute,
+     private router:Router, private authService: AuthService,
+    private userService: UserService
+  ) {}
+
+  forgetPasswordClick(){
+    this.forgetPassword = true; 
+  }
+
+  toggleShowPassword() {
+    this.showPassword = !this.showPassword;
+  }
 
   toggleMode() {
     this.isSignupMode = !this.isSignupMode;
@@ -66,32 +92,90 @@ export class AuthComponent implements OnInit {
   
 
   ngOnInit(): void {
-
     
+
+  
     this.authFormLogin = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6), this.noWhitespaceValidator]],
+      password: ['', [Validators.required, CustomValidators.strongPassword]],
     });
 
+
     this.authFormSignup = this.fb.group({
-      firstName: ['', Validators.required, Validators.minLength(3)],
-      lastName: ['', Validators.required, Validators.minLength(3)],
+      firstName: ['', [CustomValidators.name]],
+      lastName: ['', [CustomValidators.name]],      
+      username: ['', [Validators.required, CustomValidators.username]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6), this.noWhitespaceValidator]],
-      dob: ['', [Validators.required, this.ageRangeValidator(1, 120)]]
+      password: ['', [Validators.required, CustomValidators.strongPassword]],
+      dob: ['', [Validators.required, CustomValidators.ageRange(15, 120)]],
+      gender: ['', Validators.required] // 👈 Add this line
     });
     
+    // Apply the group-level validator after the form is created    
+    
+    // this.otpForm = this.fb.group({
+    //   otp: ['', [Validators.required, Validators.minLength(6)]],
+    // });
+      
+    
+    this.forgotPasswordForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
 
     this.route.params.subscribe((params) => {
       this.mode = params['mode'] === 'signup' ? 'signup' : 'login';
       this.isSignupMode = this.mode === 'signup';
       this.toggleMode(); // Apply the correct validation on first load
     });
+
+
+    // Build otpForm with one control per digit
+    const group: { [key: string]: any } = {};
+    this.otpControls.forEach(c => {
+      group[c] = ['', [Validators.required, Validators.pattern(/^\d$/)]];
+    });
+    this.otpForm = this.fb.group(group, {
+      validators: [this.minLengthValidator(6)]
+    });
+
+
+
+   
   }
 
-  noWhitespaceValidator(control: AbstractControl): ValidationErrors | null {
-    const isWhitespace = (control.value || '').trim().length === 0;
-    return isWhitespace ? { whitespace: true } : null;
+  // Ensure all 6 digits present
+  minLengthValidator(len: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      // Cast to FormGroup so we can access .get
+      const fg = control as FormGroup;
+      const code = this.otpControls
+        .map((c) => fg.get(c)?.value || '')
+        .join('');
+      return code.length === len ? null : { minlength: true };
+    };
+  } 
+
+
+  onOtpKeyUp(event: KeyboardEvent, idx: number) {
+    const input = event.target as HTMLInputElement;
+    const val = input.value;
+    if (/\d/.test(val) && idx < this.otpControls.length - 1) {
+      const next = input.nextElementSibling as HTMLInputElement;
+      next?.focus();
+    } else if (event.key === 'Backspace' && idx > 0 && !val) {
+      const prev = input.previousElementSibling as HTMLInputElement;
+      prev?.focus();
+    }
+  }
+
+  onOtpPaste(event: ClipboardEvent) {
+    event.preventDefault();
+    const paste = event.clipboardData?.getData('text')?.trim().slice(0,6) || '';
+    paste.split('').forEach((ch, i) => {
+      if (i < this.otpControls.length) {
+        this.otpForm.get(this.otpControls[i])?.setValue(ch);
+      }
+    });
   }
 
 
@@ -103,94 +187,143 @@ export class AuthComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
+    this.loading = true;
+  
     const form = this.isSignupMode ? this.authFormSignup : this.authFormLogin;
-    if (form.invalid ) {
-      form.markAllAsTouched();
+  
+    if (form.invalid) {
+      console.log("invalid");
+      console.log(form.value);
+      this.authFormSignup.markAllAsTouched();
+      this.loading = false;
       return;
     }
   
-    const dob = form.value.dob;
-    const age = this.calculateAge(dob); // you can log or use this
-
-
-     // Replace this with actual logic (e.g., checking with a backend API)
-  const allowedUser = {
-    email: 'mohamedzakariaali@gmail.com',
-    password: '123456'
-  };
+    console.log("submitted", form.value);
   
+    // Delay before calling login or signup
+    setTimeout(() => {
+      if (this.isSignupMode) {
+        console.log("entered111");
+        // Create new user object from form data
+        const newUser: User = {
+          firstName: form.value.firstName,
+          lastName: form.value.lastName,
+          username: form.value.username,
+          email: form.value.email,
+          password: form.value.password,
+          age: form.value.dob, // You can rename this if needed to match your backend model
+          gender: form.value.gender
+        };
+        
+  
+        // Call the createUser service method
+        this.userService.createUser(newUser).subscribe({
+          next: (response) => {
+            this.loading = false;
+            const user = response;  // Destructure and remove 'id'
+            localStorage.setItem('user', JSON.stringify(user));
+            this.router.navigate(['/home']);
+            console.log('User created successfully:', response);
+            // Handle successful user creation (e.g., navigate to login page or home)
+          },
+          error: (error) => {
+            this.loading = false;
+            console.error('Error creating user:', error);
+          }
+        });
+      } else {
+        // Login logic for existing users
+        this.authService.login(form.value).subscribe({
+          next: (response) => {
+            this.loading = false;
+            const { id, ...user } = response.user;  // Destructure and remove 'id'
+            localStorage.setItem('user', JSON.stringify(user));
+            this.router.navigate(['/home']);
+          },
+          error: (err) => {
+            this.loading = false;
+            console.error('Login failed', err);
+          }
+        });
+      }
+    }, 1000); // 1 second delay
+  }
+  
+  
+    
+  
+  onEmailSubmit() {
+    if (this.forgotPasswordForm.invalid) return;
+    // this.loading = true;
+    this.emailNotFound = false;
 
-    // if (form.value.email === allowedUser.email && form.value.password === allowedUser.password) {
-    //   console.log('Login matched. Redirecting to Home...');
-    //   this.router.navigate(['/home']);
-    // } else {
-    //   console.log('Invalid credentials');
-    //   // You can also show a message on the UI
-    // }
+    const email = this.forgotPasswordForm.value.email;
 
-    console.log("submitted", form.value)
-
-    // In your component or service after successful login
-    this.authService.login(form.value).subscribe({
-      next: (response) => {
-        localStorage.setItem('auth_token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
-        this.router.navigate(['/home']);
+    this.userService.getUserByEmail(email).subscribe({
+      next: (res: any) => {
+        this.verifiedUser = res.user;
+        this.loading = false;
       },
-      error: (err) => {
-        console.error('Login failed', err);
+      error: () => {
+        console.log("errrrr");
+        this.emailNotFound = true;
+        this.loading = false;
       }
     });
     
-    
   }
 
-  // onSubmit() {
-  //   console.log("entered");
-  //   this.submitted = true;
-  //   const form = this.isSignupMode ? this.authFormSignup : this.authFormLogin;
-  //   if (form.invalid) {
-  //     form.markAllAsTouched();
-  //     return;
-  //   }
-
-  //   console.log('Submitted:', form.value);
-  // }
-
-  ageRangeValidator(minAge: number, maxAge: number): ValidationErrors {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const dob = new Date(control.value);
-      const today = new Date();
-      let age = today.getFullYear() - dob.getFullYear();
-      const m = today.getMonth() - dob.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-        age--;
-      }
-  
-      if (isNaN(age) || age < minAge || age > maxAge) {
-        return { invalidAge: true };
-      }
-  
-      return null;
-    };
+  goToOtpStep() {
+    this.step = 2; // Move to OTP step
   }
+
 
  
-  
-  calculateAge(dob: string): number {
-    const birthDate = new Date(dob);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
+  onOtpSubmit() {
+    if (this.otpForm.valid) {
+      this.loading = true;
+      const code = this.otpControls.map(c => this.otpForm.get(c)?.value).join('');
+      // Call your OTP verification logic with `code`
+      this.verifyOtp(code);
     }
-    return age;
+  }
+
+
+  private verifyOtp(code: string) {
+    // Example:
+    // this.authService.verifyOtp(this.verifiedUser.email, code).subscribe({ … });
+    // For now:
+    this.loading = false;
+    this.step = 3;
+  }
+
+  resendOtp() {
+    const email = this.verifiedUser?.email;
+    // if (email) {
+    //   this.authService.resendOtp(email).subscribe({
+    //     next: () => {
+    //       this.message = 'OTP has been resent to your email.';
+    //       // optionally show a toast or set a flag
+    //     },
+    //     error: () => {
+    //       this.message = 'Failed to resend OTP. Try again.';
+    //     }
+    //   });
+    // }
   }
   
+  backToSignIn(){
+    this.step = 1;
+    this.forgetPassword = false;
+    this.verifiedUser = null;
+  }
 
 
+  retry() {
+    this.emailNotFound = false;
+    this.forgotPasswordForm.reset();
+    // If you want to focus the email input again, you could add additional logic here
+  }
 
-  
-  
 }

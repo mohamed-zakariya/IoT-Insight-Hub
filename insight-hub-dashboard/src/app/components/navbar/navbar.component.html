@@ -4,8 +4,14 @@
 <!-- Sidebar Navbar -->
 <nav class="navbar" [class.show]="sidebarVisible">
   <button class="close-btn" *ngIf="sidebarVisible" (click)="toggleSidebar()">✖</button>
+
+  
+
   <div class="navbar-top">
     <div class="brand">📊 Insight Hub</div>
+
+    <app-loading-spinner *ngIf="loading" class="sidebar-spinner"></app-loading-spinner>
+
 
     <div class="nav-section">
       <a routerLink="/home" routerLinkActive="active">
