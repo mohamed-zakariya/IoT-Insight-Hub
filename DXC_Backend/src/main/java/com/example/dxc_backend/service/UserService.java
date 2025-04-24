@@ -116,4 +116,21 @@ public class UserService {
         otpRepository.delete(otpRecord);
         return true;
     }
+    // for the authentaction proiccees we want userid by username
+
+    public Long getUserIdByUsername(String username) {
+        // Fetch the user from the repository
+        User user = userRepository.findByUsername(username);
+
+        // Check if the user exists
+        if (user == null) {
+            throw new RuntimeException("User not found with username: " + username);
+        }
+        // Return the user ID
+        return user.getId();
+    }
+
+
+
+
 }
