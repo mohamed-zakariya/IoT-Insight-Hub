@@ -1,9 +1,12 @@
 package com.example.dxc_backend.controller;
 
+import com.example.dxc_backend.model.Token;
 import com.example.dxc_backend.model.User;
+import com.example.dxc_backend.repository.TokenRepository;
 import com.example.dxc_backend.repository.UserRepository;
 import com.example.dxc_backend.dto.PasswordUpdateRequest;
 import com.example.dxc_backend.service.UserService;
+import com.example.dxc_backend.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,12 @@ import java.util.Map;
 @RequestMapping("/api/users")
 @Tag(name = "User API", description = "Endpoints for User Crud and alot of featuers")
 public class UserController {
+
+    @Autowired
+    private TokenRepository tokenRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     private UserService userService;
@@ -61,6 +70,7 @@ public class UserController {
         return ResponseEntity.ok("Sign-in successful with email!");
     }
 
+
     @Operation(summary = "Sign in f2 ", description = "Sign in with username and password ")
     @PostMapping("/signin/username")
     public ResponseEntity<String> signInWithUsername(@RequestBody Map<String, String> credentials) {
@@ -73,8 +83,25 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
 
-        return ResponseEntity.ok("Sign-in successful with username!");
+
+        String accessToken = jwtUtil.generateAccessToken(user.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
+
+
+        Token tokenEntity = new Token();
+        tokenEntity.setUserId(user.getId());
+        tokenEntity.setToken(refreshToken);
+        tokenRepository.save(tokenEntity);
+
+        Map<String, String> responseBody = Map.of(
+                "message", "Sign-in successful with username!",
+                "accessToken", accessToken,
+                "refreshToken", refreshToken
+        );
+
+        return ResponseEntity.ok(responseBody);
     }
+
 
     @Operation(summary = "Sign up ", description = "Sign up and create user with validation  ")
     @PostMapping("/create")
@@ -92,6 +119,7 @@ public class UserController {
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         User updatedUser = userService.updateUser(id, userDetails);
         return ResponseEntity.ok(updatedUser);
+
     }
 
     @Operation(summary = "Update the password  ", description = "Updates using the id and options not all to enter and check the old new password ")

@@ -40,15 +40,4 @@ public class Token {
 
 
 
-    @PrePersist
-    protected void onCreate() {
-        if (createdAt == null) {
-            createdAt = Timestamp.from(Instant.now()); // Set created_at to current time
-        }
-        if (expiresAt == null) {
-            expiresAt = Timestamp.from(createdAt.toInstant().plusSeconds(7 * 24 * 60 * 60)); // Add 7 days to created_at
-        }
-    }
-
-
 }

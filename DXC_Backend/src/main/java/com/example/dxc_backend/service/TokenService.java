@@ -40,7 +40,7 @@ public class TokenService {
 
     }
 
-    // Generate Refresh Token
+    // Generate Refresh Token and save in database
     public String createRefreshToken(String username) {
 
 
@@ -50,6 +50,9 @@ public class TokenService {
         Token tokenEntity = new Token();
         tokenEntity.setUserId(userId);
         tokenEntity.setToken(token);
+        tokenEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+        tokenEntity.setExpiresAt(new Timestamp(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 7)));
+        tokenEntity.setRevoked(false);
         tokenRepository.save(tokenEntity);
 
         System.out.println("Generated Refresh Token: " + token);

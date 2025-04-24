@@ -15,7 +15,6 @@ public class AuthController {
     public String generateAccessToken(@RequestParam String username) {
         return tokenService.createAccessToken(username);
     }
-
     @PostMapping("/generate-refresh-token")
     public String generateRefreshToken(@RequestParam String username) {
         return tokenService.createRefreshToken(username);
@@ -26,8 +25,12 @@ public class AuthController {
         return tokenService.isValidAccessToken(token);
     }
 
+    // want to get mioodified with the validation of the database
     @PostMapping("/validate-refresh-token")
     public boolean validateRefreshToken(@RequestParam String token) {
         return tokenService.isValidRefreshToken(token);
     }
+
+
+
 }
