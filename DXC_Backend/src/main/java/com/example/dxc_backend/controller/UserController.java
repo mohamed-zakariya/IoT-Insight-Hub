@@ -57,30 +57,52 @@ public class UserController {
 
     @Operation(summary = "Sign in f1 ", description = "Sign in with email and password ")
     @PostMapping("/signin/email")
-    public ResponseEntity<String> signInWithEmail(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, String>> signInWithEmail(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
 
         User user = userRepository.findByEmail(email);
 
         if (user == null || !user.getPassword().equals(password)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
         }
 
-        return ResponseEntity.ok("Sign-in successful with email!");
+
+        String accessToken = jwtUtil.generateAccessToken(user.getUsername());
+        String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
+
+
+        Token tokenEntity = new Token();
+        tokenEntity.setUserId(user.getId());
+        tokenEntity.setToken(refreshToken);
+        tokenRepository.save(tokenEntity);
+
+//        Map<String, String> responseBody = Map.of(
+//                "message", "Sign-in successful with username!",
+//                "accessToken", accessToken,
+//                "refreshToken", refreshToken
+//        );
+
+        Map<String, String> responseBody = Map.of(
+                "message", "Sign-in successful with email!",
+                "accessToken", accessToken,
+                "refreshToken", refreshToken
+        );
+
+        return ResponseEntity.ok(responseBody);
     }
 
 
     @Operation(summary = "Sign in f2 ", description = "Sign in with username and password ")
     @PostMapping("/signin/username")
-    public ResponseEntity<String> signInWithUsername(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, String>> signInWithUsername(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
         String password = credentials.get("password");
 
         User user = userRepository.findByUsername(username);
 
         if (user == null || !user.getPassword().equals(password)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid username or password"));
         }
 
 
@@ -108,8 +130,30 @@ public class UserController {
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
             User createdUser = userService.createUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        } catch (IllegalArgumentException e) {
+
+            String accessToken = jwtUtil.generateAccessToken(createdUser.getUsername());
+            String refreshToken = jwtUtil.generateRefreshToken(createdUser.getUsername());
+
+            Token tokenEntity = new Token();
+            tokenEntity.setUserId(createdUser.getId());
+            tokenEntity.setToken(refreshToken);
+            tokenRepository.save(tokenEntity);
+
+            // Prepare response body with user and tokens
+            Map<String, Object> responseBody = Map.of(
+                    "message", "Sign-up successful!",
+                    "user", createdUser,
+                    "accessToken", accessToken,
+                    "refreshToken", refreshToken
+            );
+
+            // Return response
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
+
+
+        }
+
+        catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
