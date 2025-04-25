@@ -1,9 +1,13 @@
 package com.example.dxc_backend.controller;
 
+import com.example.dxc_backend.model.Token;
 import com.example.dxc_backend.model.User;
+import com.example.dxc_backend.repository.TokenRepository;
 import com.example.dxc_backend.repository.UserRepository;
 import com.example.dxc_backend.dto.PasswordUpdateRequest;
+import com.example.dxc_backend.service.TokenService;
 import com.example.dxc_backend.service.UserService;
+import com.example.dxc_backend.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +24,15 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
+    private TokenRepository tokenRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     private UserService userService;
+    @Autowired
+    private TokenService tokenService;
 
 
     @Operation(summary = "Get all users", description = "Retrieve a list of all users in the system will not use it in production")
@@ -48,41 +60,84 @@ public class UserController {
 
     @Operation(summary = "Sign in f1 ", description = "Sign in with email and password ")
     @PostMapping("/signin/email")
-    public ResponseEntity<String> signInWithEmail(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, String>> signInWithEmail(@RequestBody Map<String, String> credentials) {
         String email = credentials.get("email");
         String password = credentials.get("password");
 
         User user = userRepository.findByEmail(email);
 
         if (user == null || !user.getPassword().equals(password)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid email or password"));
         }
 
-        return ResponseEntity.ok("Sign-in successful with email!");
+
+        String accessToken = tokenService.createAccessToken(user.getUsername());
+        String refreshToken = tokenService.createRefreshToken(user.getUsername());
+
+
+
+        Map<String, String> responseBody = Map.of(
+                "message", "Sign-in successful with email!",
+                "accessToken", accessToken,
+                "refreshToken", refreshToken
+        );
+
+        return ResponseEntity.ok(responseBody);
     }
+
 
     @Operation(summary = "Sign in f2 ", description = "Sign in with username and password ")
     @PostMapping("/signin/username")
-    public ResponseEntity<String> signInWithUsername(@RequestBody Map<String, String> credentials) {
+    public ResponseEntity<Map<String, String>> signInWithUsername(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
         String password = credentials.get("password");
 
         User user = userRepository.findByUsername(username);
 
         if (user == null || !user.getPassword().equals(password)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid username or password"));
         }
 
-        return ResponseEntity.ok("Sign-in successful with username!");
+
+        String accessToken = tokenService.createAccessToken(username);
+        String refreshToken = tokenService.createRefreshToken(username);
+
+
+        Map<String, String> responseBody = Map.of(
+                "message", "Sign-in successful with username!",
+                "accessToken", accessToken,
+                "refreshToken", refreshToken
+        );
+
+        return ResponseEntity.ok(responseBody);
     }
+
 
     @Operation(summary = "Sign up ", description = "Sign up and create user with validation  ")
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@RequestBody User user) {
         try {
             User createdUser = userService.createUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-        } catch (IllegalArgumentException e) {
+
+            String accessToken = tokenService.createAccessToken(createdUser.getUsername());
+            String refreshToken = tokenService.createRefreshToken(createdUser.getUsername());
+
+
+            // Prepare response body with user and tokens
+            Map<String, Object> responseBody = Map.of(
+                    "message", "Sign-up successful!",
+                    "user", createdUser,
+                    "accessToken", accessToken,
+                    "refreshToken", refreshToken
+            );
+
+            // Return response
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseBody);
+
+
+        }
+
+        catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -92,6 +147,7 @@ public class UserController {
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
         User updatedUser = userService.updateUser(id, userDetails);
         return ResponseEntity.ok(updatedUser);
+
     }
 
     @Operation(summary = "Update the password  ", description = "Updates using the id and options not all to enter and check the old new password ")

@@ -34,7 +34,7 @@ public class UserService {
             throw new IllegalArgumentException("A user with this email already exists.");
         }
 
-        if (userRepository.findByUsername(user.getFirstName()) != null) {
+        if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new IllegalArgumentException("A user with this name already exists.");
         }
 
