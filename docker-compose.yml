@@ -1,30 +1,48 @@
-version: '3.8'
-
 services:
   mysql:
     image: mysql:8.3
     container_name: iot_mysql
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: GmNgl69ZW9
       MYSQL_DATABASE: sql8774445
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - iot_net
     ports:
       - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-pGmNgl69ZW9"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iot_net
 
   backend:
     build: ./DXC_Backend
     container_name: iot_backend
+    restart: always
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://sql8.freesqldatabase.com:3306/sql8774445
-      SPRING_DATASOURCE_USERNAME: sql8774445
+      SPRING_DATASOURCE_URL: jdbc:mysql://iot_mysql:3306/sql8774445
+      SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: GmNgl69ZW9
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
     ports:
       - "8080:8080"
+    networks:
+      - iot_net
+
+  frontend:
+    build: ./insight-hub-dashboard
+    container_name: iot_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"  # Access Angular frontend on localhost:4200
     networks:
       - iot_net
 
