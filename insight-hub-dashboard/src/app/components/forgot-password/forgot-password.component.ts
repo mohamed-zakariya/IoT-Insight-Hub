@@ -1,41 +1,124 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { UserService } from '../../services/user_service/user.service';
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
-  imports: [ReactiveFormsModule]
-
+  styleUrl: './forgot-password.component.css',
+  standalone: true,
+  imports: [ReactiveFormsModule, CommonModule]
 })
-export class ForgotPasswordComponent {
-  forgotForm: FormGroup;
+export class ForgotPasswordComponent implements OnInit {
 
-  constructor(private fb: FormBuilder) {
-    this.forgotForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      oldPassword: ['', Validators.required],
-      newPassword: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required],
-      otp: ['', Validators.required]
+  @Output() backToSignIn = new EventEmitter<void>();
+
+  forgotPasswordForm!: FormGroup;
+  otpForm!: FormGroup;
+  loading = false;
+  emailNotFound = false;
+  step = 1;
+  verifiedUser: any = null;
+  otpControls = ['c0', 'c1', 'c2', 'c3', 'c4', 'c5'];
+
+  constructor(private fb: FormBuilder, private userService: UserService) {}
+
+  ngOnInit(): void {
+    this.forgotPasswordForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
+
+    const group: { [key: string]: any } = {};
+    this.otpControls.forEach(c => {
+      group[c] = ['', [Validators.required, Validators.pattern(/^\d$/)]];
+    });
+
+    this.otpForm = this.fb.group(group, {
+      validators: [this.minLengthValidator(6)]
     });
   }
 
-  sendOtp() {
-    // Simulate sending OTP
-    alert('OTP sent to your email.');
+  minLengthValidator(len: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const fg = control as FormGroup;
+      const code = this.otpControls
+        .map((c) => fg.get(c)?.value || '')
+        .join('');
+      return code.length === len ? null : { minlength: true };
+    };
   }
 
-  onSubmit() {
-    if (this.forgotForm.invalid) return;
+  onEmailSubmit() {
+    if (this.forgotPasswordForm.invalid) return;
 
-    const { newPassword, confirmPassword } = this.forgotForm.value;
+    this.emailNotFound = false;
+    const email = this.forgotPasswordForm.value.email;
+    this.loading = true;
 
-    if (newPassword !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
+    this.userService.getUserByEmail(email).subscribe({
+      next: (res: any) => {
+        this.verifiedUser = res.user;
+        this.step = 2;
+        this.loading = false;
+      },
+      error: () => {
+        this.emailNotFound = true;
+        this.loading = false;
+      }
+    });
+  }
+
+  onOtpSubmit() {
+    if (this.otpForm.valid) {
+      this.loading = true;
+      const code = this.otpControls.map(c => this.otpForm.get(c)?.value).join('');
+      this.verifyOtp(code);
     }
+  }
 
-    // Submit logic
-    console.log('Resetting password with data:', this.forgotForm.value);
+  private verifyOtp(code: string) {
+    // Call your real OTP API here
+    // this.authService.verifyOtp(this.verifiedUser.email, code).subscribe(...)
+
+    // Simulated success
+    this.loading = false;
+    this.step = 3;
+  }
+
+  resendOtp() {
+    const email = this.verifiedUser?.email;
+    if (email) {
+      // Call resend OTP API
+      // this.authService.resendOtp(email).subscribe(...)
+      console.log('OTP resent to', email);
+    }
+  }
+
+  retry() {
+    this.emailNotFound = false;
+    this.forgotPasswordForm.reset();
+  }
+
+  backToSignInClick() {
+    this.backToSignIn.emit();
+  }
+
+  onOtpKeyUp(event: KeyboardEvent, index: number): void {
+    const input = event.target as HTMLInputElement;
+    if (input.value && index < this.otpControls.length - 1) {
+      const next = document.querySelectorAll<HTMLInputElement>('.otp-box')[index + 1];
+      next?.focus();
+    }
+  }
+
+  onOtpPaste(event: ClipboardEvent): void {
+    const pastedText = event.clipboardData?.getData('text') || '';
+    if (pastedText.length === this.otpControls.length) {
+      this.otpControls.forEach((ctrlName, index) => {
+        this.otpForm.get(ctrlName)?.setValue(pastedText[index]);
+      });
+    }
+    event.preventDefault();
   }
 }

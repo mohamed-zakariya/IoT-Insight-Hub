@@ -186,94 +186,11 @@
         </div>
 
 
-        <!-- Step 1: Email Verification -->
-        <div *ngIf="step === 1 && forgetPassword">
-          <h3>Find Your Account</h3>
+        <app-forgot-password
+        *ngIf="forgetPassword"
+        (backToSignIn)="backToSignIn()"
+      ></app-forgot-password>
 
-          <form [formGroup]="forgotPasswordForm" (ngSubmit)="onEmailSubmit()">
-            <!-- Hide this block if verifiedUser exists -->
-            <div *ngIf="!verifiedUser" class="form-block">
-              <div class="input-group">
-                <i class="fas fa-envelope"></i>
-                <input type="email" placeholder="Enter your email" formControlName="email" />
-                <div class="tooltip-error-left" *ngIf="forgotPasswordForm.get('email')?.invalid && forgotPasswordForm.get('email')?.touched">
-                  <small *ngIf="forgotPasswordForm.get('email')?.errors?.['required']">Email is required.</small>
-                  <small *ngIf="forgotPasswordForm.get('email')?.errors?.['email']">Enter a valid email.</small>
-                </div>
-              </div>
-
-              <button class="main-button" type="submit" [disabled]="forgotPasswordForm.invalid || loading">
-                Search
-              </button>
-            </div>
-
-            <p class="small-text">
-              <a (click)="backToSignIn()" class="forgot-password-link">Back to Sign In</a>
-            </p>
-          </form>
-
-          <!-- Show user info if email exists -->
-          <div *ngIf="verifiedUser" class="user-preview-card">
-            <p><strong>Name:</strong> {{ verifiedUser.firstName }} {{ verifiedUser.lastName }}</p>
-            <p><strong>Email:</strong> {{ verifiedUser.email }}</p>
-            <button class="main-button" (click)="goToOtpStep()">Continue</button>
-          </div>
-
-          <!-- Show error if user not found -->
-          <div *ngIf="emailNotFound" class="error-alert">
-            <span class="error-icon">⚠️</span>
-            <p class="error-text">Email not found. Please <a (click)="retry()" class="retry-link">try again</a>.</p>
-            <button class="close-btn" (click)="emailNotFound = false">&times;</button>
-          </div>
-
-        </div>
-
-
-
-
-        <!-- Step 2: OTP Verification -->
-        <div *ngIf="step === 2 && forgetPassword">
-          <h3>Enter Verification Code</h3>
-          <form [formGroup]="otpForm" (ngSubmit)="onOtpSubmit()" class="otp-form">
-            <div class="otp-inputs">
-              <input
-                *ngFor="let ctrl of otpControls; let i = index"
-                type="text"
-                maxlength="1"
-                [formControlName]="ctrl"
-                (keyup)="onOtpKeyUp($event, i)"
-                (paste)="onOtpPaste($event)"
-                class="otp-box"
-                autocomplete="one-time-code"
-                inputmode="numeric"
-              />
-            </div>
-            <div
-              class="tooltip-error-left"
-              *ngIf="otpForm.invalid && otpForm.touched"
-            >
-              <small *ngIf="otpForm.get('otp')?.errors?.['required']">
-                OTP is required.
-              </small>
-              <small *ngIf="otpForm.get('otp')?.errors?.['minlength']">
-                Enter a valid 6-digit code.
-              </small>
-            </div>
-
-            <button class="main-button" type="submit" [disabled]="otpForm.invalid || loading">
-              Verify OTP
-            </button>
-
-            <p class="small-text">
-              Didn’t receive the code?
-              <a (click)="resendOtp()" class="forgot-password-link">Resend</a>
-            </p>
-          </form>
-
-          <p class="small-text">
-            <a (click)="backToSignIn()" class="forgot-password-link">Back to sign</a>
-          </p>
-</div>
 
 
       </div>
