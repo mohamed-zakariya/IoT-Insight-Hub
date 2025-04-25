@@ -1,0 +1,283 @@
+<div class="signup-wrapper" [class.signup-mode]="isSignupMode">
+
+
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+
+  <div class="signup-inner-container">
+    <div class="panel left-panel" [class.slide-right]="isSignupMode">
+      <!-- Conditional image rendering based on mode -->
+      <img *ngIf="isSignupMode; else signupImage" src="assets/93.png" alt="Signin Graphic" />
+      <ng-template #signupImage>
+        <img src="assets/94.png" alt="Signup Graphic" />
+      </ng-template>
+      
+      <div class="panel-content">
+        <h2>{{ isSignupMode ? 'Join Us!' : 'New Here?' }}</h2>
+        <p>
+          {{ isSignupMode
+            ? 'Create your account to manage your IoT devices and get real-time insights.'
+            : 'Sign up to start monitoring your IoT devices in real time and explore data-driven insights.' }}
+        </p>
+        <button class="main-button" (click)="toggleMode()">
+          {{ isSignupMode ? 'SIGN IN' : 'CREATE ACCOUNT' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="panel right-panel" [class.slide-left]="isSignupMode">
+      <div class="panel-content" >
+        <h2>
+          {{ isSignupMode ? 'Create Your Account' : 'Welcome Back to IoT Dashboard' }}
+        </h2>
+
+        <div class="social-icons" >
+          <button><i class="fab fa-facebook-f" style="color: blue;"></i></button>
+          <button><i class="fab fa-google" style="color: red;"></i></button>
+          <button><i class="fab fa-discord" style="color: darkblue;"></i></button>
+        </div>
+
+        <p class="small-text">
+          {{
+            isSignupMode
+              ? 'or sign up using your email'
+              : 'or sign in using your email and password'
+          }}
+        </p>
+
+        <div *ngIf="!forgetPassword">
+          <form [formGroup]="isSignupMode ? authFormSignup : authFormLogin" (ngSubmit)="onSubmit()">
+            
+            <!-- First Name input -->
+            <div class="input-group" *ngIf="isSignupMode">
+              <input
+                type="text"
+                formControlName="firstName"
+                placeholder="First name"
+              />
+              <div class="tooltip-error-left" *ngIf="f['firstName']?.touched && f['firstName']?.invalid">
+                <span *ngIf="f['firstName'].errors?.['required']">First name is required.</span>
+                <span *ngIf="f['firstName'].errors?.['invalidLength']">Must be between 2 and 50 characters.</span>
+                <span *ngIf="f['firstName'].errors?.['invalidCharacters']">Only letters, hyphens, apostrophes allowed.</span>
+              </div>
+              
+            </div>
+            
+
+            <!-- Last Name input -->
+            <div class="input-group" *ngIf="isSignupMode">
+              <!-- <i class="fas fa-user"></i> -->
+              <input type="text" placeholder="Last Name" formControlName="lastName" />
+              <div class="tooltip-error-left" *ngIf="f['lastName']?.touched && f['lastName']?.invalid">
+                <span *ngIf="f['lastName'].errors?.['required']">Last Name is required.</span>
+                <span *ngIf="f['lastName'].errors?.['invalidLength']">Must be between 2 and 50 characters.</span>
+                <span *ngIf="f['lastName'].errors?.['invalidCharacters']">Only letters, hyphens, apostrophes allowed.</span>
+              </div>
+              
+            </div>
+
+
+            <!-- Username input -->
+            <div class="input-group" *ngIf="isSignupMode">
+              <i class="fas fa-user"></i>
+              <input type="text" placeholder="Username" formControlName="username" />
+              <div class="tooltip-error-left" *ngIf="f['username']?.touched && f['username']?.invalid">
+                <span *ngIf="f['username'].errors?.['required']">Username is required.</span>
+                <span *ngIf="!f['username'].errors?.['required'] && f['username'].errors?.['invalidLength']">
+                  Username must be between 3 and 30 characters.
+                </span>
+                <span *ngIf="!f['username'].errors?.['required'] && !f['username'].errors?.['invalidLength'] && f['username'].errors?.['mustStartWithLetter']">
+                  Username must start with a letter.
+                </span>
+                <span *ngIf="!f['username'].errors?.['required'] && !f['username'].errors?.['invalidLength'] && !f['username'].errors?.['mustStartWithLetter'] && f['username'].errors?.['invalidCharacters']">
+                  Only letters, numbers, '.', '-', and '_' are allowed.
+                </span>
+                <span *ngIf="f['username'].errors?.['containsSpaces']">Username cannot contain spaces.</span>
+                <span *ngIf="f['username'].errors?.['consecutiveSpecials']">No consecutive '.', '-', or '_'.</span>
+                <span *ngIf="f['username'].errors?.['leadingOrTrailingSpecial']">Cannot start or end with '.', '-', or '_'.</span>
+                <span *ngIf="f['username'].errors?.['reservedWord']">This username is reserved.</span>
+              </div>
+              
+            </div>
+
+            <div class="input-group gender-group" *ngIf="isSignupMode">
+              <label class="gender-label">Gender:</label>
+              <div class="gender-options">
+                <label class="gender-option">
+                  <input type="radio" formControlName="gender" value="Male" />
+                  <span>
+                    <i class="fas fa-mars" style="color: rgb(5, 92, 205);"></i>
+                  </span>
+                </label>
+                <label class="gender-option">
+                  <input type="radio" formControlName="gender" value="Female" />
+                  <span>
+                    <i class="fas fa-venus" style="color: palevioletred;"></i>
+                  </span>
+                </label>
+              </div>
+            </div>
+            
+            
+
+            <!-- Date of Birth input -->
+            <div class="input-group" *ngIf="isSignupMode">
+              <i class="fa-regular fa-calendar"></i>
+              <input type="date" placeholder="Date of Birth" formControlName="dob" />
+              <div class="tooltip-error-left" *ngIf="(f['dob']?.touched || submitted) && f['dob']?.invalid">
+                <small *ngIf="f['dob'].errors?.['required']">Date of birth is required</small>
+                <small *ngIf="f['dob'].errors?.['invalidAge']">You must be between 1 and 120 years old</small>
+              </div>
+
+              <div class="d-flex justify-content-center">
+                <div
+                  class="border rounded"
+                  data-coreui-locale="en-US"
+                  data-coreui-start-date="2024/02/13"
+                  data-coreui-toggle="calendar"
+                ></div>
+              </div>
+            </div>
+
+            
+
+
+            <!-- Email input -->
+            <div class="input-group">
+              <i class="fas fa-envelope"></i>
+              <input type="email" placeholder="Email" formControlName="email" />
+              <div class="tooltip-error-left" *ngIf="(f['email']?.touched || submitted) && f['email']?.invalid">
+                <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
+                <small *ngIf="f['email'].errors?.['email']">Enter a valid email address.</small>
+              </div>
+            </div>
+
+
+            <!-- Password input --> 
+            <div class="input-group">
+              <i class="fas fa-lock"></i>
+              <input type="password" placeholder="Password" formControlName="password" />
+              <div class="tooltip-error-left" *ngIf="f['password']?.touched && f['password']?.invalid">
+                <span *ngIf="f['password'].errors?.['required']">Password is required.</span>
+                <span *ngIf="f['password'].errors?.['minLength']">Password must be at least 8 characters.</span>
+                <span *ngIf="f['password'].errors?.['maxLength']">Password can't exceed 64 characters.</span>
+                <span *ngIf="f['password'].errors?.['weakPassword']">
+                  Must include uppercase, lowercase, number, and special character.
+                </span>
+              </div>
+              
+            </div>
+
+
+
+            <div class="forgot-password-wrapper" *ngIf="!isSignupMode">
+              <a (click)="forgetPasswordClick()" class="forgot-password-link">
+                <i class="fa fa-key"></i> Forgot Password?
+              </a>
+            </div>
+            
+            
+            
+
+            <button class="main-button" type="submit" >
+              {{ isSignupMode ? 'SIGN UP' : 'SIGN IN' }}
+            </button>
+        
+          </form>
+        </div>
+
+
+        <!-- Step 1: Email Verification -->
+        <div *ngIf="step === 1 && forgetPassword">
+          <h3>Find Your Account</h3>
+
+          <form [formGroup]="forgotPasswordForm" (ngSubmit)="onEmailSubmit()">
+            <!-- Hide this block if verifiedUser exists -->
+            <div *ngIf="!verifiedUser" class="form-block">
+              <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" placeholder="Enter your email" formControlName="email" />
+                <div class="tooltip-error-left" *ngIf="forgotPasswordForm.get('email')?.invalid && forgotPasswordForm.get('email')?.touched">
+                  <small *ngIf="forgotPasswordForm.get('email')?.errors?.['required']">Email is required.</small>
+                  <small *ngIf="forgotPasswordForm.get('email')?.errors?.['email']">Enter a valid email.</small>
+                </div>
+              </div>
+
+              <button class="main-button" type="submit" [disabled]="forgotPasswordForm.invalid || loading">
+                Search
+              </button>
+            </div>
+
+            <p class="small-text">
+              <a (click)="backToSignIn()" class="forgot-password-link">Back to Sign In</a>
+            </p>
+          </form>
+
+          <!-- Show user info if email exists -->
+          <div *ngIf="verifiedUser" class="user-preview-card">
+            <p><strong>Name:</strong> {{ verifiedUser.firstName }} {{ verifiedUser.lastName }}</p>
+            <p><strong>Email:</strong> {{ verifiedUser.email }}</p>
+            <button class="main-button" (click)="goToOtpStep()">Continue</button>
+          </div>
+
+          <!-- Show error if user not found -->
+          <div *ngIf="emailNotFound" class="error-alert">
+            <span class="error-icon">⚠️</span>
+            <p class="error-text">Email not found. Please <a (click)="retry()" class="retry-link">try again</a>.</p>
+            <button class="close-btn" (click)="emailNotFound = false">&times;</button>
+          </div>
+
+        </div>
+
+
+
+
+        <!-- Step 2: OTP Verification -->
+        <div *ngIf="step === 2 && forgetPassword">
+          <h3>Enter Verification Code</h3>
+          <form [formGroup]="otpForm" (ngSubmit)="onOtpSubmit()" class="otp-form">
+            <div class="otp-inputs">
+              <input
+                *ngFor="let ctrl of otpControls; let i = index"
+                type="text"
+                maxlength="1"
+                [formControlName]="ctrl"
+                (keyup)="onOtpKeyUp($event, i)"
+                (paste)="onOtpPaste($event)"
+                class="otp-box"
+                autocomplete="one-time-code"
+                inputmode="numeric"
+              />
+            </div>
+            <div
+              class="tooltip-error-left"
+              *ngIf="otpForm.invalid && otpForm.touched"
+            >
+              <small *ngIf="otpForm.get('otp')?.errors?.['required']">
+                OTP is required.
+              </small>
+              <small *ngIf="otpForm.get('otp')?.errors?.['minlength']">
+                Enter a valid 6-digit code.
+              </small>
+            </div>
+
+            <button class="main-button" type="submit" [disabled]="otpForm.invalid || loading">
+              Verify OTP
+            </button>
+
+            <p class="small-text">
+              Didn’t receive the code?
+              <a (click)="resendOtp()" class="forgot-password-link">Resend</a>
+            </p>
+          </form>
+
+          <p class="small-text">
+            <a (click)="backToSignIn()" class="forgot-password-link">Back to sign</a>
+          </p>
+</div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,123 @@
+<div class="dashboard-container">
+  <main class="dashboard-main">
+
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <h2>Dashboard Overview</h2>
+      <p>Today's date is: {{ date}}</p>
+    </div>
+
+    <!-- Stat Cards -->
+    <section class="stat-cards">
+      <div class="stat-card purple">
+        <div class="stat-icon"><i class="fas fa-microchip"></i></div>
+        <div class="stat-label">Total Sensors</div>
+        <div class="stat-value">12</div>
+        <div class="stat-desc">Deployed across 5 locations</div>
+      </div>
+      
+      <div class="stat-card green">
+        <div class="stat-icon"><i class="fas fa-satellite-dish"></i></div>
+        <div class="stat-label">Online Sensors</div>
+        <div class="stat-value">9 / 12</div>
+        <div class="stat-desc">+2.5% from yesterday</div>
+      </div>
+      
+      <div class="stat-card red">
+        <div class="stat-icon"><i class="fas fa-temperature-high"></i></div>
+        <div class="stat-label">Avg. Temperature</div>
+        <div class="stat-value">73.2°F</div>
+        <div class="stat-desc">-1.2% from yesterday</div>
+      </div>
+      
+      <div class="stat-card yellow">
+        <div class="stat-icon"><i class="fas fa-road"></i></div>
+        <div class="stat-label">Avg. Traffic Flow</div>
+        <div class="stat-value">514 v/h</div>
+        <div class="stat-desc">+12.7% from yesterday</div>
+      </div>
+      
+    </section>
+
+    <!-- Environmental Sensors -->
+    <section class="sensor-section">
+      <h3>Environmental Sensors</h3>
+      <div class="sensor-grid">
+        <div class="sensor-card online">
+          <h4>Temperature Sensor A</h4>
+          <p class="value">74.36°F</p>
+          <p class="location">Downtown</p>
+        </div>
+        <div class="sensor-card online">
+          <h4>Temperature Sensor B</h4>
+          <p class="value">71.97°F</p>
+          <p class="location">Marina District</p>
+        </div>
+        <div class="sensor-card online">
+          <h4>Humidity Sensor A</h4>
+          <p class="value">40.87%</p>
+          <p class="location">Downtown</p>
+        </div>
+        <div class="sensor-card online">
+          <h4>Air Quality Sensor A</h4>
+          <p class="value">37.36 AQI</p>
+          <p class="location">Downtown</p>
+        </div>
+        <div class="sensor-card warning">
+          <h4>Air Quality Sensor B</h4>
+          <p class="value">127.75 AQI</p>
+          <p class="location">Mission District</p>
+        </div>
+        <div class="sensor-card online">
+          <h4>Wind Sensor A</h4>
+          <p class="value">10.84 mph</p>
+          <p class="location">Golden Gate Bridge</p>
+        </div>
+        <div class="sensor-card online">
+          <h4>Precipitation Sensor A</h4>
+          <p class="value">0.1 in/h</p>
+          <p class="location">Marina District</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Traffic Sensors -->
+    <section class="sensor-section">
+      <h3>Traffic Sensors</h3>
+      <div class="sensor-grid">
+        <div class="sensor-card online">
+          <h4>Traffic Flow Sensor A</h4>
+          <p class="value">302.91 v/h</p>
+          <p class="location">Downtown</p>
+        </div>
+        <div class="sensor-card warning">
+          <h4>Traffic Flow Sensor B</h4>
+          <p class="value">609.24 v/h</p>
+          <p class="location">SoMa</p>
+        </div>
+        <div class="sensor-card critical">
+          <h4>Traffic Speed Sensor A</h4>
+          <p class="value">10.38 mph</p>
+          <p class="location">Downtown</p>
+        </div>
+        <div class="sensor-card online">
+          <h4>Traffic Speed Sensor B</h4>
+          <p class="value">3.24 mph</p>
+          <p class="location">SoMa</p>
+        </div>
+        <div class="sensor-card online">
+          <h4>Noise Level Sensor A</h4>
+          <p class="value">68.48 dB</p>
+          <p class="location">Downtown</p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Placeholder for Charts -->
+    <section class="charts">
+      <!-- Insert chart components here -->
+    </section>
+
+  </main>
+</div>
