@@ -26,18 +26,11 @@ public class TokenService {
     public String createAccessToken(String username) {
         String token = jwtUtil.generateAccessToken(username);
 
-//        Long userId = userService.getUserIdByUsername(username);
-//
-//        Token tokenEntity = new Token();
-//        tokenEntity.setUserId(userId);
-//        tokenEntity.setToken(token);
-//        tokenRepository.save(tokenEntity);
-//
-//        System.out.println("Generated Access Token: " + token);
+        System.out.println("Generated Access Token: " + token);
+        String  tempname = jwtUtil.extractUsername(token);
+        System.out.println("user is : " + tempname);
 
-        return token; // Return the token
-       // return jwtUtil.generateAccessToken(username);
-
+        return token;
     }
 
     // Generate Refresh Token and save in database
@@ -53,11 +46,16 @@ public class TokenService {
         tokenEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
         tokenEntity.setExpiresAt(new Timestamp(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 7)));
         tokenEntity.setRevoked(false);
-        tokenRepository.save(tokenEntity);
 
-        System.out.println("Generated Refresh Token: " + token);
 
-        return token;
+        try {
+            tokenRepository.save(tokenEntity);
+            System.out.println("Generated Refresh Token: " + token);
+            return token;
+        }
+        catch (Exception e) { e.printStackTrace();throw new RuntimeException("Error saving refresh token to the database."); }
+
+
     }
 
     // Validate Access Token
@@ -87,4 +85,18 @@ public class TokenService {
             throw new RuntimeException("Error saving refresh token to the database.");
         }
     }
+
+    public Token getRefreshTokenFromDatabase(String refreshToken) {
+        return tokenRepository.findByToken(refreshToken).orElse(null);
+    }
+
+
+    public String Return_username(Token token) {
+        String temp_username = jwtUtil.extractUsername(token.getToken());
+
+        System.out.println("user is : " + temp_username);
+        return temp_username;
+    }
+
+
 }

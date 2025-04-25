@@ -5,6 +5,7 @@ import com.example.dxc_backend.model.User;
 import com.example.dxc_backend.repository.TokenRepository;
 import com.example.dxc_backend.repository.UserRepository;
 import com.example.dxc_backend.dto.PasswordUpdateRequest;
+import com.example.dxc_backend.service.TokenService;
 import com.example.dxc_backend.service.UserService;
 import com.example.dxc_backend.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +31,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private TokenService tokenService;
 
 
     @Operation(summary = "Get all users", description = "Retrieve a list of all users in the system will not use it in production")
@@ -68,20 +71,10 @@ public class UserController {
         }
 
 
-        String accessToken = jwtUtil.generateAccessToken(user.getUsername());
-        String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
+        String accessToken = tokenService.createAccessToken(user.getUsername());
+        String refreshToken = tokenService.createRefreshToken(user.getUsername());
 
 
-        Token tokenEntity = new Token();
-        tokenEntity.setUserId(user.getId());
-        tokenEntity.setToken(refreshToken);
-        tokenRepository.save(tokenEntity);
-
-//        Map<String, String> responseBody = Map.of(
-//                "message", "Sign-in successful with username!",
-//                "accessToken", accessToken,
-//                "refreshToken", refreshToken
-//        );
 
         Map<String, String> responseBody = Map.of(
                 "message", "Sign-in successful with email!",
@@ -106,14 +99,9 @@ public class UserController {
         }
 
 
-        String accessToken = jwtUtil.generateAccessToken(user.getUsername());
-        String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
+        String accessToken = tokenService.createAccessToken(username);
+        String refreshToken = tokenService.createRefreshToken(username);
 
-
-        Token tokenEntity = new Token();
-        tokenEntity.setUserId(user.getId());
-        tokenEntity.setToken(refreshToken);
-        tokenRepository.save(tokenEntity);
 
         Map<String, String> responseBody = Map.of(
                 "message", "Sign-in successful with username!",
@@ -131,13 +119,9 @@ public class UserController {
         try {
             User createdUser = userService.createUser(user);
 
-            String accessToken = jwtUtil.generateAccessToken(createdUser.getUsername());
-            String refreshToken = jwtUtil.generateRefreshToken(createdUser.getUsername());
+            String accessToken = tokenService.createAccessToken(createdUser.getUsername());
+            String refreshToken = tokenService.createRefreshToken(createdUser.getUsername());
 
-            Token tokenEntity = new Token();
-            tokenEntity.setUserId(createdUser.getId());
-            tokenEntity.setToken(refreshToken);
-            tokenRepository.save(tokenEntity);
 
             // Prepare response body with user and tokens
             Map<String, Object> responseBody = Map.of(
