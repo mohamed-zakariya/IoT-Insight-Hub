@@ -142,23 +142,50 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "Update up ", description = "Updates using the id and options not all to enter  ")
+    @Operation(summary = "Update user", description = "Update user profile by ID. Requires valid JWT.")
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        User updatedUser = userService.updateUser(id, userDetails);
-        return ResponseEntity.ok(updatedUser);
+        public ResponseEntity<?> updateUser(
+                @PathVariable Long id,
+                @RequestBody User userDetails,
+                @RequestHeader("accessToken") String token) {
 
-    }
+        if (!tokenService.isValidAccessToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
+        }
 
-    @Operation(summary = "Update the password  ", description = "Updates using the id and options not all to enter and check the old new password ")
+            String username = tokenService.extractUsernameFromToken(token);
+            Long tokenUserId = userService.getUserIdByUsername(username);
+
+            if (!tokenUserId.equals(id)) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: You can only update your own profile.");
+            }
+
+            User updatedUser = userService.updateUser(id, userDetails);
+            return ResponseEntity.ok(updatedUser);
+        }
+
+
+    @Operation(summary = "Update password", description = "Change password by ID. Requires valid JWT.")
     @PutMapping("/{id}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable Long id, @RequestBody PasswordUpdateRequest request) {
-        userService.updatePassword(id, request.getOldPassword(), request.getNewPassword());
-        return ResponseEntity.ok("Password updated successfully");
-    }
+    public ResponseEntity<?> updatePassword(
+            @PathVariable Long id,
+            @RequestBody PasswordUpdateRequest request,
+            @RequestHeader("accessToken") String token) {
 
+        if (!tokenService.isValidAccessToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
+        }
 
+        String username = tokenService.extractUsernameFromToken(token);
+        Long tokenUserId = userService.getUserIdByUsername(username);
 
-
-
-}
+        if (!tokenUserId.equals(id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied: You can only update your own password.");
+        }
+        try {
+            userService.updatePassword(id, request.getOldPassword(), request.getNewPassword());
+            return ResponseEntity.ok("Password updated successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+}}

@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.3
+    container_name: iot_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: GmNgl69ZW9
+      MYSQL_DATABASE: sql8774445
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - iot_net
+    ports:
+      - "3306:3306"
+
+  backend:
+    build: ./DXC_Backend
+    container_name: iot_backend
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://sql8.freesqldatabase.com:3306/sql8774445
+      SPRING_DATASOURCE_USERNAME: sql8774445
+      SPRING_DATASOURCE_PASSWORD: GmNgl69ZW9
+    ports:
+      - "8080:8080"
+    networks:
+      - iot_net
+
+volumes:
+  mysql_data:
+
+networks:
+  iot_net:
+    driver: bridge

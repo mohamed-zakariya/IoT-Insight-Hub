@@ -97,6 +97,8 @@ public class TokenService {
         System.out.println("user is : " + temp_username);
         return temp_username;
     }
-
+    public String extractUsernameFromToken(String token) {
+        return jwtUtil.extractUsername(token);
+    }
 
 }
