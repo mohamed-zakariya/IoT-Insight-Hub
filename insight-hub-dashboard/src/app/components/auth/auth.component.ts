@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ForgotPasswordComponent } from '../forgot-password/forgot-password.component';
 
 import {
   FormBuilder,
@@ -9,7 +10,7 @@ import {
   AbstractControl,
   ValidationErrors,
   ReactiveFormsModule,
-  ValidatorFn,
+  ValidatorFn,  
 } from '@angular/forms';
 import { __values } from 'tslib';
 import { AuthService } from '../../services/auth_service/auth.service';
@@ -21,7 +22,7 @@ import { User } from '../../models/user';
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, LoadingSpinnerComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LoadingSpinnerComponent, ForgotPasswordComponent],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css'],
 })
@@ -38,8 +39,7 @@ export class AuthComponent implements OnInit {
   showPassword: boolean = false;
   step = 1;
   emailNotFound = false;
-  verifiedUser: any = null;
-  otpControls = ['c0','c1','c2','c3','c4','c5'];
+  // verifiedUser: any = null;
 
 
 
@@ -49,8 +49,9 @@ export class AuthComponent implements OnInit {
     private userService: UserService
   ) {}
 
-  forgetPasswordClick(){
-    this.forgetPassword = true; 
+  forgetPasswordClick() {
+    this.forgetPassword = true;
+    this.isSignupMode = false; // Switch to login mode if needed
   }
 
   toggleShowPassword() {
@@ -59,6 +60,9 @@ export class AuthComponent implements OnInit {
 
   toggleMode() {
     this.isSignupMode = !this.isSignupMode;
+    if (this.isSignupMode) {
+      this.forgetPassword = false; // Reset the forget password when switching to signup
+    }
   
     // Reset validators conditionally (if using 'age' in the future)
     const ageControl = this.authFormLogin.get('age');
@@ -129,54 +133,8 @@ export class AuthComponent implements OnInit {
     });
 
 
-    // Build otpForm with one control per digit
-    const group: { [key: string]: any } = {};
-    this.otpControls.forEach(c => {
-      group[c] = ['', [Validators.required, Validators.pattern(/^\d$/)]];
-    });
-    this.otpForm = this.fb.group(group, {
-      validators: [this.minLengthValidator(6)]
-    });
-
-
-
-   
   }
 
-  // Ensure all 6 digits present
-  minLengthValidator(len: number): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      // Cast to FormGroup so we can access .get
-      const fg = control as FormGroup;
-      const code = this.otpControls
-        .map((c) => fg.get(c)?.value || '')
-        .join('');
-      return code.length === len ? null : { minlength: true };
-    };
-  } 
-
-
-  onOtpKeyUp(event: KeyboardEvent, idx: number) {
-    const input = event.target as HTMLInputElement;
-    const val = input.value;
-    if (/\d/.test(val) && idx < this.otpControls.length - 1) {
-      const next = input.nextElementSibling as HTMLInputElement;
-      next?.focus();
-    } else if (event.key === 'Backspace' && idx > 0 && !val) {
-      const prev = input.previousElementSibling as HTMLInputElement;
-      prev?.focus();
-    }
-  }
-
-  onOtpPaste(event: ClipboardEvent) {
-    event.preventDefault();
-    const paste = event.clipboardData?.getData('text')?.trim().slice(0,6) || '';
-    paste.split('').forEach((ch, i) => {
-      if (i < this.otpControls.length) {
-        this.otpForm.get(this.otpControls[i])?.setValue(ch);
-      }
-    });
-  }
 
 
   get f() {
@@ -251,77 +209,16 @@ export class AuthComponent implements OnInit {
   }
   
   
-    
-  
-  onEmailSubmit() {
-    if (this.forgotPasswordForm.invalid) return;
-    // this.loading = true;
-    this.emailNotFound = false;
 
-    const email = this.forgotPasswordForm.value.email;
-
-    this.userService.getUserByEmail(email).subscribe({
-      next: (res: any) => {
-        this.verifiedUser = res.user;
-        this.loading = false;
-      },
-      error: () => {
-        console.log("errrrr");
-        this.emailNotFound = true;
-        this.loading = false;
-      }
-    });
-    
-  }
-
-  goToOtpStep() {
-    this.step = 2; // Move to OTP step
-  }
-
-
- 
-  onOtpSubmit() {
-    if (this.otpForm.valid) {
-      this.loading = true;
-      const code = this.otpControls.map(c => this.otpForm.get(c)?.value).join('');
-      // Call your OTP verification logic with `code`
-      this.verifyOtp(code);
-    }
-  }
-
-
-  private verifyOtp(code: string) {
-    // Example:
-    // this.authService.verifyOtp(this.verifiedUser.email, code).subscribe({ … });
-    // For now:
-    this.loading = false;
-    this.step = 3;
-  }
-
-  resendOtp() {
-    const email = this.verifiedUser?.email;
-    // if (email) {
-    //   this.authService.resendOtp(email).subscribe({
-    //     next: () => {
-    //       this.message = 'OTP has been resent to your email.';
-    //       // optionally show a toast or set a flag
-    //     },
-    //     error: () => {
-    //       this.message = 'Failed to resend OTP. Try again.';
-    //     }
-    //   });
-    // }
-  }
   
   backToSignIn(){
     this.step = 1;
     this.forgetPassword = false;
-    this.verifiedUser = null;
+    // this.verifiedUser = null;
   }
 
 
   retry() {
-    this.emailNotFound = false;
     this.forgotPasswordForm.reset();
     // If you want to focus the email input again, you could add additional logic here
   }
