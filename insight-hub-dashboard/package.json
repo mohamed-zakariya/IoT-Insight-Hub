@@ -6,8 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:insight-hub-dashboard": "node dist/insight-hub-dashboard/server/server.mjs"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
@@ -17,9 +16,7 @@
     "@angular/forms": "19.2.7",
     "@angular/platform-browser": "19.2.7",
     "@angular/platform-browser-dynamic": "19.2.7",
-    "@angular/platform-server": "^19.2.7",
     "@angular/router": "19.2.7",
-    "@angular/ssr": "^19.2.8",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
