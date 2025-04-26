@@ -9,6 +9,7 @@ import {
   Validators,
   ReactiveFormsModule,
   FormsModule,
+  AbstractControl,
 } from '@angular/forms';
 import { __values } from 'tslib';
 import { AuthService } from '../../services/auth_service/auth.service';
@@ -116,11 +117,19 @@ export class AuthComponent implements OnInit {
       username: ['', [Validators.required, CustomValidators.username]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, CustomValidators.strongPassword]],
+      confirmPassword: ['', Validators.required], // Add validation if necessary
       dob: ['', [Validators.required, CustomValidators.ageRange(15, 120)]],
       gender: ['', Validators.required] // 👈 Add this line
     });
-    
-    // Apply the group-level validator after the form is created    
+
+     // Apply the custom validator to confirmPassword
+      this.authFormSignup.get('confirmPassword')?.setValidators([
+        Validators.required,
+        this.matchPasswordValidator.bind(this)  // Ensure the context of "this" is correct
+      ]);
+
+      this.authFormSignup.get('confirmPassword')?.updateValueAndValidity();  // Trigger validation check
+      // Apply the group-level validator after the form is created    
     
     // this.otpForm = this.fb.group({
     //   otp: ['', [Validators.required, Validators.minLength(6)]],
@@ -140,6 +149,25 @@ export class AuthComponent implements OnInit {
 
   }
 
+  matchPasswordValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    const password = this.authFormSignup.get('password')?.value;
+    if (password && control.value !== password) {
+      return { passwordsDoNotMatch: true };
+    }
+    return null;
+  }
+  
+  
+  onConfirmPasswordTouched() {
+    this.authFormSignup.get('confirmPassword')?.markAsTouched();
+  
+    const password = this.authFormSignup.get('password')?.value;
+    const confirmPassword = this.authFormSignup.get('confirmPassword')?.value;
+    this.passwordsDoNotMatch = password && confirmPassword && password !== confirmPassword;
+  }
+  
+  
+
 
 
   get f() {
@@ -157,13 +185,6 @@ export class AuthComponent implements OnInit {
       console.log("invalid form");
       form.markAllAsTouched();
       return;
-    }
-    // 👇 Check password confirmation manually
-    if (this.isSignupMode && form.value.password !== this.confirmPassword) {
-      this.passwordsDoNotMatch = true;
-      return;
-    } else {
-      this.passwordsDoNotMatch = false;
     }
   
     console.log("submitted", form.value);
@@ -248,10 +269,6 @@ export class AuthComponent implements OnInit {
 
   toggleConfirmPasswordVisibility() {
     this.showConfirmPassword = !this.showConfirmPassword;
-  }
-  
-  onConfirmPasswordTouched() {
-    this.confirmPasswordTouched = true;
   }
   
 }

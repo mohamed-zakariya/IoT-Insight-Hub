@@ -192,6 +192,7 @@
 
 
 
+            <!-- Password Field -->
             <div class="input-group-password-class">
               <i class="fas fa-lock lock-icon"></i>
               <input
@@ -206,8 +207,7 @@
                 [class.fa-eye-slash]="showPassword" 
                 (click)="togglePasswordVisibility()"
               ></i>
-
-
+              
               <!-- Error Tooltip -->
               <div class="tooltip-error-left" *ngIf="f['password']?.touched && f['password']?.invalid">
                 <span *ngIf="f['password'].errors?.['required']">Password is required.</span>
@@ -218,28 +218,31 @@
                 </span>
               </div>
             </div>
-            
-            
+
+            <!-- Confirm Password Field -->
             <div class="input-group-password-class" *ngIf="isSignupMode">
               <i class="fas fa-lock lock-icon"></i>
               <input
-                [type]="showConfirmPassword ? 'text' : 'password'"
-                placeholder="Confirm Password"
-                [(ngModel)]="confirmPassword"
-                name="confirmPassword" 
-              />
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              placeholder="Confirm Password"
+              (input)="onConfirmPasswordTouched()"
+              [ngClass]="{ 'is-invalid': f['confirmPassword'].invalid && (f['confirmPassword'].touched || submitted) || passwordsDoNotMatch }"
+            />
               <i 
                 class="fa-solid toggle-eye" 
                 [class.fa-eye]="!showConfirmPassword" 
                 [class.fa-eye-slash]="showConfirmPassword" 
                 (click)="toggleConfirmPasswordVisibility()"
               ></i>
-            
-              <!-- Error Message -->
-              <div class="tooltip-error-left" *ngIf="passwordsDoNotMatch && (submitted || confirmPasswordTouched)">
-                <span>Passwords do not match.</span>
-              </div>
+              
+              <!-- Error Tooltip -->
+              <div class="tooltip-error-left" *ngIf="f['confirmPassword']?.touched && (f['confirmPassword']?.invalid || passwordsDoNotMatch)">
+                <span *ngIf="f['confirmPassword'].errors?.['required']">Confirm Password is required.</span>
+                <span *ngIf="passwordsDoNotMatch">Passwords do not match.</span>
+              </div>              
             </div>
+
             
               
             
