@@ -38,4 +38,14 @@ public class PasswordResetController {
             return ResponseEntity.badRequest().body("Invalid or expired OTP.");
         }
     }
+
+    // In PasswordResetController.java
+
+    // Endpoint to check OTP validity
+    @PostMapping("/check-otp")
+    public ResponseEntity<?> checkOtpValidity(@RequestParam String otp) {
+        String result = userService.checkOtpValidity(otp);
+        return ResponseEntity.ok(result);
+    }
+
 }

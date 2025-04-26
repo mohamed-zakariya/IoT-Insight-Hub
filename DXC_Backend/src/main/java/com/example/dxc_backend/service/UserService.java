@@ -131,6 +131,21 @@ public class UserService {
     }
 
 
+    // In UserService.java
+
+    public String checkOtpValidity(String otp) {
+        PasswordResetOTP otpRecord = otpRepository.findByOtp(otp);
+        if (otpRecord == null) {
+            return "Invalid OTP";
+        } else if (otpRecord.isExpired()) {
+            return "Expired OTP";
+        } else {
+            return "Valid OTP";
+        }
+    }
+
+
+
 
 
 }

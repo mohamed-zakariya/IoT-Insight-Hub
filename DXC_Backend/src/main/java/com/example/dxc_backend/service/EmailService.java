@@ -8,4 +8,6 @@ public class EmailService {
         // For development: just log the email instead of sending
         System.out.printf("Email to %s:\nSubject: %s\nBody: %s\n", to, subject, content);
     }
+
+
 }
