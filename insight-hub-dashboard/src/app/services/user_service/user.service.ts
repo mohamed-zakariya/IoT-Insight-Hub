@@ -138,29 +138,37 @@ export class UserService {
 
   createUser(user: User): Observable<any> {
     console.log(user);
-    return this.http.post<{accessToken: string, refreshToken:string}>(`${this.apiUrl}/create`, user, {
+    return this.http.post<{accessToken: string, refreshToken: string}>(`${this.apiUrl}/create`, user, {
       headers: this.getAuthHeaders()
     }).pipe(
       tap((response) => {
-        // Assuming response contains accessToken and refreshToken
         if (response && response.accessToken && response.refreshToken) {
-          // Store the tokens in the local storage or wherever needed
           this.authService.storeAuthToken(response.accessToken, response.refreshToken);
   
-          // Decode the user from the access token
-          const user = this.authService.decodeToken(response.accessToken);
+          const payload: any = this.authService.decodeToken(response.accessToken);
+          const username = payload?.sub;
+          console.log("Decoded username (sub):", username);
   
-          // If decoding is successful, set the user
-          if (user) {
-            this.authService.setUser(user);
-          }
+          localStorage.setItem('user', JSON.stringify({ username, email: user?.email }));
         }
       }),
       catchError((err) => {
-        console.error('Error creating user:', err);
-        throw err; // Rethrow error after logging
+        console.error('Error creating user 1:', err);
+  
+        // Check if the backend returned the email exists error
+        if (err?.error === "A user with this email already exists.") {
+          // Instead of throwing the full error, throw a custom object
+          return throwError(() => ({ type: 'EMAIL_EXISTS' }));
+        }
+        else if(err?.error === "A user with this name already exists.") {
+          return throwError(() => ({ type: 'USERNAME_EXISTS' }));
+        }        
+
+        // Otherwise, throw normal error
+        return throwError(() => err);
       })
     );
   }
+  
   
 }
