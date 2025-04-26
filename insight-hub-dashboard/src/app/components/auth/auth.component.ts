@@ -18,6 +18,7 @@ import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.comp
 import { CustomValidators } from '../../shared/validators/custom-validators';
 import { UserService } from '../../services/user_service/user.service';
 import { User } from '../../models/user';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -39,6 +40,7 @@ export class AuthComponent implements OnInit {
   showPassword: boolean = false;
   step = 1;
   emailNotFound = false;
+
   // verifiedUser: any = null;
 
 
@@ -165,7 +167,8 @@ export class AuthComponent implements OnInit {
         username: form.value.username,
         email: form.value.email,
         password: form.value.password,
-        age: form.value.dob,
+        dob: form.value.dob,
+        gender: form.value.gender
       };
   
       this.userService.createUser(newUser).subscribe({
@@ -218,6 +221,12 @@ export class AuthComponent implements OnInit {
     this.step = 1;
     this.forgetPassword = false;
     // this.verifiedUser = null;
+  }
+
+  
+  // Toggle password visibility
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 
 

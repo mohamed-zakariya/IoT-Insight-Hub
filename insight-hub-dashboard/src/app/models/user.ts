@@ -5,7 +5,8 @@ export interface User {
     password?: string,
     firstName?: string,
     lastName?: string,
-    age?: string,
+    dob?: Date,
+    age?: number;
     gender?: String,
     location?: string,
     current_postion?: string,

@@ -7,23 +7,13 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* .signup-container {
-  display: flex;
-  width: 100vw;
-  max-width: 1200px;
-  height: 80vh;
-  background-color: #fff;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-} */
-
 .signup-inner-container {
   position: relative;
   width: 100vw;
   max-width: 1200px;
   height: 80vh;
   background-color: #fff;
-  border-radius: 20px;
+  border-radius: 5px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   overflow: visible;
 }
@@ -52,6 +42,7 @@
   flex-direction: column;
   justify-content: space-between;
   z-index: 1;
+  border-radius: 4px;
 }
 
 .left-panel img {
@@ -87,6 +78,7 @@
   flex-direction: column;
   justify-content: space-around;
   z-index: 2;
+  border-radius: 4px;
 }
 
 .panel-content {
@@ -319,12 +311,7 @@ form {
   max-width: 900px;
   margin: auto;
 }
-/* .panel-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-} */
+
 .panel {
   flex: 1 1 80%;
   padding: 2rem;
@@ -587,6 +574,9 @@ form {
     width: 100%;
   }
 
+  .input-group-password-class div input{
+    width: 100%;
+  }
   .gender-options {
     flex-direction: row;
     gap: 0.5rem;
@@ -635,7 +625,88 @@ form {
     width: 100%;
   }
 
-  .input-group input {
-    width: 100%;
+}
+
+input.is-invalid {
+  border: 2px solid red;
+  outline: none;
+}
+
+.gender-options input.is-invalid {
+  outline: 2px solid red;
+}
+
+input[type="date"].is-invalid {
+  border: 2px solid red;
+}
+
+/* .toggle-eye {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #666;
+} */
+
+.input-group-password-class {
+  position: relative;
+  width: 100%;
+  background-color: #f5f5f5;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s, background-color 0.3s;
+}
+
+.input-group-password-class i.lock-icon {
+  color: #888;
+  font-size: 12px;
+  margin-right: 8px;
+}
+
+.input-group-password-class input {
+  flex: 1 1 auto; /* allow it to shrink */
+  min-width: 0; /* prevent overflow */
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 14px;
+  padding: 12px 0;
+}
+
+.input-group-password-class i.toggle-eye {
+  color: #888;
+  font-size: 13px;
+  cursor: pointer;
+  margin-left: 8px;
+  flex: 0 0 auto; /* never shrink */
+}
+
+.input-group-password-class i.toggle-eye:active {
+  transform: scale(1.2);
+  transition: transform 0.2s;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .input-group-password-class input {
+    font-size: 13px;
+  }
+  .input-group-password-class i.lock-icon,
+  .input-group-password-class i.toggle-eye {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .input-group-password-class input {
+    font-size: 12px;
+  }
+  .input-group-password-class i.lock-icon,
+  .input-group-password-class i.toggle-eye {
+    font-size: 14px;
   }
 }

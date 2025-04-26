@@ -46,11 +46,28 @@ export class ProfileComponent implements OnInit {
           this.originalUser = { ...userData };
           console.log("Profile Data", this.originalUser);
     
+          // Calculate age based on DOB
+          if (this.originalUser?.dob) {
+            const birthDate = new Date(this.originalUser.dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+            // Adjust age if the birthday hasn't occurred yet this year
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+              age--;
+            }
+    
+            // Update dob field to the age
+            this.user.age = age;
+          }
+    
           // Save the user data to localStorage
           localStorage.setItem('user', JSON.stringify({ 
             id: this.originalUser?.id, 
             email: this.originalUser?.email, 
-            username: this.originalUser?.username
+            username: this.originalUser?.username,
+            age: this.originalUser?.dob // Save the age instead of DOB
           }));
         },
         error: (err) => {
@@ -63,7 +80,7 @@ export class ProfileComponent implements OnInit {
       });
     } else {
       console.warn('No email found in auth service.');
-    }    
+    }      
   }
   
 
