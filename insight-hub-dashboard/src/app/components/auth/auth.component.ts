@@ -7,10 +7,8 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
-  AbstractControl,
-  ValidationErrors,
   ReactiveFormsModule,
-  ValidatorFn,  
+  FormsModule,
 } from '@angular/forms';
 import { __values } from 'tslib';
 import { AuthService } from '../../services/auth_service/auth.service';
@@ -23,7 +21,7 @@ import { from } from 'rxjs';
 @Component({
   selector: 'app-auth',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, LoadingSpinnerComponent, ForgotPasswordComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LoadingSpinnerComponent, ForgotPasswordComponent, FormsModule],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css'],
 })
@@ -40,6 +38,11 @@ export class AuthComponent implements OnInit {
   showPassword: boolean = false;
   step = 1;
   emailNotFound = false;
+  confirmPassword: string = '';
+  showConfirmPassword: boolean = false;
+  passwordsDoNotMatch: boolean = false;
+  confirmPasswordTouched: boolean = false;
+
 
   // verifiedUser: any = null;
 
@@ -155,6 +158,13 @@ export class AuthComponent implements OnInit {
       form.markAllAsTouched();
       return;
     }
+    // 👇 Check password confirmation manually
+    if (this.isSignupMode && form.value.password !== this.confirmPassword) {
+      this.passwordsDoNotMatch = true;
+      return;
+    } else {
+      this.passwordsDoNotMatch = false;
+    }
   
     console.log("submitted", form.value);
   
@@ -235,4 +245,13 @@ export class AuthComponent implements OnInit {
     // If you want to focus the email input again, you could add additional logic here
   }
 
+
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+  
+  onConfirmPasswordTouched() {
+    this.confirmPasswordTouched = true;
+  }
+  
 }

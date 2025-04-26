@@ -220,6 +220,27 @@
             </div>
             
             
+            <div class="input-group-password-class" *ngIf="isSignupMode">
+              <i class="fas fa-lock lock-icon"></i>
+              <input
+                [type]="showConfirmPassword ? 'text' : 'password'"
+                placeholder="Confirm Password"
+                [(ngModel)]="confirmPassword"
+                name="confirmPassword" 
+              />
+              <i 
+                class="fa-solid toggle-eye" 
+                [class.fa-eye]="!showConfirmPassword" 
+                [class.fa-eye-slash]="showConfirmPassword" 
+                (click)="toggleConfirmPasswordVisibility()"
+              ></i>
+            
+              <!-- Error Message -->
+              <div class="tooltip-error-left" *ngIf="passwordsDoNotMatch && (submitted || confirmPasswordTouched)">
+                <span>Passwords do not match.</span>
+              </div>
+            </div>
+            
               
             
 
