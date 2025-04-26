@@ -33,7 +33,7 @@
     
         <div class="input-group">
           <label>Current position</label>
-          <input type="text" [(ngModel)]="user.position" name="position" />
+          <input type="text" [(ngModel)]="user.current_postion" name="position" />
         </div>
     
         <div class="input-group">
@@ -154,6 +154,12 @@
   >
     ✅ Your password has been updated successfully.
   </div>
+
+  <!-- Server-Side Error Message
+  <div *ngIf="serverErrorMessage" class="error-message">
+    ⚠️ {{ serverErrorMessage }}
+  </div> -->
+
 
 
 

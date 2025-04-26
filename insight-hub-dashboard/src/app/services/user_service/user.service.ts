@@ -9,7 +9,7 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:3000/api/users';
+  private apiUrl = 'http://localhost:8080/api/users';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -17,10 +17,11 @@ export class UserService {
     const token = this.authService.getAuthToken();
     let headers = new HttpHeaders();
     if (token) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
+      headers = headers.set('accessToken', token);
     }
     return headers;
   }
+  
 
   // Helper method to handle token refresh and retry
   private refreshAndRetryRequest(requestFn: () => Observable<any>): Observable<any> {
@@ -52,36 +53,68 @@ export class UserService {
   }
 
   updateProfile(data: Partial<User>): Observable<User> {
-    return this.http.put<User>(`${this.apiUrl}/update-profile`, data, {
-      headers: this.getAuthHeaders()
-    }).pipe(
-      catchError((err) => {
-        if (err.status === 401) {  // Unauthorized, token might have expired
-          return this.refreshAndRetryRequest(() => this.http.put<User>(`${this.apiUrl}/update-profile`, data, {
-            headers: this.getAuthHeaders()
-          }));
-        }
-        throw err;
-      })
-    );
+    const userString = localStorage.getItem('user');
+    if (!userString) {
+      return throwError(() => new Error('User not found in local storage'));
+    }
+  
+    const user = JSON.parse(userString);
+    const userId = user.id;
+  
+    // Get headers using the existing method
+    const headers = this.getAuthHeaders();
+  
+    // Log the request information (for debugging)
+    console.log('Sending request to update profile with data:', data);
+    console.log('Request URL:', `${this.apiUrl}/${userId}`);
+    console.log('Headers:', headers);
+  
+    return this.http.put<User>(`${this.apiUrl}/${userId}`, data, { headers })
+      .pipe(
+        catchError((err) => {
+          if (err.status === 401) {
+            return this.refreshAndRetryRequest(() =>
+              this.http.put<User>(`${this.apiUrl}/${userId}`, data, { headers: this.getAuthHeaders() })
+            );
+          }
+          throw err;
+        })
+      );
   }
+  
+  
+  
+  
 
   updatePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
-    const payload = { currentPassword, newPassword };
-
-    return this.http.put<{ message: string }>(`${this.apiUrl}/update-password`, payload, {
-      headers: this.getAuthHeaders()
-    }).pipe(
-      catchError((err) => {
-        if (err.status === 401 || err.status === 403) {  // Unauthorized, token might have expired
-          return this.refreshAndRetryRequest(() => this.http.put<{ message: string }>(`${this.apiUrl}/update-password`, payload, {
-            headers: this.getAuthHeaders()
-          }));
+    const payload = { oldPassword: currentPassword, newPassword };
+  
+    // Get user info from localStorage
+    const userString = localStorage.getItem('user');
+    if (!userString) {
+      return throwError(() => new Error('User not found in localStorage'));
+    }
+  
+    const { id: userId } = JSON.parse(userString);
+    const url = `${this.apiUrl}/${userId}/password`;
+  
+    const makeRequest = () => this.http.put<{ message: string }>(url, payload, {
+      headers: this.getAuthHeaders(),
+      responseType: 'text' as 'json'  // 👈 tell Angular to expect plain text
+    });
+  
+    return makeRequest().pipe(
+      catchError(err => {
+        if (err.status === 401 || err.status === 403) {
+          return this.refreshAndRetryRequest(makeRequest);
         }
+        console.error('Password update error:', err);
         throw err;
       })
     );
   }
+  
+  
 
   // Get public user info by email (no auth required)
   getUserByEmail(email: string): Observable<User> {

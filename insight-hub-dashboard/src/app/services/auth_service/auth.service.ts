@@ -11,7 +11,7 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:3000/api';
+  private apiUrl = 'http://localhost:8080/api';
   private http = inject(HttpClient);
   private router = inject(Router);
 
@@ -45,19 +45,20 @@ export class AuthService {
   /** Save token only */
   public storeAuthToken(accessToken: string, refreshToken: string) {
     if (this.isBrowser) {
-      localStorage.setItem('access_token', accessToken);
-      localStorage.setItem('refresh_token', refreshToken);  // Save refresh token as well
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);  // Save refresh token as well
     }
   }
 
   /** Retrieve access token */
   public getAuthToken(): string | null {
-    return this.isBrowser ? localStorage.getItem('access_token') : null;
+    return this.isBrowser ? localStorage.getItem('accessToken') : null;
   }
 
   /** Retrieve refresh token */
   public getRefreshToken(): string | null {
-    return this.isBrowser ? localStorage.getItem('refresh_token') : null;
+    return this.isBrowser ? localStorage.getItem('refreshToken') : null;
+
   }
 
   /** Decode token to extract user */
@@ -77,8 +78,8 @@ export class AuthService {
 
   logout() {
     if (this.isBrowser) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       localStorage.clear(); // ← clear all keys if your app stores user data
     }
     this.currentUserSubject.next(null);
@@ -91,17 +92,34 @@ export class AuthService {
   }
 
   login(user: User): Observable<any> {
-    console.log(user);
-    return this.http.post<{ accessToken: string, refreshToken: string }>(`${this.apiUrl}/login`, user).pipe(
+    console.log("post request", user);
+  
+    return this.http.post<{ accessToken: string; refreshToken: string; message: string }>(
+      `${this.apiUrl}/users/signin/email`,
+      user
+    ).pipe(
       tap((response) => {
+        // Store tokens
         this.storeAuthToken(response.accessToken, response.refreshToken);
-        const user = this.decodeToken(response.accessToken);
-        if (user) {
-          this.setUser(user);
+  
+        // Log response
+        console.log('Access Token:', response.accessToken);
+        console.log('Message:', response.message);
+  
+        // Decode token to get payload
+        const payload: any = this.decodeToken(response.accessToken);
+        const username = payload?.sub;
+        console.log("Decoded username (sub):", username);
+        localStorage.setItem('user', JSON.stringify({ username, email: user.email }));
+  
+        // Set user if valid
+        if (username) {
+          this.setUser(username);
         }
       })
     );
   }
+  
 
   private addAuthHeaders(): HttpHeaders {
     const token = this.getAuthToken();
@@ -118,11 +136,15 @@ export class AuthService {
     if (!refreshToken) {
       return this.logoutAndRedirect();  // No refresh token, log out
     }
-
-    return this.http.post<{ accessToken: string }>(`${this.apiUrl}/token/refresh`, { refreshToken }).pipe(
+  
+    // Construct the URL with the refreshToken as a query parameter
+    const url = `http://localhost:8080/auth/refresh-token?refreshToken=${refreshToken}`;
+  
+    return this.http.post<{ accessToken: string }>(url, {}).pipe(
       tap((response) => {
-        // Store new access token
-        this.storeAuthToken(response.accessToken, refreshToken); // Refresh accessToken remains the same
+        console.log(response);
+        // Store new access token while reusing the existing refresh token
+        this.storeAuthToken(response.accessToken, refreshToken);
       }),
       catchError((error) => {
         this.logoutAndRedirect();
@@ -130,6 +152,8 @@ export class AuthService {
       })
     );
   }
+  
+  
 
   // Intercept protected requests and ensure the token is valid
   someProtectedRequest(): Observable<any> {

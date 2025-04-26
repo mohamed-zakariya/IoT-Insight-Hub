@@ -24,6 +24,7 @@ export class ProfileComponent implements OnInit {
   updateMessage = '';
   updateSuccess = false;
   updateError = false;
+  serverErrorMessage = '';
 
   passwordData = {
     oldPassword: '',
@@ -34,29 +35,55 @@ export class ProfileComponent implements OnInit {
   constructor(private authService: AuthService, private userService: UserService) {}
 
   ngOnInit(): void {
-    const user = this.authService.checkCurrentUser();
-    if (user) {
-      this.user = { ...user };
-      this.originalUser = { ...user };
-    }
+    const userData = localStorage.getItem('user');
+    const email = userData ? JSON.parse(userData).email : null;
+
+  
+    if (email) {
+      this.userService.getUserByEmail(email).subscribe({
+        next: (userData) => {
+          this.user = { ...userData };
+          this.originalUser = { ...userData };
+          console.log("Profile Data", this.originalUser);
+    
+          // Save the user data to localStorage
+          localStorage.setItem('user', JSON.stringify({ 
+            id: this.originalUser?.id, 
+            email: this.originalUser?.email, 
+            username: this.originalUser?.username
+          }));
+        },
+        error: (err) => {
+          if (err.message === 'UserNotFound') {
+            console.error('User not found with email:', email);
+          } else {
+            console.error('Error fetching user data:', err);
+          }
+        }
+      });
+    } else {
+      console.warn('No email found in auth service.');
+    }    
   }
+  
 
   changePassword(form: any) {
     this.passwordMismatch = false;
     this.oldPasswordError = false;
     this.passwordChangeSuccess = false;
-
+    this.serverErrorMessage = '';
+  
     if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
       this.passwordMismatch = true;
       return;
     }
-
+  
     this.userService.updatePassword(
       form.value.oldPassword,
       form.value.newPassword
     ).subscribe({
       next: (res) => {
-        console.log(res.message);
+        console.log("in Component", res.message);
         this.passwordChangeSuccess = true;
         setTimeout(() => {
           this.passwordChangeSuccess = false;
@@ -64,19 +91,25 @@ export class ProfileComponent implements OnInit {
         this.resetForm(form);
       },
       error: (err) => {
-        if (err.error.message === 'Current password is incorrect.') {
+        // Check specific error message or fallback to general
+        const errorMsg = err?.error?.message || err?.error || 'An unexpected error occurred.';
+        
+        if (errorMsg === 'Current password is incorrect.' || errorMsg === 'Old password is incorrect') {
           this.oldPasswordError = true;
         }
-        console.error(err.error.message);
+  
+        this.serverErrorMessage = typeof errorMsg === 'string' ? errorMsg : JSON.stringify(errorMsg);
+        console.error('Password update error:', this.serverErrorMessage);
       }
     });
   }
+  
 
   updateProfile(form: any) {
     const updatedData: Partial<User> = {
       firstName: this.user.firstName !== this.originalUser.firstName ? this.user.firstName : undefined,
       lastName: this.user.lastName !== this.originalUser.lastName ? this.user.lastName : undefined,
-      position: this.user.position !== this.originalUser.position ? this.user.position : undefined,
+      current_postion: this.user.current_postion !== this.originalUser.current_postion ? this.user.current_postion : undefined,
       location: this.user.location !== this.originalUser.location ? this.user.location : undefined,
       description: this.user.description !== this.originalUser.description ? this.user.description : undefined
     };
@@ -97,17 +130,19 @@ export class ProfileComponent implements OnInit {
 
     this.userService.updateProfile(payload).subscribe({
       next: (res) => {
+        console.log("enterend in udpate profile fn")
         this.updateMessage = 'Profile updated successfully!';
         this.updateSuccess = true;
         this.updateError = false;
         this.originalUser = { ...this.user };
       },
       error: (err) => {
-        this.updateMessage = err.error.message || 'An error occurred while updating profile.';
+        this.updateMessage = err.error?.message || 'An error occurred while updating profile.';
         this.updateError = true;
         this.updateSuccess = false;
       }
     });
+    
   }
 
   cancelEdit() {

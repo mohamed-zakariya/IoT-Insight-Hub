@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9585b4e9-5298-4f5e-9a92-af99f29bcefa" name="Changes" comment="" />
+    <list default="true" id="9585b4e9-5298-4f5e-9a92-af99f29bcefa" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/PasswordResetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/PasswordResetController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/angular.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.spec.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/models/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/models/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/services/auth_service/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/services/auth_service/auth.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/services/user_service/user.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/services/user_service/user.service.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,24 +38,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Spring Boot.DxcBackendApplication.executor": "Debug",
-    "git-widget-placeholder": "BackEnd",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Github_repos/IoT-Insight-Hub",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.DxcBackendApplication.executor&quot;: &quot;Debug&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Back__front__integration__testing&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Github_repos/IoT-Insight-Hub&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="DxcBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
       <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
@@ -53,14 +68,7 @@
       </method>
     </configuration>
   </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.23774.435" />
-        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-IU-251.23774.435" />
-      </set>
-    </attachedChunks>
-  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="StructureViewState">
     <option name="selectedTab" value="Logical" />
   </component>

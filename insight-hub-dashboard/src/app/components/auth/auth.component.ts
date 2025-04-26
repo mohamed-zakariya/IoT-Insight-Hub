@@ -171,7 +171,7 @@ export class AuthComponent implements OnInit {
           email: form.value.email,
           password: form.value.password,
           age: form.value.dob, // You can rename this if needed to match your backend model
-          gender: form.value.gender
+          // gender: form.value.gender
         };
         
   
@@ -193,17 +193,22 @@ export class AuthComponent implements OnInit {
       } else {
         // Login logic for existing users
         this.authService.login(form.value).subscribe({
-          next: (response) => {
+          next: () => {
             this.loading = false;
-            const { id, ...user } = response.user;  // Destructure and remove 'id'
-            localStorage.setItem('user', JSON.stringify(user));
+        
+            // Retrieve the user from local storage (set by setUser in AuthService)
+            const username = localStorage.getItem('user');
+
+
+            console.log("Logged in as:", username);
+        
             this.router.navigate(['/home']);
           },
           error: (err) => {
             this.loading = false;
             console.error('Login failed', err);
           }
-        });
+        });        
       }
     }, 1000); // 1 second delay
   }
