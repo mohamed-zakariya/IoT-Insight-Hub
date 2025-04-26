@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,12 +32,23 @@ public class UserService {
     }
 
     public User createUser(User user) {
+
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new IllegalArgumentException("A user with this email already exists.");
         }
 
         if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new IllegalArgumentException("A user with this name already exists.");
+        }
+
+
+        // Validate gender
+        validateGender(user.getGender());
+
+        // Validate date of birth (DOB)
+        if (user.getDob() != null) {
+            String dobString = user.getDob().toString(); // Convert Date to String
+            validateDob(dobString);
         }
 
         return userRepository.save(user);
@@ -47,16 +60,30 @@ public class UserService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
 
+            // Validate gender if it's being updated
+            if (userDetails.getGender() != null) {
+                validateGender(userDetails.getGender());
+                user.setGender(userDetails.getGender());
+            }
+
+            // Validate date of birth (DOB) if it's being updated
+            if (userDetails.getDob() != null) {
+                String dobString = userDetails.getDob().toString(); // Convert Date to String
+                validateDob(dobString);
+                user.setDob(userDetails.getDob());
+            }
+
+            // Update other fields
             if (userDetails.getFirstName() != null) user.setFirstName(userDetails.getFirstName());
             if (userDetails.getLastName() != null) user.setLastName(userDetails.getLastName());
             if (userDetails.getEmail() != null) user.setEmail(userDetails.getEmail());
             if (userDetails.getPassword() != null) user.setPassword(userDetails.getPassword());
             if (userDetails.getUsername() != null) user.setUsername(userDetails.getUsername());
-            if (userDetails.getAge() != null) user.setAge(userDetails.getAge());
             if (userDetails.getCurrent_postion() != null) user.setCurrent_postion(userDetails.getCurrent_postion());
             if (userDetails.getLocation() != null) user.setLocation(userDetails.getLocation());
             if (userDetails.getDescription() != null) user.setDescription(userDetails.getDescription());
 
+            //save this mmm i cant say it
             return userRepository.save(user);
         } else {
             throw new RuntimeException("User not found with ID: " + id);
@@ -145,6 +172,28 @@ public class UserService {
     }
 
 
+    // some new validation because its not working in the user Model iam done with shi fr fr 4real 4real i wanted to be a basket nall player what ami doing here
+
+    public void validateGender(String gender) {
+        if (gender == null || (!gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female"))) {
+            throw new IllegalArgumentException("Invalid gender. Allowed values are 'Male' or 'Female'.");
+        }
+    }
+
+
+    // Date of Birth (DOB) validation
+    public void validateDob(String dob) {
+        if (dob == null) {
+            throw new IllegalArgumentException("Date of Birth cannot be null.");
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false); // Prevent invalid dates like "2022-02-30"
+        try {
+            dateFormat.parse(dob); // Attempt to parse the date
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format. Expected format is yyyy-MM-dd.");
+        }
+    }
 
 
 
