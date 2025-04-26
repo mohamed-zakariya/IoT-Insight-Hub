@@ -145,73 +145,71 @@ export class AuthComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
-    this.loading = true;
-  
+    
     const form = this.isSignupMode ? this.authFormSignup : this.authFormLogin;
   
     if (form.invalid) {
-      console.log("invalid");
-      console.log(form.value);
-      this.authFormSignup.markAllAsTouched();
-      this.loading = false;
+      console.log("invalid form");
+      form.markAllAsTouched();
       return;
     }
   
     console.log("submitted", form.value);
   
-    // Delay before calling login or signup
-    setTimeout(() => {
-      if (this.isSignupMode) {
-        console.log("entered111");
-        // Create new user object from form data
-        const newUser: User = {
-          firstName: form.value.firstName,
-          lastName: form.value.lastName,
-          username: form.value.username,
-          email: form.value.email,
-          password: form.value.password,
-          age: form.value.dob, // You can rename this if needed to match your backend model
-          // gender: form.value.gender
-        };
-        
+    if (this.isSignupMode) {
+      this.loading = true; // ✅ Start spinner immediately
   
-        // Call the createUser service method
-        this.userService.createUser(newUser).subscribe({
-          next: (response) => {
-            this.loading = false;
-            const user = response;  // Destructure and remove 'id'
-            localStorage.setItem('user', JSON.stringify(user));
-            this.router.navigate(['/home']);
-            console.log('User created successfully:', response);
-            // Handle successful user creation (e.g., navigate to login page or home)
-          },
-          error: (error) => {
-            this.loading = false;
-            console.error('Error creating user:', error);
+      const newUser: User = {
+        firstName: form.value.firstName,
+        lastName: form.value.lastName,
+        username: form.value.username,
+        email: form.value.email,
+        password: form.value.password,
+        age: form.value.dob,
+      };
+  
+      this.userService.createUser(newUser).subscribe({
+        next: (response) => {
+          console.log('User created successfully:', response);
+          this.router.navigate(['/home']);
+          this.loading = false; // ✅ Stop spinner after success
+        },
+        error: (error) => {
+          console.error('Error creating user:', error);
+  
+          if (error?.type === 'EMAIL_EXISTS') {
+            console.log("A user with this email already exists.");
+            this.authFormSignup.get('email')?.setErrors({ emailExists: true });
+          } else if (error?.type === 'USERNAME_EXISTS') {
+            console.log("A user with this username already exists.");
+            this.authFormSignup.get('username')?.setErrors({ usernameExists: true });
+          } else {
+            console.error('Other error creating user:', error);
           }
-        });
-      } else {
-        // Login logic for existing users
-        this.authService.login(form.value).subscribe({
-          next: () => {
-            this.loading = false;
-        
-            // Retrieve the user from local storage (set by setUser in AuthService)
-            const username = localStorage.getItem('user');
-
-
-            console.log("Logged in as:", username);
-        
-            this.router.navigate(['/home']);
-          },
-          error: (err) => {
-            this.loading = false;
-            console.error('Login failed', err);
-          }
-        });        
-      }
-    }, 1000); // 1 second delay
+  
+          this.loading = false; // ✅ Always stop spinner after error
+        }
+      });
+  
+    } else {
+      this.loading = true; // ✅ Start spinner immediately
+  
+      this.authService.login(form.value).subscribe({
+        next: () => {
+          console.log("Logged in successfully");
+          const username = localStorage.getItem('user');
+          console.log("Logged in as:", username);
+          this.router.navigate(['/home']);
+          this.loading = false; // ✅ Stop spinner after success
+        },
+        error: (error) => {
+          console.error('Error logging in:', error);
+          this.loading = false; // ✅ Stop spinner after error
+        }
+      });
+    }
   }
+  
   
   
 

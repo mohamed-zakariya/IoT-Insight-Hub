@@ -20,12 +20,25 @@
           <label>Last name</label>
           <input type="text" [(ngModel)]="user.lastName" name="lastName" required />
         </div>
-    
+
+
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" [(ngModel)]="user.username" name="username" readonly class="readonly-dark"  />
+        </div>
+        
         <div class="input-group">
           <label>Email</label>
           <input type="email" [(ngModel)]="user.email" name="email" readonly class="readonly-dark" />
         </div>
-    
+
+
+        <div class="input-group">
+          <label>Gender</label>
+          <input type="text" [value]="user.gender" readonly class="readonly-dark" />
+        </div>
+        
+        
         <div class="input-group">
           <label>age</label>
           <input type="text" [(ngModel)]="user.age" name="age" readonly class="readonly-dark" />

@@ -83,7 +83,7 @@
               <div class="tooltip-error-left" *ngIf="f['username']?.touched && f['username']?.invalid">
                 <span *ngIf="f['username'].errors?.['required']">Username is required.</span>
                 <span *ngIf="!f['username'].errors?.['required'] && f['username'].errors?.['invalidLength']">
-                  Username must be between 3 and 30 characters.
+                  Username must be between 5 and 30 characters.
                 </span>
                 <span *ngIf="!f['username'].errors?.['required'] && !f['username'].errors?.['invalidLength'] && f['username'].errors?.['mustStartWithLetter']">
                   Username must start with a letter.
@@ -95,7 +95,10 @@
                 <span *ngIf="f['username'].errors?.['consecutiveSpecials']">No consecutive '.', '-', or '_'.</span>
                 <span *ngIf="f['username'].errors?.['leadingOrTrailingSpecial']">Cannot start or end with '.', '-', or '_'.</span>
                 <span *ngIf="f['username'].errors?.['reservedWord']">This username is reserved.</span>
+                <span *ngIf="f['username'].errors?.['commonPattern']">This username follows a common or weak pattern.</span>
+                <span *ngIf="f['username'].errors?.['usernameExists']">Username already exists. Please choose another one.</span>
               </div>
+              
               
             </div>
 
@@ -145,11 +148,14 @@
             <div class="input-group">
               <i class="fas fa-envelope"></i>
               <input type="email" placeholder="Email" formControlName="email" />
+              
               <div class="tooltip-error-left" *ngIf="(f['email']?.touched || submitted) && f['email']?.invalid">
                 <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
                 <small *ngIf="f['email'].errors?.['email']">Enter a valid email address.</small>
+                <small *ngIf="f['email'].errors?.['emailExists']">Email already exists. Please use another one.</small> <!-- 👈 added this line -->
               </div>
             </div>
+
 
 
             <!-- Password input --> 

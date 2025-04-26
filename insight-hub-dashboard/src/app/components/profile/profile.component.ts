@@ -111,8 +111,11 @@ export class ProfileComponent implements OnInit {
       lastName: this.user.lastName !== this.originalUser.lastName ? this.user.lastName : undefined,
       current_postion: this.user.current_postion !== this.originalUser.current_postion ? this.user.current_postion : undefined,
       location: this.user.location !== this.originalUser.location ? this.user.location : undefined,
-      description: this.user.description !== this.originalUser.description ? this.user.description : undefined
+      description: this.user.description !== this.originalUser.description ? this.user.description : undefined,
+      username: this.user.username !== this.originalUser.username ? this.user.username : undefined,
+      // gender: this.user.gender !== this.originalUser.gender ? this.user.gender : undefined,
     };
+    
 
     const payload = Object.fromEntries(
       Object.entries(updatedData).filter(([_, v]) => v !== undefined)

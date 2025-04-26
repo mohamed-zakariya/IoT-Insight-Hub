@@ -6,17 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="9585b4e9-5298-4f5e-9a92-af99f29bcefa" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/PasswordResetController.java" beforeDir="false" afterPath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/PasswordResetController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/DXC_Backend/src/main/java/com/example/dxc_backend/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/angular.json" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/angular.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.spec.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/profile/profile.component.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/models/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/models/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/services/auth_service/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/services/auth_service/auth.service.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/services/user_service/user.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/services/user_service/user.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/shared/validators/custom-validators.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/shared/validators/custom-validators.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
