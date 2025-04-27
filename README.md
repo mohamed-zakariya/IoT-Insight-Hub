@@ -3,11 +3,6 @@ is a real-time sensor data platform designed to collect, process, and visualize 
 
 
 
----
-
-=======
----
-
 ## 📁 Project Structure
 
 
