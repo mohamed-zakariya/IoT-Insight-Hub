@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { UserService } from '../../services/user_service/user.service';
+import { OtpPasswordService } from '../../services/otp_password/otp-password.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -22,7 +23,7 @@ export class ForgotPasswordComponent implements OnInit {
   verifiedUser: any = null;
   otpControls = ['c0', 'c1', 'c2', 'c3', 'c4', 'c5'];
 
-  constructor(private fb: FormBuilder, private userService: UserService) {}
+  constructor(private fb: FormBuilder, private userService: UserService, private otpPasswordService: OtpPasswordService) {}
 
   ngOnInit(): void {
     this.forgotPasswordForm = this.fb.group({
@@ -51,23 +52,29 @@ export class ForgotPasswordComponent implements OnInit {
 
   onEmailSubmit() {
     if (this.forgotPasswordForm.invalid) return;
-
+  
     this.emailNotFound = false;
     const email = this.forgotPasswordForm.value.email;
     this.loading = true;
-
-    this.userService.getUserByEmail(email).subscribe({
-      next: (res: any) => {
-        this.verifiedUser = res.user;
-        this.step = 2;
-        this.loading = false;
+  
+    this.otpPasswordService.sendOtp(email).subscribe({
+      next: (response) => {
+        console.log("ssss",response);
       },
-      error: () => {
-        this.emailNotFound = true;
+      error: (err: Error) => {
+        console.error(err.message);
+        if (err.message === 'Email does not exist.') {
+          this.emailNotFound = true;
+        } else {
+          this.emailNotFound = true;
+          // alert(err.message); // Optional: show other errors nicely (network/server errors)
+        }
         this.loading = false;
       }
     });
   }
+  
+  
 
   onOtpSubmit() {
     if (this.otpForm.valid) {

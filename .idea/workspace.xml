@@ -8,6 +8,10 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.css" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/shared/validators/custom-validators.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/shared/validators/custom-validators.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -57,7 +57,7 @@
               [ngClass]="{ 'is-invalid': f['firstName'].invalid && (f['firstName'].touched || submitted) }"
             />
 
-              <div class="tooltip-error-left" *ngIf="f['firstName']?.touched && f['firstName']?.invalid">
+              <div class="tooltip-error-left" *ngIf="submitted && f['firstName']?.invalid">
                 <span *ngIf="f['firstName'].errors?.['required']">First name is required.</span>
                 <span *ngIf="f['firstName'].errors?.['invalidLength']">Must be between 2 and 50 characters.</span>
                 <span *ngIf="f['firstName'].errors?.['invalidCharacters']">Only letters, hyphens, apostrophes allowed.</span>
@@ -76,7 +76,7 @@
               [ngClass]="{ 'is-invalid': f['lastName'].invalid && (f['lastName'].touched || submitted) }"
             />
 
-              <div class="tooltip-error-left" *ngIf="f['lastName']?.touched && f['lastName']?.invalid">
+              <div class="tooltip-error-left" *ngIf="submitted && f['lastName']?.invalid">
                 <span *ngIf="f['lastName'].errors?.['required']">Last Name is required.</span>
                 <span *ngIf="f['lastName'].errors?.['invalidLength']">Must be between 2 and 50 characters.</span>
                 <span *ngIf="f['lastName'].errors?.['invalidCharacters']">Only letters, hyphens, apostrophes allowed.</span>
@@ -94,7 +94,7 @@
               formControlName="username"
               [ngClass]="{ 'is-invalid': f['username'].invalid && (f['username'].touched || submitted) }"
               />
-              <div class="tooltip-error-left" *ngIf="f['username']?.touched && f['username']?.invalid">
+              <div class="tooltip-error-left" *ngIf="submitted && f['username']?.invalid">
                 <span *ngIf="f['username'].errors?.['required']">Username is required.</span>
                 <span *ngIf="!f['username'].errors?.['required'] && f['username'].errors?.['invalidLength']">
                   Username must be between 5 and 30 characters.
@@ -130,7 +130,7 @@
                   type="radio"
                   formControlName="gender"
                   value="Female"
-                  [ngClass]="{ 'is-invalid': f['gender'].invalid && (f['gender'].touched || submitted) }"
+                  [ngClass]="{ 'is-invalid': f['gender'].invalid && (submitted) }"
                   />
                   <span>
                     <i class="fas fa-venus" style="color: palevioletred;"></i>
@@ -139,7 +139,7 @@
               </div>
             
               <!-- 🛠️ Add this part to show validation error -->
-              <div class="tooltip-error-left" *ngIf="f['gender']?.touched && f['gender']?.invalid">
+              <div class="tooltip-error-left" *ngIf="submitted && f['gender']?.invalid">
                 <span *ngIf="f['gender'].errors?.['required']">Gender is required.</span>
               </div>
             </div>
@@ -155,9 +155,9 @@
               formControlName="dob"
               [ngClass]="{ 'is-invalid': f['dob'].invalid && (f['dob'].touched || submitted) }"
               />
-              <div class="tooltip-error-left" *ngIf="(f['dob']?.touched || submitted) && f['dob']?.invalid">
+              <div class="tooltip-error-left" *ngIf="(submitted) && f['dob']?.invalid">
                 <small *ngIf="f['dob'].errors?.['required']">Date of birth is required</small>
-                <small *ngIf="f['dob'].errors?.['invalidAge']">You must be between 1 and 120 years old</small>
+                <small *ngIf="!f['dob'].errors?.['required'] && f['dob'].errors?.['invalidAge']">You must be between 1 and 120 years old</small>
               </div>
 
               <div class="d-flex justify-content-center">
@@ -183,10 +183,12 @@
               [ngClass]="{ 'is-invalid': f['email'].invalid && (f['email'].touched || submitted) }"
             />
                           
-              <div class="tooltip-error-left" *ngIf="(f['email']?.touched || submitted) && f['email']?.invalid">
+              <div class="tooltip-error-left" *ngIf="(submitted) && f['email']?.invalid">
                 <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
                 <small *ngIf="f['email'].errors?.['email']">Enter a valid email address.</small>
                 <small *ngIf="f['email'].errors?.['emailExists']">Email already exists. Please use another one.</small> <!-- 👈 added this line -->
+                <small *ngIf="f['email'].errors?.['invalidEmail']">Enter a valid email address.</small>
+
               </div>
             </div>
 
@@ -209,7 +211,7 @@
               ></i>
               
               <!-- Error Tooltip -->
-              <div class="tooltip-error-left" *ngIf="f['password']?.touched && f['password']?.invalid">
+              <div class="tooltip-error-left" *ngIf="submitted && f['password']?.invalid">
                 <span *ngIf="f['password'].errors?.['required']">Password is required.</span>
                 <span *ngIf="f['password'].errors?.['minlength']">Password must be at least 8 characters.</span>
                 <span *ngIf="f['password'].errors?.['maxlength']">Password can't exceed 64 characters.</span>
@@ -237,7 +239,7 @@
               ></i>
               
               <!-- Error Tooltip -->
-              <div class="tooltip-error-left" *ngIf="f['confirmPassword']?.touched && (f['confirmPassword']?.invalid || passwordsDoNotMatch)">
+              <div class="tooltip-error-left" *ngIf="submitted && (f['confirmPassword']?.invalid || passwordsDoNotMatch)">
                 <span *ngIf="f['confirmPassword'].errors?.['required']">Confirm Password is required.</span>
                 <span *ngIf="passwordsDoNotMatch">Passwords do not match.</span>
               </div>              
@@ -246,9 +248,6 @@
             
               
             
-
-
-
             <div class="forgot-password-wrapper" *ngIf="!isSignupMode">
               <a (click)="forgetPasswordClick()" class="forgot-password-link">
                 <i class="fa fa-key"></i> Forgot Password?

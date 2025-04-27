@@ -134,4 +134,14 @@ export class CustomValidators {
     };
   
   
+    static customEmailValidator(control: AbstractControl): ValidationErrors | null {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; // Ensure at least one "." after @ and at least 2 letters
+      const value = control.value;
+    
+      if (!value) {
+        return null; // Let required validator handle empty cases
+      }
+    
+      return emailRegex.test(value) ? null : { invalidEmail: true };
+    }
 }

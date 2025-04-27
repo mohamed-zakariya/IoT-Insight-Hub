@@ -115,7 +115,7 @@ export class AuthComponent implements OnInit {
       firstName: ['', [CustomValidators.name]],
       lastName: ['', [CustomValidators.name]],      
       username: ['', [Validators.required, CustomValidators.username]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, CustomValidators.customEmailValidator]],
       password: ['', [Validators.required, CustomValidators.strongPassword]],
       confirmPassword: ['', Validators.required], // Add validation if necessary
       dob: ['', [Validators.required, CustomValidators.ageRange(15, 120)]],
