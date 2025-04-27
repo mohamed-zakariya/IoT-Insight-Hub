@@ -7,11 +7,11 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 export const routes: Routes = [
     {
         path: '',
-        redirectTo: 'auth/login',
+        redirectTo: 'auth',
         pathMatch: 'full'
     },
     {
-        path: 'auth/:mode',
+        path: 'auth',
         component: AuthComponent,
     },
     {

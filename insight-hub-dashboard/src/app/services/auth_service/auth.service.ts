@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { tap, catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { User } from '../../models/user';
@@ -87,7 +87,7 @@ export class AuthService {
 
   public logoutAndRedirect(): Observable<void> {
     this.logout();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/auth']);
     return of(); // Return an observable that completes immediately
   }
 
@@ -115,6 +115,17 @@ export class AuthService {
         // Set user if valid
         if (username) {
           this.setUser(username);
+        }
+      }),
+      catchError((error) => {
+        console.log("ccccc", error);
+        if (error.message === 401) {
+          // Handle 401 Unauthorized error
+          console.error("Invalid email or password");
+          return throwError(() => new Error('Invalid email or password.'));
+        } else {
+          // Re-throw other errors
+          return throwError(() => error);
         }
       })
     );

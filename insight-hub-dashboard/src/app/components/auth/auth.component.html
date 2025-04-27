@@ -254,6 +254,10 @@
               </a>
             </div>
             
+            <div *ngIf="authError" class="error-message">
+              <i class="fa fa-exclamation-circle"></i> {{ authError }}
+            </div>
+            
             
             
 

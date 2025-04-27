@@ -29,7 +29,7 @@ import { from } from 'rxjs';
 
 export class AuthComponent implements OnInit {
   mode: 'login' | 'signup' = 'login';
-  isSignupMode: boolean = true;
+  isSignupMode: boolean = false;
   authFormLogin!: FormGroup;
   authFormSignup!: FormGroup;
   forgotPasswordForm!: FormGroup;
@@ -43,7 +43,7 @@ export class AuthComponent implements OnInit {
   showConfirmPassword: boolean = false;
   passwordsDoNotMatch: boolean = false;
   confirmPasswordTouched: boolean = false;
-
+  authError: string = "";
 
   // verifiedUser: any = null;
 
@@ -178,6 +178,8 @@ export class AuthComponent implements OnInit {
 
   onSubmit() {
     this.submitted = true;
+    this.authError = ''; // Reset error message before submitting
+
     
     const form = this.isSignupMode ? this.authFormSignup : this.authFormLogin;
   
@@ -238,7 +240,14 @@ export class AuthComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error logging in:', error);
-          this.loading = false; // ✅ Stop spinner after error
+          this.loading = false;
+  
+          if (error.status === 401 && error.error?.message === 'Invalid email or password') {
+            this.authError = "Invalid email or password.";
+            console.log("auth error", this.authError);
+          } else {
+            this.authError = "An unexpected error occurred. Please try again.";
+          }
         }
       });
     }
