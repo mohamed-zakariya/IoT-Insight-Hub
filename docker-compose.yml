@@ -1,8 +1,21 @@
+version: "3.8"
+
 services:
+  # Persistent volume initializer (no-op)
+  mysql-data:
+    image: iotinsighthub/mysql-data:latest
+    container_name: iot_mysql_data
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: ["true"]
+
+  # MySQL database
   mysql:
     image: mysql:8.3
     container_name: iot_mysql
     restart: always
+    depends_on:
+      - mysql-data
     environment:
       MYSQL_ROOT_PASSWORD: GmNgl69ZW9
       MYSQL_DATABASE: sql8774445
@@ -18,31 +31,42 @@ services:
     networks:
       - iot_net
 
+  # Backend service (using Gmail SMTP)
   backend:
-    build: ./DXC_Backend
+    image: iotinsighthub/iot_backend:latest
     container_name: iot_backend
     restart: always
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://iot_mysql:3306/sql8774445
+      # Database
+      SPRING_DATASOURCE_URL:      jdbc:mysql://iot_mysql:3306/sql8774445
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: GmNgl69ZW9
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      # Gmail SMTP settings
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: swipeacc288@gmail.com
+      SPRING_MAIL_PASSWORD: wszphmeqbcwlyjju
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
     ports:
       - "8080:8080"
     networks:
       - iot_net
 
+  # Frontend service
   frontend:
-    build: ./insight-hub-dashboard
+    image: iotinsighthub/iot_frontend:latest
     container_name: iot_frontend
     restart: always
     depends_on:
       - backend
     ports:
-      - "4200:80"  # Access Angular frontend on localhost:4200
+      - "4200:80"
     networks:
       - iot_net
 
