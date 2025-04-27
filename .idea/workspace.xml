@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9585b4e9-5298-4f5e-9a92-af99f29bcefa" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/auth/auth.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.css" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/components/forgot-password/forgot-password.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/insight-hub-dashboard/src/app/shared/validators/custom-validators.ts" beforeDir="false" afterPath="$PROJECT_DIR$/insight-hub-dashboard/src/app/shared/validators/custom-validators.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2w2Bo02wFn4t3dC3AwbFHEqvR1u" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.DxcBackendApplication.executor&quot;: &quot;Debug&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Back__front__integration__testing&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Github_repos/IoT-Insight-Hub&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\IntelliJ IDEA 2025.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="DxcBackendApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="DXC_Backend" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.example.dxc_backend.DxcBackendApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="StructureViewState">
+    <option name="selectedTab" value="Logical" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9585b4e9-5298-4f5e-9a92-af99f29bcefa" name="Changes" comment="" />
+      <created>1745229958426</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1745229958426</updated>
+      <workItem from="1745229959563" duration="72000" />
+      <workItem from="1745230374297" duration="420000" />
+      <workItem from="1745230937770" duration="227000" />
+      <workItem from="1745231206376" duration="104000" />
+      <workItem from="1745231318529" duration="124000" />
+      <workItem from="1745233839078" duration="183000" />
+      <workItem from="1745241444246" duration="152000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
