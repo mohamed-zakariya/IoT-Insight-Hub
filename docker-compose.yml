@@ -5,8 +5,8 @@ services:
   mysql-data:
     image: iotinsighthub/mysql-data:latest
     container_name: iot_mysql_data
-    # volumes:
-    #   - mysql_data:/var/lib/mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
     command: ["true"]
 
   # MySQL database
@@ -21,8 +21,8 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3306:3306"
-    # volumes:
-    #   - mysql_data:/var/lib/mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
       # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
