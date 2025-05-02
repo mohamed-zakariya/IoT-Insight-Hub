@@ -33,4 +33,6 @@ public class StreetLightSensorDataService {
     public void deleteSensorData(UUID id) {
         repository.deleteById(id);
     }
+
+
 }

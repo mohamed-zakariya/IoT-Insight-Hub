@@ -1,7 +1,9 @@
 package com.example.dxc_backend.service;
 
-import com.example.dxc_backend.model.TrafficSensorData;
+import com.example.dxc_backend.controller.AirPollutionSensorDataController;
 import com.example.dxc_backend.controller.TrafficSensorDataController;
+import com.example.dxc_backend.model.AirPollutionSensorData;
+import com.example.dxc_backend.model.TrafficSensorData;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -9,17 +11,33 @@ import org.springframework.stereotype.Service;
 public class SensorSchedulerService {
 
     private final TrafficSensorDataService trafficSensorDataService;
-    private final TrafficSensorDataController TrafficSensorDataController;
+    private final TrafficSensorDataController trafficSensorDataController;
 
-    public SensorSchedulerService(TrafficSensorDataService trafficSensorDataService, TrafficSensorDataController TrafficSensorDataController) {
+    private final AirPollutionSensorDataService airPollutionSensorDataService;
+    private final AirPollutionSensorDataController airPollutionSensorDataController;
+
+    // Constructor to inject the dependencies for both traffic and air pollution services/controllers
+    public SensorSchedulerService(TrafficSensorDataService trafficSensorDataService,
+                                  TrafficSensorDataController trafficSensorDataController,
+                                  AirPollutionSensorDataService airPollutionSensorDataService,
+                                  AirPollutionSensorDataController airPollutionSensorDataController) {
         this.trafficSensorDataService = trafficSensorDataService;
-        this.TrafficSensorDataController = TrafficSensorDataController;
+        this.trafficSensorDataController = trafficSensorDataController;
+        this.airPollutionSensorDataService = airPollutionSensorDataService;
+        this.airPollutionSensorDataController = airPollutionSensorDataController;
     }
 
-    @Scheduled(fixedRate = 10000) // Runs every 5 minutes (300,000 ms)
+    @Scheduled(fixedRate = 20000) // Runs every 5 minutes (300,000 ms)
     public void generateAndPostTrafficSensorData() {
         TrafficSensorData randomData = trafficSensorDataService.generateRandomTrafficSensorData();
         System.out.println("Generated Traffic Sensor Data: " + randomData.toString());
-        TrafficSensorDataController.createTrafficSensorData(randomData); // Call the POST function
+        trafficSensorDataController.createTrafficSensorData(randomData); // Call the POST function
+    }
+
+    @Scheduled(fixedRate = 20000) // Runs every 5 minutes (300,000 ms)
+    public void generateAndPostAirPollutionSensorData() {
+        AirPollutionSensorData randomData = airPollutionSensorDataService.generateRandomAirPollutionSensorData();
+        System.out.println("Generated Air Pollution Sensor Data: " + randomData.toString());
+        airPollutionSensorDataController.createSensorData(randomData); // Call the POST function
     }
 }
