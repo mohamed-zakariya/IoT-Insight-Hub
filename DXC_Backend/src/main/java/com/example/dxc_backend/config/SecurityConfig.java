@@ -37,6 +37,9 @@ public class SecurityConfig {
                 .cors(withDefaults())  // ✅ Enable CORS with configuration from WebConfig
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+
+
+                                "/api/traffic-sensors",
                                 "/api/users/create",
                                 "/api/users/signin/email",
                                 "/api/users/{email}",

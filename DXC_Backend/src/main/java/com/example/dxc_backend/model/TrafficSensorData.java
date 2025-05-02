@@ -8,10 +8,9 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 import lombok.Data;
-import lombok.Setter;
-import lombok.Getter;
 
 
+@Data
 @Entity
 @Table(name = "traffic_sensors_data")
 public class TrafficSensorData {
