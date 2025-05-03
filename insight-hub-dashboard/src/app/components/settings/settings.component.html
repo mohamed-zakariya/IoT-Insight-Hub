@@ -1,30 +1,47 @@
-<!-- src/app/components/settings/settings.component.html -->
 <div class="settings-container">
     <h2>Adjust Sensor Settings</h2>
   
+    <!-- Category dropdown -->
     <div class="form-group">
-      <label for="sensor-select">Select Sensor Category:</label>
-      <select
-        id="sensor-select"
-        [(ngModel)]="selectedSensor"
-        (change)="onSensorSelect(selectedSensor)"
-      >
-        <option value="" disabled>-- choose one --</option>
+      <label for="sensor-select">Category:</label>
+      <select id="sensor-select"
+              [(ngModel)]="selectedSensor"
+              (change)="onSensorSelect(selectedSensor)">
+        <option value="" disabled>-- choose category --</option>
         <option *ngFor="let s of sensors" [value]="s">{{ s }}</option>
       </select>
     </div>
   
+    <!-- Sub-metric rows -->
     <div *ngIf="selectedSensor">
       <h3>{{ selectedSensor }} Metrics</h3>
   
       <div *ngFor="let sub of currentSubSensors" class="form-group">
-        <label>{{ sub }}</label>
+        <label>{{ sub }}:</label>
+  
+        <!-- Value input with placeholder + validation -->
         <input
           type="number"
           [(ngModel)]="adjustments[sub]"
-          placeholder="Enter value"
+          (ngModelChange)="validate(sub, $event)"
+          [ngClass]="{ invalid: errors[sub] }"
+          [placeholder]="'e.g. ' + exampleMap[sub] + ' ' + units[sub]"
         />
-        <button (click)="adjust(sub)">Adjust</button>
+  
+        <!-- Unit selector -->
+        <select [(ngModel)]="units[sub]" class="unit-select">
+          <option *ngFor="let u of unitOptionsMap[selectedSensor]" [value]="u">
+            {{ u }}
+          </option>
+        </select>
+  
+        <!-- Adjust button -->
+        <button (click)="adjust(sub)" [disabled]="!!errors[sub]">
+          Adjust
+        </button>
+  
+        <!-- Inline error message -->
+        <small class="error-msg" *ngIf="errors[sub]">{{ errors[sub] }}</small>
       </div>
     </div>
   </div>
