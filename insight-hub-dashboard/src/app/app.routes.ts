@@ -3,6 +3,8 @@ import { AuthComponent } from './components/auth/auth.component';
 import { HomeComponent } from './components/home/home.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { SensorSimulatorComponent } from './components/sensor-simulator/sensor-simulator.component';
 
 export const routes: Routes = [
     {
@@ -25,7 +27,13 @@ export const routes: Routes = [
     { 
         path: 'forgot-password',
         component: ForgotPasswordComponent
+    },
+    {
+        path: 'settings',
+        component: SettingsComponent
+    },
+    {
+        path: 'simulate',
+        component: SensorSimulatorComponent
     }
-   
-
 ];

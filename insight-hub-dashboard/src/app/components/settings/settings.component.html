@@ -1,0 +1,31 @@
+<!-- src/app/components/settings/settings.component.html -->
+<div class="settings-container">
+    <h2>Adjust Sensor Settings</h2>
+  
+    <div class="form-group">
+      <label for="sensor-select">Select Sensor Category:</label>
+      <select
+        id="sensor-select"
+        [(ngModel)]="selectedSensor"
+        (change)="onSensorSelect(selectedSensor)"
+      >
+        <option value="" disabled>-- choose one --</option>
+        <option *ngFor="let s of sensors" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+  
+    <div *ngIf="selectedSensor">
+      <h3>{{ selectedSensor }} Metrics</h3>
+  
+      <div *ngFor="let sub of currentSubSensors" class="form-group">
+        <label>{{ sub }}</label>
+        <input
+          type="number"
+          [(ngModel)]="adjustments[sub]"
+          placeholder="Enter value"
+        />
+        <button (click)="adjust(sub)">Adjust</button>
+      </div>
+    </div>
+  </div>
+  
