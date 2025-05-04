@@ -14,8 +14,8 @@ import java.util.UUID;
 public class Settings {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)  // Automatically generate UUID
-    private UUID id;  // Unique setting ID
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
     private String type;
 
@@ -25,19 +25,15 @@ public class Settings {
 
     private String alertType;
 
-    private LocalDateTime createdAt;  // Timestamp of setting creation
+    private LocalDateTime createdAt;
 
-    // Define the many-to-one relationship with the User entity
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")  // Specify the foreign key column and the referenced column in the User table
-    private User user;  // Store the associated User entity
-
-
-    // Constructor to initialize the UUID if necessary
     @PrePersist
     public void prePersist() {
         if (this.id == null) {
-            this.id = UUID.randomUUID();  // Generate a random UUID before persisting
+            this.id = UUID.randomUUID();
+        }
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
         }
     }
 }

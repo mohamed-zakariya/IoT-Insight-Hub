@@ -12,12 +12,9 @@ import java.util.UUID;
 @Repository
 public interface SettingsRepository extends JpaRepository<Settings, UUID> {
 
-    // Find all settings for a specific user by user entity
-    List<Settings> findAllByUser(User user);
+    List<Settings> findAllByType(String type);
 
-    // Find a setting by user entity, type, and metric
-    Optional<Settings> findByUserAndTypeAndMetric(User user, String type, String metric);
+    Optional<Settings> findByTypeAndMetric(String type, String metric);
 
-    // Delete a setting by user entity, type, and metric
-    void deleteByUserAndTypeAndMetric(User user, String type, String metric);
+    void deleteByTypeAndMetric(String type, String metric);
 }

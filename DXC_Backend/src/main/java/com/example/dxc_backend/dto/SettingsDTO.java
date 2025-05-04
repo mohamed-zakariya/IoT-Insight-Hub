@@ -1,28 +1,29 @@
 package com.example.dxc_backend.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
-import lombok.Setter;
+
 
 @Getter
-@Setter
 public class SettingsDTO {
 
-    @NotBlank(message = "Username must not be blank")
-    private String username;
-
-    @NotBlank(message = "Type must not be blank")
+    @Pattern(
+            regexp = "Traffic|Air_Pollution|Street_Light",
+            message = "Type must be one of: Traffic, Air_Pollution, Street_Light"
+    )
+    @NotBlank(message = "Type is required")
     private String type;
 
-    @NotBlank(message = "Metric must not be blank")
+
+    @NotBlank(message = "Metric is required")
     private String metric;
 
-    @NotBlank(message = "AlertType is required")
-    private String alertType;
-
-    @NotNull(message = "Threshold value must be provided")
+    @NotNull(message = "Threshold value is required")
     private Float thresholdValue;
 
-}
+    @NotBlank(message = "Alert type is required")
+    @Pattern(regexp = "ABOVE|BELOW", message = "Alert type must be 'ABOVE' or 'BELOW'")
+    private String alertType;
 
+    // Getters and setters
+}

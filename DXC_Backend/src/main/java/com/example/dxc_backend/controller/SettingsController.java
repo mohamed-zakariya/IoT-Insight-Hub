@@ -37,7 +37,6 @@ public class SettingsController {
         try {
             // Pass the full User object and other parameters to the service method
             Settings saved = settingsService.createSetting(
-                    dto.getUsername(),
                     dto.getType(),
                     dto.getMetric(),
                     dto.getThresholdValue(),
@@ -50,18 +49,15 @@ public class SettingsController {
         }
     }
 
+
     @Operation(
-            summary = "Get settings by username",
-            description = "Fetch all settings for a specific user by their username."
+            summary = "Get all settings",
+            description = "Fetch all sensor settings."
     )
-    @GetMapping("/{username}")
-    public ResponseEntity<List<Settings>> getSettingsByUsername(@PathVariable String username) {
-        try {
-            // Pass the username to the service method to get the settings for the corresponding User
-            List<Settings> settingsList = settingsService.getSettingsByUsername(username);
-            return ResponseEntity.ok(settingsList);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(null); // User not found
-        }
+    @GetMapping
+    public ResponseEntity<List<Settings>> getAllSettings() {
+        List<Settings> settingsList = settingsService.getAllSettings();
+        return ResponseEntity.ok(settingsList);
     }
+
 }

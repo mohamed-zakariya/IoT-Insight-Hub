@@ -23,14 +23,10 @@ public class SettingsService {
     private UserRepository userRepository;
 
     @Transactional
-    public Settings createSetting(String username, String type, String metric,
+    public Settings createSetting(String type, String metric,
                                   Float thresholdValue, String alertType) {
 
-        // ✅ Validate user
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new IllegalArgumentException("User with username '" + username + "' does not exist.");
-        }
+
 
         // ✅ Validate sensor type
         if (!SensorMetricValidation.SENSOR_METRIC_MAP.containsKey(type)) {
@@ -56,29 +52,26 @@ public class SettingsService {
                     + validRange.getMin() + " to " + validRange.getMax());
         }
 
-        // ✅ Remove existing setting for the same user/type/metric
-        Optional<Settings> existingSetting = settingsRepository.findByUserAndTypeAndMetric(user, type, metric);
-        // Delete the existing setting
-        existingSetting.ifPresent(settings -> settingsRepository.delete(settings));
+        // Remove existing setting (if any)
+        settingsRepository.findByTypeAndMetric(type, metric)
+                .ifPresent(existing -> settingsRepository.deleteByTypeAndMetric(type, metric));
 
-        // ✅ Save new setting
+        // Create and save new setting
         Settings settings = new Settings();
         settings.setType(type);
         settings.setMetric(metric);
-        settings.setAlertType(alertType);
         settings.setThresholdValue(thresholdValue);
-        settings.setCreatedAt(LocalDateTime.now());
-        settings.setUser(user);  // Set the User entity
-
-        return settingsRepository.save(settings);  // Save the new setting
+        settings.setAlertType(alertType);
+        return settingsRepository.save(settings);
     }
 
-    public List<Settings> getSettingsByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new IllegalArgumentException("User with username '" + username + "' does not exist.");
-        }
-
-        return settingsRepository.findAllByUser(user); // Fetch settings by User entity
+    public List<Settings> getAllSettings() {
+        return settingsRepository.findAll();
     }
+
+    public List<Settings> getSettingsByType(String type) {
+        return settingsRepository.findAllByType(type);
+    }
+
+
 }
