@@ -38,21 +38,21 @@ public class SensorSchedulerService {
         this.streetLightSensorDataController = streetLightSensorDataController;
     }
 
-    @Scheduled(fixedRate = 20000) // Runs every 5 minutes (300,000 ms)
+    @Scheduled(fixedRate = 300000) // Runs every 5 minutes (300,000 ms)
     public void generateAndPostTrafficSensorData() {
         TrafficSensorData randomData = trafficSensorDataService.generateRandomTrafficSensorData();
         System.out.println("Generated Traffic Sensor Data: " + randomData.toString());
         trafficSensorDataController.createTrafficSensorData(randomData); // Call the POST function
     }
 
-    @Scheduled(fixedRate = 20000) // Runs every 5 minutes (300,000 ms)
+    @Scheduled(fixedRate = 300000) // Runs every 5 minutes (300,000 ms)
     public void generateAndPostAirPollutionSensorData() {
         AirPollutionSensorData randomData = airPollutionSensorDataService.generateRandomAirPollutionSensorData();
         System.out.println("Generated Air Pollution Sensor Data: " + randomData.toString());
         airPollutionSensorDataController.createSensorData(randomData); // Call the POST function
     }
 
-    @Scheduled(fixedRate = 20000) // Runs every 5 minutes (300,000 ms)
+    @Scheduled(fixedRate = 300000) // Runs every 5 minutes (300,000 ms)
     public void generateAndPostStreetLightSensorData() {
         StreetLightSensorData randomData = streetLightSensorDataService.generateRandomStreetLightSensorData();
         System.out.println("Generated Traffic Sensor Data: " + randomData.toString());
