@@ -1,5 +1,6 @@
 package com.example.dxc_backend.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -22,4 +23,31 @@ public class GlobalExceptionHandler {
     }
 
     // Optional: handle ConstraintViolationException if you're using @Validated on method params
+
+
+    @ExceptionHandler(InvalidFormatException.class)
+    public ResponseEntity<?> handleInvalidEnum(InvalidFormatException ex) {
+        if (ex.getTargetType().isEnum()) {
+            String fieldName = ex.getPath().get(0).getFieldName();
+            Object[] constants = ex.getTargetType().getEnumConstants();
+            String allowedValues = String.join(", ",
+                    java.util.Arrays.stream(constants).map(Object::toString).toArray(String[]::new));
+
+            Map<String, String> error = new HashMap<>();
+            error.put(fieldName, fieldName + " must be one of [" + allowedValues + "]");
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>("Invalid request format", HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+
 }

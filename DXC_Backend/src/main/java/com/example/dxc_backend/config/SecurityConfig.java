@@ -46,6 +46,9 @@ public class SecurityConfig {
                                 "/api/auth/verify-otp",
                                 "/api/auth/forgot-password",
                                 "/api/auth/check-otp",
+                                "/api/settings",
+                                "/api/settings/*",
+
 
                                 // Swagger endpoints
                                 "/swagger-ui/**",
