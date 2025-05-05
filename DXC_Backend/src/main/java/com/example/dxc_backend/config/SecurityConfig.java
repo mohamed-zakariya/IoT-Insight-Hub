@@ -38,8 +38,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
 
+                                "/api/street-light-sensors",
+                                "/api/street-light-sensors/{id}",
 
+                                "/api/traffic-sensors/{id}",
                                 "/api/traffic-sensors",
+
+                                "/api/air-pollution-sensors",
+                                "/api/air-pollution-sensors/{id}",
+
+
                                 "/api/users/create",
                                 "/api/users/signin/email",
                                 "/api/users/{email}",
