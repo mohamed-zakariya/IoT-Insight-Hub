@@ -67,8 +67,8 @@ public class EmailTemplateUtil {
                 </div>
                 <div class="alert-details">
                     <p><img class="icon" src="https://img.icons8.com/color/48/satellite.png" alt="Sensor Icon"><strong>Sensor Type:</strong>&nbsp;%s</p>
-                    <p><img class="icon" src="https://img.icons8.com/color/48/combo-chart--v1.png" alt="Metric Icon"><strong>Metric:</strong>&nbsp;%s</p>
-                    <p><img class="icon" src="https://img.icons8.com/color/48/activity-history.png" alt="Value Icon"><strong>Current Value:</strong>&nbsp;%.2f</p>
+                    <p> 📊 <strong>Metric:</strong>&nbsp;%s</p>
+                    <p> 📈 <strong>Current Value:</strong>&nbsp;%.2f</p>
                     <p><img class="icon" src="https://img.icons8.com/color/48/speed.png" alt="Threshold Icon"><strong>Threshold:</strong>&nbsp;%.2f</p>
                     <p><img class="icon" src="https://img.icons8.com/color/48/error--v1.png" alt="Status Icon"><strong>Status:</strong>&nbsp;%s threshold</p>
                 </div>
