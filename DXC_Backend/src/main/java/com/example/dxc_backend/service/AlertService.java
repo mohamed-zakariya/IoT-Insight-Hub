@@ -36,17 +36,20 @@ public class AlertService {
             // Get the latest metric value based on sensor type
             switch (type) {
                 case "Traffic":
-                    TrafficSensorData latestTraffic = trafficRepo.findTopByOrderByTimestampDesc();
+                    TrafficSensorData latestTraffic = trafficRepo.findTopByOrderByTimestampDesc()
+                            .orElseThrow(() -> new IllegalStateException("No traffic data available"));
                     latestValue = getTrafficMetricValue(latestTraffic, metric);
                     break;
 
                 case "Air_Pollution":
-                    AirPollutionSensorData latestAir = airRepo.findTopByOrderByTimestampDesc();
+                    AirPollutionSensorData latestAir = airRepo.findTopByOrderByTimestampDesc()
+                            .orElseThrow(() -> new IllegalStateException("No Air Poll data available"));
                     latestValue = getAirMetricValue(latestAir, metric);
                     break;
 
                 case "Street_Light":
-                    StreetLightSensorData latestLight = lightRepo.findTopByOrderByTimestampDesc();
+                    StreetLightSensorData latestLight = lightRepo.findTopByOrderByTimestampDesc()
+                            .orElseThrow(() -> new IllegalStateException("No Street Light data available"));
                     latestValue = getStreetLightMetricValue(latestLight, metric);
                     break;
             }
