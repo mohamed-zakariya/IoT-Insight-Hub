@@ -38,17 +38,17 @@ export class SettingsComponent implements OnInit {
     'Traffic Sensor': [
       { key: 'trafficDensity',  label: 'Traffic Density',  type: 'integer', min: 0,   max: 500, unitOptions: ['vehicles/hour'] },
       { key: 'avgSpeed',        label: 'Average Speed',    type: 'float',   min: 0,   max: 120, unitOptions: ['km/h','mph'] },
-      { key: 'congestionLevel', label: 'Congestion Level', type: 'enum',    allowedValues: ['Low','Moderate','High','Severe'] }
+      // { key: 'congestionLevel', label: 'Congestion Level', type: 'enum',    allowedValues: ['Low','Moderate','High','Severe'] }
     ],
     'Air Pollution Sensor': [
       { key: 'co',             label: 'CO (ppm)',          type: 'float', min: 0,   max: 50,  unitOptions: ['ppm'] },
       { key: 'ozone',          label: 'Ozone (ppb)',       type: 'float', min: 0,   max: 300, unitOptions: ['ppb'] },
-      { key: 'pollutionLevel', label: 'Pollution Level',   type: 'enum',  allowedValues: ['Good','Moderate','Unhealthy','Very Unhealthy','Hazardous'] }
+      // { key: 'pollutionLevel', label: 'Pollution Level',   type: 'enum',  allowedValues: ['Good','Moderate','Unhealthy','Very Unhealthy','Hazardous'] }
     ],
     'Street Light Sensor': [
       { key: 'brightnessLevel',  label: 'Brightness Level',  type: 'integer', min: 0,    max: 100 },
       { key: 'powerConsumption', label: 'Power Consumption', type: 'float',   min: 0,    max: 5000, unitOptions: ['W'] },
-      { key: 'status',           label: 'Status',            type: 'enum',    allowedValues: ['ON','OFF'] }
+      // { key: 'status',           label: 'Status',            type: 'enum',    allowedValues: ['ON','OFF'] }
     ]
   };
 
@@ -56,13 +56,13 @@ export class SettingsComponent implements OnInit {
   exampleMap: Record<string,string> = {
     trafficDensity:   '250',
     avgSpeed:         '60',
-    congestionLevel:  'Moderate',
+    // congestionLevel:  'Moderate',
     co:               '10',
     ozone:            '100',
-    pollutionLevel:   'Moderate',
+    // pollutionLevel:   'Moderate',
     brightnessLevel:  '80',
     powerConsumption: '2000',
-    status:           'ON'
+    // status:           'ON'
   };
 
   // 4) Shared form state
