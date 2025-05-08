@@ -1,0 +1,107 @@
+/* src/app/components/alerts/alerts.component.css */
+
+.alerts-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  
+  .alerts-container h2 {
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  /* FILTER BAR */
+  .alerts-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .alerts-filters label {
+    font-size: 0.95rem;
+    color: #555;
+  }
+  
+  .alerts-filters select,
+  .alerts-filters input {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+  
+  .refresh-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #1976d2;
+    transition: transform 0.2s;
+  }
+  
+  .refresh-btn:hover {
+    transform: rotate(90deg);
+  }
+  
+  /* LIST CONTAINER */
+  .alerts-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  /* SINGLE CARD */
+  .alert-card {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.15s, box-shadow 0.15s;
+    overflow: hidden;
+  }
+  
+  .alert-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+  
+  /* severity strip */
+  .alert-card.above {
+    border-left: 4px solid #d32f2f; /* red */
+  }
+  .alert-card.below {
+    border-left: 4px solid #388e3c; /* green */
+  }
+  
+  /* icon */
+  .alert-icon {
+    flex: 0 0 auto;
+    width: 3rem;
+    text-align: center;
+    font-size: 1.5rem;
+    color: #1976d2;
+    background: #f5faff;
+    padding: 1rem 0;
+  }
+  
+  /* text */
+  .alert-content {
+    flex: 1;
+    padding: 1rem;
+  }
+  .alert-message {
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+  }
+  .alert-timestamp {
+    font-size: 0.85rem;
+    color: #888;
+  }
+  

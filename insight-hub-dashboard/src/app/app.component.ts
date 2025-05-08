@@ -1,26 +1,32 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
-import { NavbarComponent } from './components/navbar/navbar.component';
+// src/app/app.component.ts
+import { Component }            from '@angular/core';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
+import { CommonModule }         from '@angular/common';
+import { filter }               from 'rxjs/operators';
+
+import { NavbarComponent }      from './components/navbar/navbar.component';
+import { AlertButtonComponent } from './components/alert-button/alert-button.component';
 
 @Component({
+  standalone: true,
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, CommonModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    NavbarComponent,
+    AlertButtonComponent
+  ],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'insight-hub-dashboard';
   showNavbar = true;
 
   constructor(private router: Router) {
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        // Hide navbar if route starts with "/auth"
-        this.showNavbar = !event.urlAfterRedirects.startsWith('/auth');
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(e => {
+        this.showNavbar = !e.urlAfterRedirects.startsWith('/auth');
       });
   }
 }

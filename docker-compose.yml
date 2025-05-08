@@ -3,7 +3,7 @@ version: "3.8"
 services:
   # Persistent volume initializer (no-op)
   mysql-data:
-    image: iotinsighthub/mysql-with-data:sql8774445
+    image: iotinsighthub/mysql-data:latest
     container_name: iot_mysql_data
     volumes:
       - mysql_data:/var/lib/mysql
@@ -59,7 +59,7 @@ services:
 
   # Frontend service
   frontend:
-    image: iotinsighthub/insight-hub-dashboard:2.0
+    image: iotinsighthub/insight-hub-dashboard:2.1
     container_name: iot_frontend
     restart: always
     depends_on:

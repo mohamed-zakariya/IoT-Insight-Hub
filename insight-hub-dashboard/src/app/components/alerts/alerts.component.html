@@ -1,0 +1,50 @@
+<!-- src/app/components/alerts/alerts.component.html -->
+<div class="alerts-container">
+    <h2>Sensor Alerts</h2>
+  
+    <!-- Filters -->
+    <div class="alerts-filters">
+      <label>
+        Type:
+        <select #typeFilter (change)="onTypeChange(typeFilter.value)">
+          <option value="">All</option>
+          <option value="above">Above</option>
+          <option value="below">Below</option>
+        </select>
+      </label>
+      <label>
+        Since:
+        <input
+          #sinceFilter
+          type="datetime-local"
+          (change)="onSinceChange(sinceFilter.value)"
+        />
+      </label>
+      <button class="refresh-btn" (click)="ngOnInit()">
+        <i class="fa-solid fa-rotate"></i>
+      </button>
+    </div>
+  
+    <!-- Cards list -->
+    <div class="alerts-list">
+      <div
+        *ngFor="let a of filtered$ | async"
+        class="alert-card"
+        [ngClass]="{
+          above:   a.message.toLowerCase().includes('above'),
+          below:   a.message.toLowerCase().includes('below')
+        }"
+      >
+        <div class="alert-icon">
+          <i class="fa-solid fa-bell"></i>
+        </div>
+        <div class="alert-content">
+          <div class="alert-message">{{ a.message }}</div>
+          <div class="alert-timestamp">
+            {{ a.timestamp | date: 'short' }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

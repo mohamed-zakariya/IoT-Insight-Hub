@@ -1,0 +1,31 @@
+<!-- src/app/components/alert-button/alert-button.component.html -->
+<div class="alert-button">
+    <button
+      class="btn-notif"
+      (click)="toggle()"
+      [class.open]="dropdownOpen"
+    >
+      <i class="fa-solid fa-bell"></i>
+      <span class="badge" *ngIf="allAlerts$ | async as all">{{ all.length }}</span>
+    </button>
+  
+    <div class="preview-dropdown" [class.open]="dropdownOpen">
+      <div class="alerts-scroll">
+        <ng-container *ngIf="grouped$ | async as groups">
+          <div *ngFor="let g of groups" class="group">
+            <div class="group-label">{{ g.dateLabel }}</div>
+            <div class="group-items">
+              <div *ngFor="let a of g.alerts" class="alert-item">
+                <div class="msg">{{ a.message }}</div>
+                <div class="ts">{{ a.timestamp | date:'shortTime' }}</div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="view-all">
+        <a routerLink="/alerts">View all alerts →</a>
+      </div>
+    </div>
+  </div>
+  

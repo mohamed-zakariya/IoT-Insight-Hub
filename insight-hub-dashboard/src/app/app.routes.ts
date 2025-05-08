@@ -5,6 +5,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { SensorSimulatorComponent } from './components/sensor-simulator/sensor-simulator.component';
+import { AlertsComponent } from './components/alerts/alerts.component';
 
 export const routes: Routes = [
     {
@@ -35,5 +36,6 @@ export const routes: Routes = [
     {
         path: 'simulate',
         component: SensorSimulatorComponent
-    }
+    },
+    { path: 'alerts', component: AlertsComponent }
 ];

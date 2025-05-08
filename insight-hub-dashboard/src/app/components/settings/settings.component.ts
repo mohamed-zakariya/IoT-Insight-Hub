@@ -1,11 +1,14 @@
 // src/app/components/settings/settings.component.ts
 
-import { Component, OnInit } from '@angular/core';
-import { CommonModule }      from '@angular/common';
-import { FormsModule }       from '@angular/forms';
-import { SettingsService }   from '../../services/settings.service';
+import { Component, OnInit }            from '@angular/core';
+import { CommonModule }                 from '@angular/common';
+import { FormsModule }                  from '@angular/forms';
+import {
+  SettingsService,
+  SettingsDTO
+} from '../../services/settings.service';
 
-type MetricType = 'integer'|'float'|'enum';
+type MetricType = 'integer' | 'float';
 
 interface MetricDef {
   key: string;
@@ -13,8 +16,6 @@ interface MetricDef {
   type: MetricType;
   min?: number;
   max?: number;
-  unitOptions?: string[];
-  allowedValues?: string[];
 }
 
 @Component({
@@ -26,107 +27,110 @@ interface MetricDef {
   styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent implements OnInit {
-  // 1) Sensor categories
+  // 1) Sensor Categories
   sensors = [
     'Traffic Sensor',
     'Air Pollution Sensor',
     'Street Light Sensor'
   ];
 
-  // 2) Metric definitions per category (from your DB constraints)
+  // 2) Metrics per category
   metricMap: Record<string, MetricDef[]> = {
     'Traffic Sensor': [
-      { key: 'trafficDensity',  label: 'Traffic Density',  type: 'integer', min: 0,   max: 500, unitOptions: ['vehicles/hour'] },
-      { key: 'avgSpeed',        label: 'Average Speed',    type: 'float',   min: 0,   max: 120, unitOptions: ['km/h','mph'] },
-      // { key: 'congestionLevel', label: 'Congestion Level', type: 'enum',    allowedValues: ['Low','Moderate','High','Severe'] }
+      { key: 'trafficDensity', label: 'Traffic Density', type: 'integer', min: 0,   max: 500 },
+      { key: 'avgSpeed',       label: 'Average Speed',   type: 'float',   min: 0,   max: 120 }
     ],
     'Air Pollution Sensor': [
-      { key: 'co',             label: 'CO (ppm)',          type: 'float', min: 0,   max: 50,  unitOptions: ['ppm'] },
-      { key: 'ozone',          label: 'Ozone (ppb)',       type: 'float', min: 0,   max: 300, unitOptions: ['ppb'] },
-      // { key: 'pollutionLevel', label: 'Pollution Level',   type: 'enum',  allowedValues: ['Good','Moderate','Unhealthy','Very Unhealthy','Hazardous'] }
+      { key: 'co',    label: 'CO (ppm)',    type: 'float', min: 0,   max: 50 },
+      { key: 'ozone', label: 'Ozone (ppb)', type: 'float', min: 0,   max: 300 }
     ],
     'Street Light Sensor': [
-      { key: 'brightnessLevel',  label: 'Brightness Level',  type: 'integer', min: 0,    max: 100 },
-      { key: 'powerConsumption', label: 'Power Consumption', type: 'float',   min: 0,    max: 5000, unitOptions: ['W'] },
-      // { key: 'status',           label: 'Status',            type: 'enum',    allowedValues: ['ON','OFF'] }
+      { key: 'brightnessLevel',  label: 'Brightness Level',  type: 'integer', min: 0,   max: 100 },
+      { key: 'powerConsumption', label: 'Power Consumption', type: 'float',   min: 0,   max: 5000 }
     ]
   };
 
-  // 3) Example values for grey hints
-  exampleMap: Record<string,string> = {
-    trafficDensity:   '250',
-    avgSpeed:         '60',
-    // congestionLevel:  'Moderate',
-    co:               '10',
-    ozone:            '100',
-    // pollutionLevel:   'Moderate',
-    brightnessLevel:  '80',
-    powerConsumption: '2000',
-    // status:           'ON'
-  };
+  // 3) Alert‐type options for the dropdown
+  alertTypes: Array<'ABOVE'|'BELOW'> = ['ABOVE','BELOW'];
 
-  // 4) Shared form state
-  alertTypes = ['above','below'];
+  // 4) Cache of existing settings, keyed by SettingsDTO.type
+  prefilled: Record<SettingsDTO['type'], Record<string, SettingsDTO>> = {
+    Traffic:        {},
+    Air_Pollution:  {},
+    Street_Light:   {}
+  };
+  
+  // 5) Current UI state
   selectedSensor = '';
-  metrics: MetricDef[] = [];
-  form: Record<string, { alertType: string; threshold: number|string|null; unit?: string }> = {};
-  errors: Record<string,string> = {};
+  metrics        = [] as MetricDef[];
+  form           = {} as Record<string, { alertType: 'ABOVE'|'BELOW'; threshold: number|null }>;
+  errors         = {} as Record<string,string>;
 
   constructor(private settingsService: SettingsService) {}
 
   ngOnInit(): void {
-    // nothing to fetch at init—categories are hard-coded
+    // Load saved settings once
+    this.settingsService.getSettings().subscribe({
+      next: (all: SettingsDTO[]) => {
+        all.forEach(s => {
+          this.prefilled[s.type] = this.prefilled[s.type] || {};
+          this.prefilled[s.type][s.metric] = s;
+        });
+      },
+      error: err => console.error('Could not load settings:', err)
+    });
   }
 
-  /** When the user picks a category, reset everything for those metrics */
+  /** Convert "Traffic Sensor" → "Traffic", etc. */
+  private categoryToType(cat: string): SettingsDTO['type'] {
+    switch (cat) {
+      case 'Traffic Sensor':       return 'Traffic';
+      case 'Air Pollution Sensor': return 'Air_Pollution';
+      case 'Street Light Sensor':  return 'Street_Light';
+      default: throw new Error(`Unknown category: ${cat}`);
+    }
+  }
+
+  /** When user picks a sensor, reset & pre-fill form */
   onSensorSelect(category: string): void {
     this.selectedSensor = category;
-    this.metrics = this.metricMap[category] || [];
-    this.form   = {};
-    this.errors = {};
+    this.metrics        = this.metricMap[category] || [];
+    this.form           = {};
+    this.errors         = {};
+
+    const typeKey = this.categoryToType(category);
+    const preset  = this.prefilled[typeKey] || {};
 
     this.metrics.forEach(m => {
+      const existing = preset[m.key];
       this.form[m.key] = {
-        alertType: 'above',
-        threshold: null,
-        unit: m.unitOptions?.[0]
+        alertType: existing?.alertType ?? 'ABOVE',
+        threshold: existing?.thresholdValue ?? null
       };
       this.errors[m.key] = '';
     });
   }
 
-  /** Validate according to type, min/max, enum, and set errors[m.key] */
+  /** Validate required / numeric / integer / min / max */
   validate(m: MetricDef): boolean {
     const v = this.form[m.key].threshold;
-    // required
-    if (v === null || v === '') {
+    if (v === null) {
       this.errors[m.key] = 'Required';
       return false;
     }
-    // enum
-    if (m.type === 'enum') {
-      if (!m.allowedValues!.includes(v as string)) {
-        this.errors[m.key] = 'Invalid choice';
-        return false;
-      }
-      this.errors[m.key] = '';
-      return true;
-    }
-    // numeric
-    const num = Number(v);
-    if (isNaN(num)) {
+    if (isNaN(v)) {
       this.errors[m.key] = 'Must be a number';
       return false;
     }
-    if (m.type === 'integer' && !Number.isInteger(num)) {
+    if (m.type === 'integer' && !Number.isInteger(v)) {
       this.errors[m.key] = 'Must be an integer';
       return false;
     }
-    if (m.min != null && num < m.min) {
+    if (m.min != null && v < m.min) {
       this.errors[m.key] = `Min ${m.min}`;
       return false;
     }
-    if (m.max != null && num > m.max) {
+    if (m.max != null && v > m.max) {
       this.errors[m.key] = `Max ${m.max}`;
       return false;
     }
@@ -134,17 +138,21 @@ export class SettingsComponent implements OnInit {
     return true;
   }
 
-  /** Fires when Adjust is clicked; logs the payload for now */
+  /** Actually POST /api/settings with the proper DTO */
   onAdjust(m: MetricDef): void {
     if (!this.validate(m)) return;
+
     const f = this.form[m.key];
-    console.log('POST threshold →', {
-      category:   this.selectedSensor,
-      metric:     m.key,
-      alertType:  f.alertType,
-      threshold:  f.threshold,
-      unit:       f.unit
+    const dto: SettingsDTO = {
+      type:           this.categoryToType(this.selectedSensor),
+      metric:         m.key,
+      thresholdValue: f.threshold!,
+      alertType:      f.alertType
+    };
+
+    this.settingsService.saveSetting(dto).subscribe({
+      next: () => alert(`${m.label} saved!`),
+      error: err => alert(`Save failed: ${err.error || err.message}`)
     });
-    // TODO: call SettingsService.saveThreshold(...)
   }
 }
