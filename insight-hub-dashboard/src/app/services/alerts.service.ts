@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { AlertSummary } from '../../models/alert-summary.model';
+import { AlertSummary } from '../models/alert-summary.model';
 
 @Injectable({ providedIn: 'root' })
 export class AlertsService {

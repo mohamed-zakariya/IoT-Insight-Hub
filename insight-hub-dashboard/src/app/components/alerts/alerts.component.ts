@@ -3,7 +3,7 @@ import { CommonModule }      from '@angular/common';
 import { FormsModule }       from '@angular/forms';
 import { combineLatest, BehaviorSubject, Observable } from 'rxjs';
 import { startWith, map }    from 'rxjs/operators';
-import { AlertsService }     from '../alerts/alerts.service';
+import { AlertsService }     from '../../services/alerts.service';
 import { AlertSummary }      from '../../models/alert-summary.model';
 
 @Component({
