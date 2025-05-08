@@ -1,27 +1,44 @@
 // src/app/services/settings.service.ts
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 
-export interface SettingsPayload {
-  sensor: string;
-  subSensor: string;
-  value: number;
+import { Injectable }               from '@angular/core';
+import { HttpClient, HttpHeaders }  from '@angular/common/http';
+import { Observable }               from 'rxjs';
+
+/**
+ * Matches com.example.dxc_backend.dto.SettingsDTO
+ */
+export interface SettingsDTO {
+  type:           'Traffic' | 'Air_Pollution' | 'Street_Light';
+  metric:         string;
+  thresholdValue: number;
+  alertType:      'ABOVE' | 'BELOW';
 }
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  constructor(/* no args here */) {}
+  private baseUrl = 'http://localhost:8080/api/settings';
 
-  /** mock: replace with real HTTP call later */
-  getSensorList(): Observable<string[]> {
-    return new Observable(sub => {
-      sub.next(['Temperature','Air Quality','Pressure']);
-      sub.complete();
-    });
+  constructor(private http: HttpClient) {}
+
+  private authHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken') || '';
+    return new HttpHeaders().set('accessToken', token);
   }
 
-  adjustSubSensor(sensor: string, sub: string, val: number): Observable<any> {
-    console.log('MOCK adjust', {sensor, sub, val});
-    return new Observable(subj => { subj.next(true); subj.complete(); });
+  /** GET /api/settings */
+  getSettings(): Observable<SettingsDTO[]> {
+    return this.http.get<SettingsDTO[]>(
+      this.baseUrl,
+      { headers: this.authHeaders() }
+    );
+  }
+
+  /** POST /api/settings */
+  saveSetting(setting: SettingsDTO): Observable<SettingsDTO> {
+    return this.http.post<SettingsDTO>(
+      this.baseUrl,
+      setting,
+      { headers: this.authHeaders() }
+    );
   }
 }
