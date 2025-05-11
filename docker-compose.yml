@@ -23,7 +23,6 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
@@ -32,17 +31,16 @@ services:
     networks:
       - iot_net
 
-  # Backend service (using Gmail SMTP)
+  # Backend service
   backend:
-    image: iotinsighthub/iot_backend:latest
+    image: iotinsighthub/dxc_backend:2.1
     container_name: iot_backend
     restart: always
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      # Database
-      SPRING_DATASOURCE_URL:      jdbc:mysql://iot_mysql:3306/sql8774445
+      SPRING_DATASOURCE_URL: jdbc:mysql://iot_mysql:3306/sql8774445
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
@@ -61,7 +59,7 @@ services:
 
   # Frontend service
   frontend:
-    image: iotinsighthub/iot_frontend:latest
+    image: iotinsighthub/insight-hub-dashboard:2.1
     container_name: iot_frontend
     restart: always
     depends_on:

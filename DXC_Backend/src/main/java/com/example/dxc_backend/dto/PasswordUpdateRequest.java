@@ -1,23 +1,17 @@
 package com.example.dxc_backend.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+
+@Getter
 public class PasswordUpdateRequest {
+
+
+    @NotBlank(message = "Old Password must be entered")
     private String oldPassword;
+
+    @NotBlank(message = "New Password must be entered")
     private String newPassword;
 
-    // Getters and setters
-    public String getOldPassword() {
-        return oldPassword;
-    }
 
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
 }

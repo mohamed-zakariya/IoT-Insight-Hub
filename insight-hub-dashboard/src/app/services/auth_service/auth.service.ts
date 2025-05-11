@@ -134,7 +134,7 @@ export class AuthService {
 
   private addAuthHeaders(): HttpHeaders {
     const token = this.getAuthToken();
-    let headers = new HttpHeaders();
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }

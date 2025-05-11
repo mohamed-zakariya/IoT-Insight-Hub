@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { User } from '../../models/user';
 import { AuthService } from '../auth_service/auth.service';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
+
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class UserService {
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getAuthToken();
-    let headers = new HttpHeaders();
+    let headers = new HttpHeaders().set('Content-Type', 'application/json');
     if (token) {
       headers = headers.set('accessToken', token);
     }
@@ -83,36 +84,46 @@ export class UserService {
   }
   
   
-  
-  
 
-  updatePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
-    const payload = { oldPassword: currentPassword, newPassword };
-  
-    // Get user info from localStorage
-    const userString = localStorage.getItem('user');
-    if (!userString) {
-      return throwError(() => new Error('User not found in localStorage'));
-    }
-  
-    const { id: userId } = JSON.parse(userString);
-    const url = `${this.apiUrl}/${userId}/password`;
-  
-    const makeRequest = () => this.http.put<{ message: string }>(url, payload, {
-      headers: this.getAuthHeaders(),
-      responseType: 'text' as 'json'  // 👈 tell Angular to expect plain text
-    });
-  
-    return makeRequest().pipe(
-      catchError(err => {
-        if (err.status === 401 || err.status === 403) {
-          return this.refreshAndRetryRequest(makeRequest);
-        }
-        console.error('Password update error:', err);
-        throw err;
-      })
-    );
+updatePassword(currentPassword: string, newPassword: string): Observable<{ message: string }> {
+  const payload = { oldPassword: currentPassword, newPassword };
+
+  const userString = localStorage.getItem('user');
+  if (!userString) {
+    return throwError(() => new Error('User not found in localStorage'));
   }
+
+  const { id: userId } = JSON.parse(userString);
+  const url = `${this.apiUrl}/${userId}/password`;
+
+  const makeRequest = () =>
+    this.http.put(url, payload, {
+      headers: this.getAuthHeaders(),
+      responseType: 'text' as 'json'  // 👈 Tell Angular to treat text as JSON
+    });
+
+  return makeRequest().pipe(
+    map(response => {
+      // Handle plain text as message
+      return { message: typeof response === 'string' ? response : (response as any).message };
+    }),
+    catchError(err => {
+      if (err.status === 401 || err.status === 403) {
+        return this.refreshAndRetryRequest(() =>
+          this.http.put(`${this.apiUrl}/${userId}/password`, payload, {
+            headers: this.getAuthHeaders(),
+            responseType: 'text' as 'json'
+          }).pipe(map(resp => ({ message: typeof resp === 'string' ? resp : (resp as any).message })))
+        );
+      }
+
+      const errorText = err?.error?.text || err?.error || 'Unexpected error';
+      console.error('Password update error:', errorText);
+      return throwError(() => new Error(errorText));
+    })
+  );
+}
+
   
   
 
@@ -160,7 +171,7 @@ export class UserService {
           // Instead of throwing the full error, throw a custom object
           return throwError(() => ({ type: 'EMAIL_EXISTS' }));
         }
-        else if(err?.error === "A user with this name already exists.") {
+        else if(err?.error === "A user with this username already exists.") {
           return throwError(() => ({ type: 'USERNAME_EXISTS' }));
         }        
 
