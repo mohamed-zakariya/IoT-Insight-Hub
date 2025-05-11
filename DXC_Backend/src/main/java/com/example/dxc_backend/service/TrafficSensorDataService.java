@@ -43,8 +43,12 @@ public class TrafficSensorDataService {
         return repository.save(data);
     }
 
-    public void deleteTrafficSensorData(UUID id) {
-        repository.deleteById(id);
+    public boolean deleteTrafficSensorData(UUID id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true; // Indicate successful deletion
+        }
+        return false; // Indicate that the ID was not found
     }
 
     //now will make a a new function for the random generation
