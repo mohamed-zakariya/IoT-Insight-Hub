@@ -33,9 +33,14 @@ public class AirPollutionSensorDataService {
         return repository.save(data);
     }
 
-    public void deleteSensorData(UUID id) {
-        repository.deleteById(id);
+    public boolean deleteSensorData(UUID id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true; // Indicate successful deletion
+        }
+        return false; // Indicate that the ID was not found
     }
+
 
     private final Random random = new Random();
     public AirPollutionSensorData generateRandomAirPollutionSensorData() {

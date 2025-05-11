@@ -2,6 +2,7 @@ package com.example.dxc_backend.controller;
 
 import com.example.dxc_backend.model.AirPollutionSensorData;
 import com.example.dxc_backend.service.AirPollutionSensorDataService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -35,8 +36,13 @@ public class AirPollutionSensorDataController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSensorData(@PathVariable UUID id) {
-        service.deleteSensorData(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteSensorData(@PathVariable UUID id) {
+        boolean isDeleted = service.deleteSensorData(id);
+        if (isDeleted) {
+            return ResponseEntity.ok("Sensor data with ID " + id + " successfully deleted.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sensor data with ID " + id + " does not exist.");
+        }
     }
+
 }
