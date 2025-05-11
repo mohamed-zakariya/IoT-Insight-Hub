@@ -8,14 +8,14 @@ import java.util.Set;
 public class SensorMetricValidation {
 
     // Define valid sensor types and metrics along with their corresponding threshold ranges
-    public static final Map<String, Set<String>> SENSOR_METRIC_MAP = Map.of(
+    public static Map<String, Set<String>> SENSOR_METRIC_MAP = Map.of(
             "Traffic", Set.of("trafficDensity", "avgSpeed"),
             "Air_Pollution", Set.of("co", "ozone"),
             "Street_Light", Set.of("brightnessLevel", "powerConsumption")
     );
 
     // Define valid threshold ranges for each metric
-    public static final Map<String, Map<String, Range>> METRIC_VALID_RANGES = Map.of(
+    public static Map<String, Map<String, Range>> METRIC_VALID_RANGES = Map.of(
             "Traffic", Map.of(
                     "trafficDensity", new Range(0, 500),
                     "avgSpeed", new Range(0f, 120f)
