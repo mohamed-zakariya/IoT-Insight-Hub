@@ -11,13 +11,17 @@
     </div>
   </div>
 
-  <!-- Bell + badge -->
-  <button class="btn-notif" (click)="toggle()" [class.open]="dropdownOpen">
+  <!-- Bell + unread badge -->
+  <button class="btn-notif"
+          (click)="toggle()"
+          [class.open]="dropdownOpen">
     <i class="fa-solid fa-bell"></i>
-    <span class="badge" *ngIf="allAlerts$ | async as all">{{ all.length }}</span>
+    <span class="badge" *ngIf="unreadCount > 0">
+      {{ unreadCount }}
+    </span>
   </button>
 
-  <!-- Alert dropdown -->
+  <!-- Dropdown panel -->
   <div class="preview-dropdown" [class.open]="dropdownOpen">
     <div class="alerts-scroll">
       <ng-container *ngIf="grouped$ | async as groups">
@@ -36,5 +40,4 @@
       <a routerLink="/alerts">View all alerts →</a>
     </div>
   </div>
-
 </div>

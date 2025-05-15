@@ -32,7 +32,11 @@ export class AlertButtonComponent implements OnInit, OnDestroy {
   grouped$!:   Observable<AlertGroup[]>;
   dropdownOpen = false;
 
+  /** for the little pop-ups */
   toasts: Toast[] = [];
+  /** unread badge count */
+  unreadCount = 0;
+
   private alertsSub!: Subscription;
 
   constructor(private alerts: AlertsService) {}
@@ -40,38 +44,41 @@ export class AlertButtonComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.allAlerts$ = this.alerts.getAlerts();
 
+    // group into Today/Yesterday/Older
     this.grouped$ = this.allAlerts$.pipe(
       map(list => {
-        const sorted = [...list].sort((a,b) =>
+        const sorted = [...list].sort((a,b)=>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
         const today     = new Date();
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
         const fmt = (d: Date) => d.toDateString();
-
         const groups: Record<string, AlertSummary[]> = {};
+
         sorted.forEach(a => {
           const d = new Date(a.timestamp);
-          let label = fmt(d) === fmt(today)
-                    ? 'Today'
-                    : fmt(d) === fmt(yesterday)
-                      ? 'Yesterday'
-                      : d.toLocaleDateString();
+          let label = 
+            fmt(d) === fmt(today)     ? 'Today' :
+            fmt(d) === fmt(yesterday) ? 'Yesterday' :
+            d.toLocaleDateString();
           (groups[label] ||= []).push(a);
         });
 
         return Object.entries(groups)
-                     .map(([dateLabel, alerts]) => ({ dateLabel, alerts }));
+                     .map(([dateLabel, alerts])=>({ dateLabel, alerts }));
       })
     );
 
-    // detect new alerts to fire toast
+    // watch for newly arriving alerts
     this.alertsSub = this.allAlerts$
       .pipe(startWith([] as AlertSummary[]), pairwise())
       .subscribe(([prev, curr]) => {
         if (curr.length > prev.length) {
+          // 1) show toast
           this.addToast(curr[curr.length - 1]);
+          // 2) increment unread count
+          this.unreadCount++;
         }
       });
   }
@@ -82,20 +89,22 @@ export class AlertButtonComponent implements OnInit, OnDestroy {
 
   toggle() {
     this.dropdownOpen = !this.dropdownOpen;
+    // whenever user clicks open, mark all as read
+    if (this.dropdownOpen) {
+      this.unreadCount = 0;
+    }
   }
 
   private addToast(alert: AlertSummary) {
     const id = Date.now();
     this.toasts.push({ id, message: alert.message, show: false });
-
-    // trigger slide-in
+    // slide in
     setTimeout(() => {
       const t = this.toasts.find(x => x.id === id);
       if (t) t.show = true;
     }, 10);
-
     // auto-dismiss after 5s
-    setTimeout(() => this.removeToast(id), 5_010);
+    setTimeout(() => this.removeToast(id), 5010);
   }
 
   private removeToast(id: number) {
