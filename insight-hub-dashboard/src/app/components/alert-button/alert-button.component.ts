@@ -1,5 +1,3 @@
-// src/app/components/alert-button/alert-button.component.ts
-
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule }                  from '@angular/common';
 import { RouterModule }                  from '@angular/router';
@@ -25,31 +23,36 @@ interface Toast {
   selector:   'app-alert-button',
   imports:    [ CommonModule, RouterModule ],
   templateUrl:'./alert-button.component.html',
-  styleUrls:  ['./alert-button.component.css']
+  styleUrls:  [ './alert-button.component.css' ]
 })
 export class AlertButtonComponent implements OnInit, OnDestroy {
+  // your full alert stream
   allAlerts$!: Observable<AlertSummary[]>;
+  // grouped for the dropdown
   grouped$!:   Observable<AlertGroup[]>;
   dropdownOpen = false;
 
-  /** for the little pop-ups */
-  toasts: Toast[] = [];
-  /** unread badge count */
+  // unread badge count
   unreadCount = 0;
 
+  // active toasts on screen
+  toasts: Toast[] = [];
   private alertsSub!: Subscription;
 
   constructor(private alerts: AlertsService) {}
 
   ngOnInit() {
+    // 1) fetch all alerts
     this.allAlerts$ = this.alerts.getAlerts();
 
-    // group into Today/Yesterday/Older
+    // 2) group into Today/Yesterday/Older
     this.grouped$ = this.allAlerts$.pipe(
       map(list => {
         const sorted = [...list].sort((a,b)=>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+          new Date(b.timestamp).getTime() -
+          new Date(a.timestamp).getTime()
         );
+
         const today     = new Date();
         const yesterday = new Date(today);
         yesterday.setDate(today.getDate() - 1);
@@ -57,27 +60,25 @@ export class AlertButtonComponent implements OnInit, OnDestroy {
         const groups: Record<string, AlertSummary[]> = {};
 
         sorted.forEach(a => {
-          const d = new Date(a.timestamp);
-          let label = 
-            fmt(d) === fmt(today)     ? 'Today' :
-            fmt(d) === fmt(yesterday) ? 'Yesterday' :
-            d.toLocaleDateString();
+          const d     = new Date(a.timestamp);
+          const label = fmt(d) === fmt(today)      ? 'Today'
+                        : fmt(d) === fmt(yesterday) ? 'Yesterday'
+                        : d.toLocaleDateString();
           (groups[label] ||= []).push(a);
         });
 
         return Object.entries(groups)
-                     .map(([dateLabel, alerts])=>({ dateLabel, alerts }));
+                     .map(([dateLabel, alerts]) => ({ dateLabel, alerts }));
       })
     );
 
-    // watch for newly arriving alerts
+    // 3) detect newly arriving alerts
     this.alertsSub = this.allAlerts$
       .pipe(startWith([] as AlertSummary[]), pairwise())
       .subscribe(([prev, curr]) => {
         if (curr.length > prev.length) {
-          // 1) show toast
-          this.addToast(curr[curr.length - 1]);
-          // 2) increment unread count
+          const newAlert = curr[curr.length - 1];
+          this.showToast(newAlert.message);
           this.unreadCount++;
         }
       });
@@ -87,29 +88,33 @@ export class AlertButtonComponent implements OnInit, OnDestroy {
     this.alertsSub.unsubscribe();
   }
 
+  /** toggle dropdown & clear unread count */
   toggle() {
     this.dropdownOpen = !this.dropdownOpen;
-    // whenever user clicks open, mark all as read
     if (this.dropdownOpen) {
       this.unreadCount = 0;
     }
   }
 
-  private addToast(alert: AlertSummary) {
+  /** push and animate a toast, auto-remove after 5 s */
+  private showToast(message: string) {
     const id = Date.now();
-    this.toasts.push({ id, message: alert.message, show: false });
-    // slide in
+    this.toasts.push({ id, message, show: false });
+
+    // trigger slide-in
     setTimeout(() => {
       const t = this.toasts.find(x => x.id === id);
       if (t) t.show = true;
     }, 10);
-    // auto-dismiss after 5s
-    setTimeout(() => this.removeToast(id), 5010);
+
+    // auto-dismiss in 5 s
+    setTimeout(() => this.removeToast(id), 5_010);
   }
 
-  private removeToast(id: number) {
+  /** fade out & remove toast */
+  removeToast(id: number) {
     const idx = this.toasts.findIndex(x => x.id === id);
-    if (idx === -1) return;
+    if (idx < 0) return;
     this.toasts[idx].show = false;
     setTimeout(() => this.toasts.splice(idx, 1), 300);
   }

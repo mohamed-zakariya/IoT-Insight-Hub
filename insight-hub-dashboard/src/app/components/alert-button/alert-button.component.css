@@ -1,47 +1,54 @@
 /* src/app/components/alert-button/alert-button.component.css */
 
-/* TOAST STYLES */
-#toast-container {
+/* ── BANNER CONTAINER ───────────────────────────────── */
+#banner-container {
   position: fixed;
-  top: 4rem;
-  right: 1rem;
+  top: 0;
+  left: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  z-index: 1001;
+  align-items: center;
+  pointer-events: none;
+  z-index: 1002;
 }
 
-.toast {
+/* ── INDIVIDUAL BANNER ─────────────────────────────── */
+.banner {
   display: flex;
   align-items: center;
-  max-width: 300px;
+  justify-content: center;
+  width: 100%;
+  background: #3B82F6;      /* updated to your blue swatch */
+  color: #ffffff;
   padding: 0.75rem 1rem;
-  background: #fff;
-  border-left: 4px solid #1976d2;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  transform: translateY(-100%);
+  transition: transform 0.3s ease;
+  pointer-events: auto;
 }
 
-.toast.show {
-  opacity: 1;
+.banner.show {
   transform: translateY(0);
 }
 
-.toast .icon {
-  margin-right: 0.75rem;
-  font-size: 1.2rem;
-  color: #1976d2;
+.banner-text {
+  flex: 1;
+  text-align: center;
 }
 
-.toast .message {
-  font-size: 0.9rem;
-  color: #333;
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  margin-left: auto;
+  color: #ffffff;
 }
 
-/* EXISTING BUTTON + DROPDOWN STYLES */
+/* ── BUTTON & DROPDOWN ─────────────────────────────── */
 .alert-button {
   position: fixed;
   top: 1rem;
@@ -124,7 +131,6 @@
   padding: 0.5rem 12px;
   border-bottom: 1px solid #eee;
   transition: background 0.15s;
-  white-space: normal;
 }
 
 .alert-item:hover {
