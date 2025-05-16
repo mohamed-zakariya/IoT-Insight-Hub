@@ -49,7 +49,7 @@ pipeline {
                         cp "$SECRET_ENV_FILE" .env
                         # Safe debugging - show non-sensitive info
                         echo "Environment file prepared. Contents (sanitized):"
-                        grep -vE '(PASSWORD|SECRET|KEY)' .env || true
+                        grep -vE '(PASSWORD|SECRET|KEY|MAIL)' .env || true
                     '''
                 }
             }
@@ -57,11 +57,11 @@ pipeline {
 
         stage('Deploy Containers with docker-compose') {
             steps {
-sh '''
-    # Use explicit project name in the command itself
-    docker-compose  down
-    docker-compose up -d
-'''
+        sh '''
+         # Use explicit project name in the command itself
+            docker-compose  down
+           docker-compose up -d
+            '''
             }
         }
     }
