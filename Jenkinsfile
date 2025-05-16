@@ -5,6 +5,7 @@ pipeline {
         DOCKER_REGISTRY = "iotinsighthub"
         DOCKER_IMAGE = "iotinsighthub"
         ENV_FILE_CONTENT = credentials('env-file-content') // Use the stored Jenkins secret
+        
     }
 
     stages {
@@ -40,6 +41,25 @@ pipeline {
                 }
             }
         }
+
+stages {
+    stage('Debug and Write .env') {
+      steps {
+        script {
+          // Print the secret content (WARNING: This exposes secrets in logs, only do in secure environment)
+          echo "ENV_FILE_CONTENT (raw):"
+          echo "${env.ENV_FILE_CONTENT}"
+
+          // Write .env file with the content from the credential
+          writeFile file: '.env', text: env.ENV_FILE_CONTENT
+
+          // Print the .env file content after writing
+          sh 'cat .env'
+        }
+      }
+    }
+  }
+
 
         stage('Deploy Containers') {
             steps {
