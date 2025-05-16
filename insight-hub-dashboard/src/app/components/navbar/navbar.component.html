@@ -14,37 +14,48 @@
 
     <!-- Primary navigation -->
     <div class="nav-section">
-      <a routerLink="/home"            routerLinkActive="active">
+      <!-- Dashboard parent link -->
+      <a 
+        routerLink="/home" 
+        routerLinkActive="active" 
+        #dash="routerLinkActive"
+        (click)="toggleSidebar()"
+      >
         <i class="fa-solid fa-table-columns"></i> Dashboard
       </a>
-      <a routerLink="/environmental"   routerLinkActive="active">
-        <i class="fa-solid fa-leaf"></i> Environmental
-      </a>
-      <a routerLink="/traffic"         routerLinkActive="active">
-        <i class="fa-solid fa-car"></i> Traffic
+
+      <!-- Sub-nav: only visible when Dashboard is active -->
+      <div class="sub-nav" *ngIf="dash.isActive">
+        <a routerLink="/traffic" routerLinkActive="active" (click)="toggleSidebar()">
+          <i class="fa-solid fa-car"></i> Traffic Sensor
+        </a>
+        <a routerLink="/environmental" routerLinkActive="active" (click)="toggleSidebar()">
+          <i class="fa-solid fa-leaf"></i> Air Pollution Sensor
+        </a>
+        <a routerLink="/street-light" routerLinkActive="active" (click)="toggleSidebar()">
+          <i class="fa-solid fa-lightbulb"></i> Street Light Sensor
+        </a>
+      </div>
+
+      <!-- Other top-level items -->
+      <a routerLink="/alerts" routerLinkActive="active">
+        <i class="fa-solid fa-bell"></i> Alerts
       </a>
     </div>
 
     <!-- System section -->
     <div class="nav-section">
       <div class="section-title">SYSTEM</div>
-
-      <a routerLink="/profile"        routerLinkActive="active">
+      <a routerLink="/profile" routerLinkActive="active">
         <i class="fa-solid fa-user"></i> Profile
       </a>
-      <a routerLink="/alerts" routerLinkActive="active">
-        <i class="fa-solid fa-bell"></i> Alerts
-      </a>
-      <!-- FIXED: absolute path to settings -->
-      <a routerLink="/settings"       routerLinkActive="active">
+      <a routerLink="/settings" routerLinkActive="active">
         <i class="fa-solid fa-gear"></i> Settings
       </a>
-
-      <a routerLink="/help"           routerLinkActive="active">
+      <a routerLink="/help" routerLinkActive="active">
         <i class="fa-solid fa-circle-info"></i> Help & Support
       </a>
-
-      <a (click)="signOut()" class="signout-link" style="cursor: pointer;">
+      <a (click)="signOut()" class="signout-link">
         <i class="fa-solid fa-right-from-bracket"></i> Sign Out
       </a>
     </div>

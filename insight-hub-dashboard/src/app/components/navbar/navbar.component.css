@@ -1,5 +1,7 @@
+/* src/app/components/navbar/navbar.component.css */
+
 .navbar {
-  background: linear-gradient(180deg, #4f46e5, #3b82f6); /* Indigo to blue */
+  background: linear-gradient(180deg, #4f46e5, #3b82f6);
   width: 250px;
   height: 100vh;
   display: flex;
@@ -18,7 +20,7 @@
 .brand {
   font-size: 22px;
   font-weight: bold;
-  color: #ffffff;
+  color: #fff;
   text-align: center;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
@@ -28,6 +30,7 @@
   padding: 0 20px;
 }
 
+/* Top-level links */
 .nav-section a {
   color: #e0e7ff;
   text-decoration: none;
@@ -44,7 +47,30 @@
 .nav-section a:hover,
 .nav-section a.active {
   background-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: #fff;
+}
+
+/* Dashboard sub-links */
+.sub-nav {
+  margin-left: 1.5rem;        /* indent */
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sub-nav a {
+  color: #e0e7ff;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.sub-nav a:hover,
+.sub-nav a.active {
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #fff;
 }
 
 .section-title {
@@ -83,7 +109,7 @@
   top: 20px;
   left: 20px;
   background-color: #4f46e5;
-  color: white;
+  color: #fff;
   padding: 10px 15px;
   font-size: 20px;
   border: none;

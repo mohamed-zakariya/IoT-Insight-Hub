@@ -16,3 +16,15 @@ body, html {
   }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* center every page by default */
+.app-content {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 1rem;
+  transition: margin-left 0.3s ease;
+}
+
+/* only when .traffic-page is on the root do we push it right */
+.traffic-page .app-content {
+  margin-left: 150px;
+}

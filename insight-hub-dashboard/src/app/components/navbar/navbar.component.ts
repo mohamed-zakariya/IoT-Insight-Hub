@@ -2,12 +2,18 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ProfileComponent } from '../profile/profile.component';
 import { CommonModule } from '@angular/common';
+import { RouterModule }    from '@angular/router';
+
 import { AuthService } from '../../services/auth_service/auth.service';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, CommonModule, LoadingSpinnerComponent],
+  imports: [
+    CommonModule,
+    RouterModule,            // ← gives you routerLink + routerLinkActive
+    LoadingSpinnerComponent
+  ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css'
 })
