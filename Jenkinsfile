@@ -49,7 +49,7 @@ pipeline {
                         cp "$SECRET_ENV_FILE" .env
                         # Safe debugging - show non-sensitive info
                         echo "Environment file prepared. Contents (sanitized):"
-                        grep -vE '(PASSWORD|SECRET|KEY|DATABASE|MAIL)' .env || true
+                        grep -vE '(PASSWORD|SECRET|KEY)' .env || true
                     '''
                 }
             }
