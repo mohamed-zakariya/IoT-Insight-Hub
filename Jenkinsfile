@@ -52,6 +52,13 @@ pipeline {
                 }
             }
         }
+        stage('Debug .env File') {
+                 steps {
+                      sh 'cat -A .env'  // shows special characters including newlines as ^M or $ for line ends
+             }
+        }
+
+        
 
         stage('Validate .env Variables') {
             steps {
@@ -77,7 +84,8 @@ pipeline {
     post {
         cleanup {
             // Remove .env file after deployment to keep secrets safe
-            sh 'rm -f .env'
+            // sh 'rm -f .env'
+            
         }
     }
 }
