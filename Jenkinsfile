@@ -53,6 +53,13 @@ pipeline {
             }
         }
 
+        stage('Debug .env File') {
+    steps {
+        sh 'cat /var/jenkins_home/workspace/Pipeline@2@tmp/secretFiles/dff23ad9-c7e4-4d04-b0c4-70881c4cc2a0/.env'
+    }
+}
+
+
         // stage('Validate .env Variables') {
         //     steps {
         //         script {
