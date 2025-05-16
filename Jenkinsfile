@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_REGISTRY = "iotinsighthub"
         DOCKER_IMAGE = "iotinsighthub"
+        ENV_FILE_CONTENT = credentials('env-file-content') // Use the stored Jenkins secret
     }
 
     stages {
@@ -43,12 +44,20 @@ pipeline {
         stage('Deploy Containers') {
             steps {
                 script {
+                    writeFile file: '.env', text: "${ENV_FILE_CONTENT}"
                     sh '''
                     docker-compose down
-                    docker-compose up -d
+                    docker-compose --env-file .env up -d
                     '''
                 }
             }
+        }
+    }
+
+    post {
+        cleanup {
+            // Ensure the .env file is removed after the pipeline execution
+            sh 'rm -f .env'
         }
     }
 }
