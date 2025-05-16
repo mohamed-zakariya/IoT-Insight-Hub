@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_REGISTRY = "iotinsighthub"
         DOCKER_IMAGE = "iotinsighthub"
-        ENV_FILE_CONTENT = credentials('env-file-content')  // Multiline secret with env vars per line
+        
     }
 
     stages {
@@ -43,48 +43,36 @@ pipeline {
 
         stage('Write .env File') {
             steps {
-                script {
-                    // Write multiline .env file from Jenkins secret
-                    writeFile file: '.env', text: env.ENV_FILE_CONTENT
-
-                    // Optional: print to verify (remove this in production!)
-                    sh 'cat .env'
-                }
-            }
-        }
-
-        stage('Debug .env File') {
-    steps {
-        sh 'cat /var/jenkins_home/workspace/Pipeline@2@tmp/secretFiles/dff23ad9-c7e4-4d04-b0c4-70881c4cc2a0/.env'
-    }
-}
-
-
-        // stage('Validate .env Variables') {
-        //     steps {
-        //         script {
-        //             echo "Checking .env content for required variables..."
-        //             sh "grep -E '^(MYSQL_ROOT_PASSWORD|MYSQL_DATABASE|SPRING_MAIL_USERNAME|SPRING_MAIL_PASSWORD)=' .env"
-        //         }
-        //     }
-        // }
-
-        stage('Deploy Containers with docker-compose') {
-            steps {
-                script {
+                withCredentials([file(credentialsId: 'env-file-content', variable: 'SECRET_ENV_FILE')]) {
                     sh '''
-                    docker-compose down
-                    docker-compose --env-file .env up -d
+                        # Copy the secret file to .env
+                        cp "$SECRET_ENV_FILE" .env
+                        # Safe debugging - show non-sensitive info
+                        echo "Environment file prepared. Contents (sanitized):"
+                        grep -vE '(PASSWORD|SECRET|KEY)' .env || true
                     '''
                 }
             }
         }
+
+        stage('Deploy Containers with docker-compose') {
+            steps {
+                sh '''
+                    docker-compose down
+                    docker-compose --env-file .env up -d
+                '''
+            }
+        }
     }
 
-    // post {
-    //     cleanup {
-    //         // Remove .env file after deployment to keep secrets safe
-    //         sh 'rm -f .env'
-    //     }
-    // }
+    post {
+        cleanup {
+            sh '''
+                # Securely remove .env file
+                if [ -f .env ]; then
+                    shred -u .env 2>/dev/null || rm -f .env
+                fi
+            '''
+        }
+    }
 }
