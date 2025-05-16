@@ -74,10 +74,10 @@ pipeline {
         }
     }
 
-    post {
-        cleanup {
-            // Remove .env file after deployment to keep secrets safe
-            sh 'rm -f .env'
-        }
-    }
+    // post {
+    //     cleanup {
+    //         // Remove .env file after deployment to keep secrets safe
+    //         sh 'rm -f .env'
+    //     }
+    // }
 }
