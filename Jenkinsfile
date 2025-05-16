@@ -16,7 +16,7 @@ pipeline {
         stage('Build Backend Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_REGISTRY}/dxc_backend:latest", "-f dockerfile DXC_Backend")
+                    docker.build("${DOCKER_REGISTRY}/dxc_backend:latest", "-f DXC_Backend/dockerfile .")
                 }
             }
         }
@@ -24,7 +24,7 @@ pipeline {
         stage('Build Frontend Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_REGISTRY}/insight-hub-dashboard:latest", "-f dockerfile insight-hub-dashboard")
+                    docker.build("${DOCKER_REGISTRY}/insight-hub-dashboard:latest", "-f insight-hub-dashboard/dockerfile .")
                 }
             }
         }
