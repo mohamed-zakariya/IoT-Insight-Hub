@@ -53,9 +53,7 @@ services:
 volumes:
   mysql_data:
     name: iot-hub-mysql-data  # Fixed volume name
-    external: true  # Will reuse existing volume
 
 networks:
   iot_net:
     name: iot-hub-network  # Fixed network name
-    external: true  # Will reuse existing network
