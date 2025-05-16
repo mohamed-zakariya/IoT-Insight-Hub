@@ -59,8 +59,8 @@ pipeline {
             steps {
 sh '''
     # Use explicit project name in the command itself
-    docker-compose --project-name iot-hub down
-    docker-compose --project-name iot-hub up -d
+    docker-compose  down
+    docker-compose up -d
 '''
             }
         }

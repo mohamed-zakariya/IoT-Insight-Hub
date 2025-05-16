@@ -1,21 +1,11 @@
 version: "3.8"
 
 services:
-  # Persistent volume initializer (no-op)
-  mysql-data:
-    image: iotinsighthub/mysql-data:latest
-    container_name: iot_mysql_data
-    volumes:
-      - mysql_data:/var/lib/mysql
-    command: ["true"]
-
-  # MySQL database
+  # MySQL database (removed the separate mysql-data service)
   mysql:
     image: mysql:8.3
     container_name: iot_mysql
-    restart: always
-    depends_on:
-      - mysql-data
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -24,10 +14,10 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s  # Reduced from 10s
+      timeout: 3s   # Reduced from 5s
+      retries: 3    # Reduced from 5
     networks:
       - iot_net
 
@@ -35,23 +25,16 @@ services:
   backend:
     image: iotinsighthub/dxc_backend:latest
     container_name: iot_backend
-    restart: always
+    restart: unless-stopped
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://iot_mysql:3306/sql8774445
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}  # Changed to service name
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
-
-      # Gmail SMTP settings
-      SPRING_MAIL_HOST: smtp.gmail.com
-      SPRING_MAIL_PORT: 587
-      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
-      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
-      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 30000  # Added connection timeout
     ports:
       - "8080:8080"
     networks:
@@ -61,9 +44,7 @@ services:
   frontend:
     image: iotinsighthub/insight-hub-dashboard:latest
     container_name: iot_frontend
-    restart: always
-    depends_on:
-      - backend
+    restart: unless-stopped
     ports:
       - "4200:80"
     networks:
@@ -71,7 +52,10 @@ services:
 
 volumes:
   mysql_data:
+    name: iot-hub-mysql-data  # Fixed volume name
+    external: true  # Will reuse existing volume
 
 networks:
   iot_net:
-    driver: bridge
+    name: iot-hub-network  # Fixed network name
+    external: true  # Will reuse existing network
