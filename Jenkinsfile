@@ -57,10 +57,11 @@ pipeline {
 
         stage('Deploy Containers with docker-compose') {
             steps {
-                sh '''
-                    docker-compose down
-                    docker-compose  up -d
-                '''
+sh '''
+    # Use explicit project name in the command itself
+    docker-compose --project-name iot-hub down
+    docker-compose --project-name iot-hub up -d
+'''
             }
         }
     }

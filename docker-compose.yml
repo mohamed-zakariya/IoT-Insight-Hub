@@ -33,7 +33,7 @@ services:
 
   # Backend service
   backend:
-    image: iotinsighthub/dxc_backend:2.1
+    image: iotinsighthub/dxc_backend:latest
     container_name: iot_backend
     restart: always
     depends_on:
@@ -59,7 +59,7 @@ services:
 
   # Frontend service
   frontend:
-    image: iotinsighthub/insight-hub-dashboard:2.1
+    image: iotinsighthub/insight-hub-dashboard:latest
     container_name: iot_frontend
     restart: always
     depends_on:
