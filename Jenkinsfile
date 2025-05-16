@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_REGISTRY = "iotinsighthub"
         DOCKER_IMAGE = "iotinsighthub"
-        ENV_FILE_CONTENT = credentials('env-file-content') // Jenkins secret with multiline env variables
+        ENV_FILE_CONTENT = credentials('env-file-content')  // Multiline secret with env vars per line
     }
 
     stages {
@@ -41,17 +41,23 @@ pipeline {
             }
         }
 
-        stage('Write .env file securely') {
+        stage('Write .env File') {
             steps {
                 script {
-                    // Write the .env file from secret without interpolation
+                    // Write multiline .env file from Jenkins secret
                     writeFile file: '.env', text: env.ENV_FILE_CONTENT
 
-                    // Validate presence of important environment variables in the file
-                    sh '''
+                    // Optional: print to verify (remove this in production!)
+                    sh 'cat .env'
+                }
+            }
+        }
+
+        stage('Validate .env Variables') {
+            steps {
+                script {
                     echo "Checking .env content for required variables..."
-                    grep -E "^(MYSQL_ROOT_PASSWORD|MYSQL_DATABASE|SPRING_MAIL_USERNAME|SPRING_MAIL_PASSWORD)=" .env || echo "Warning: Some required variables are missing in .env"
-                    '''
+                    sh "grep -E '^(MYSQL_ROOT_PASSWORD|MYSQL_DATABASE|SPRING_MAIL_USERNAME|SPRING_MAIL_PASSWORD)=' .env"
                 }
             }
         }
@@ -60,7 +66,6 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    docker-compose --env-file .env config || { echo "docker-compose config failed"; exit 1; }
                     docker-compose down
                     docker-compose --env-file .env up -d
                     '''
@@ -71,7 +76,7 @@ pipeline {
 
     post {
         cleanup {
-            // Remove .env file after pipeline execution for security
+            // Remove .env file after deployment to keep secrets safe
             sh 'rm -f .env'
         }
     }
