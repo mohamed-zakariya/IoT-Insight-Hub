@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_REGISTRY = "iotinsighthub"
         DOCKER_IMAGE = "iotinsighthub"
-        ENV_FILE_CONTENT = credentials('env-file-content') // Use the stored Jenkins secret
+        ENV_FILE_CONTENT = credentials('env-file-content') // Jenkins secret with multiline env variables
     }
 
     stages {
@@ -41,27 +41,26 @@ pipeline {
             }
         }
 
-        stage('Debug and Write .env') {
+        stage('Write .env file securely') {
             steps {
                 script {
-                    // Print the secret content (WARNING: Exposes secrets in logs, use in a secure environment)
-                    echo "ENV_FILE_CONTENT (raw):"
-                    echo "${env.ENV_FILE_CONTENT}"
-
-                    // Write .env file with the content from the credential
+                    // Write the .env file from secret without interpolation
                     writeFile file: '.env', text: env.ENV_FILE_CONTENT
 
-                    // Print the .env file content after writing
-                    sh 'cat .env'
+                    // Validate presence of important environment variables in the file
+                    sh '''
+                    echo "Checking .env content for required variables..."
+                    grep -E "^(MYSQL_ROOT_PASSWORD|MYSQL_DATABASE|SPRING_MAIL_USERNAME|SPRING_MAIL_PASSWORD)=" .env || echo "Warning: Some required variables are missing in .env"
+                    '''
                 }
             }
         }
 
-        stage('Deploy Containers') {
+        stage('Deploy Containers with docker-compose') {
             steps {
                 script {
-                    writeFile file: '.env', text: "${ENV_FILE_CONTENT}"
                     sh '''
+                    docker-compose --env-file .env config || { echo "docker-compose config failed"; exit 1; }
                     docker-compose down
                     docker-compose --env-file .env up -d
                     '''
@@ -72,7 +71,7 @@ pipeline {
 
     post {
         cleanup {
-            // Ensure the .env file is removed after the pipeline execution
+            // Remove .env file after pipeline execution for security
             sh 'rm -f .env'
         }
     }
