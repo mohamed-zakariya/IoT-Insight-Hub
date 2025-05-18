@@ -1,0 +1,81 @@
+version: "3.8"
+
+services:
+  # Persistent volume initializer (no-op)
+  mysql-data:
+    image: iotinsighthub/mysql-data:latest
+    platform: linux/amd64
+    container_name: iot_mysql_data
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: ["true"]
+
+  # MySQL database
+  mysql:
+    image: mysql:8.3
+    platform: linux/amd64
+    container_name: iot_mysql
+    restart: always
+    depends_on:
+      - mysql-data
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - iot_net
+
+  # Backend service
+  backend:
+    image: iotinsighthub/dxc_backend:2.1
+    platform: linux/amd64
+    container_name: iot_backend
+    restart: always
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://iot_mysql:3306/sql8774445
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      # Gmail SMTP settings
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "true"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "true"
+    ports:
+      - "8080:8080"
+    networks:
+      - iot_net
+
+  # Frontend service
+  frontend:
+    image: iotinsighthub/insight-hub-dashboard:2.1
+    platform: linux/amd64
+    container_name: iot_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+    networks:
+      - iot_net
+
+volumes:
+  mysql_data:
+
+networks:
+  iot_net:
+    driver: bridge

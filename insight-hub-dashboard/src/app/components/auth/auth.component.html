@@ -1,0 +1,283 @@
+<div class="signup-wrapper" [class.signup-mode]="isSignupMode">
+
+
+  <app-loading-spinner *ngIf="loading"></app-loading-spinner>
+
+  <div class="signup-inner-container">
+    <div class="panel left-panel" [class.slide-right]="isSignupMode">
+      <!-- Conditional image rendering based on mode -->
+      <img *ngIf="isSignupMode; else signupImage" src="assets/93.png" alt="Signin Graphic" />
+      <ng-template #signupImage>
+        <img src="assets/94.png" alt="Signup Graphic" />
+      </ng-template>
+      
+      <div class="panel-content">
+        <h2>{{ isSignupMode ? 'Join Us!' : 'New Here?' }}</h2>
+        <p>
+          {{ isSignupMode
+            ? 'Create your account to manage your IoT devices and get real-time insights.'
+            : 'Sign up to start monitoring your IoT devices in real time and explore data-driven insights.' }}
+        </p>
+        <button class="main-button" (click)="toggleMode()">
+          {{ isSignupMode ? 'SIGN IN' : 'CREATE ACCOUNT' }}
+        </button>
+      </div>
+    </div>
+
+    <div class="panel right-panel" [class.slide-left]="isSignupMode">
+      <div class="panel-content" >
+        <h2>
+          {{ isSignupMode ? 'Create Your Account' : 'Welcome Back to IoT Dashboard' }}
+        </h2>
+
+        <div class="social-icons" >
+          <button><i class="fab fa-facebook-f" style="color: blue;"></i></button>
+          <button><i class="fab fa-google" style="color: red;"></i></button>
+          <button><i class="fab fa-discord" style="color: darkblue;"></i></button>
+        </div>
+
+        <p class="small-text">
+          {{
+            isSignupMode
+              ? 'or sign up using your email'
+              : 'or sign in using your email and password'
+          }}
+        </p>
+
+        <div *ngIf="!forgetPassword">
+          <form [formGroup]="isSignupMode ? authFormSignup : authFormLogin" (ngSubmit)="onSubmit()">
+            
+            <!-- First Name input -->
+            <div class="input-group" *ngIf="isSignupMode">
+              <i class="fas fa-pen"></i> <!-- Pen icon for first name -->
+              <input
+              type="text"
+              formControlName="firstName"
+              placeholder="First Name"
+              [ngClass]="{ 'is-invalid': f['firstName'].invalid && (f['firstName'].touched || submitted) }"
+            />
+
+              <div class="tooltip-error-left" *ngIf="submitted && f['firstName']?.invalid">
+                <span *ngIf="f['firstName'].errors?.['required']">First name is required.</span>
+                <span *ngIf="f['firstName'].errors?.['invalidLength']">Must be between 2 and 50 characters.</span>
+                <span *ngIf="f['firstName'].errors?.['invalidCharacters']">Only letters, hyphens, apostrophes allowed.</span>
+              </div>
+            </div>
+            
+            
+
+            <!-- Last Name input -->
+            <div class="input-group" *ngIf="isSignupMode">
+              <i class="fas fa-id-card"></i> <!-- ID Card icon for last name -->
+              <input
+              type="text"
+              formControlName="lastName"
+              placeholder="Last Name"
+              [ngClass]="{ 'is-invalid': f['lastName'].invalid && (f['lastName'].touched || submitted) }"
+            />
+
+              <div class="tooltip-error-left" *ngIf="submitted && f['lastName']?.invalid">
+                <span *ngIf="f['lastName'].errors?.['required']">Last Name is required.</span>
+                <span *ngIf="f['lastName'].errors?.['invalidLength']">Must be between 2 and 50 characters.</span>
+                <span *ngIf="f['lastName'].errors?.['invalidCharacters']">Only letters, hyphens, apostrophes allowed.</span>
+              </div>
+            </div>
+            
+
+
+            <!-- Username input -->
+            <div class="input-group" *ngIf="isSignupMode">
+              <i class="fas fa-user"></i>
+              <input
+              type="text"
+              placeholder="Username"
+              formControlName="username"
+              [ngClass]="{ 'is-invalid': f['username'].invalid && (f['username'].touched || submitted) }"
+              />
+              <div class="tooltip-error-left" *ngIf="submitted && f['username']?.invalid">
+                <span *ngIf="f['username'].errors?.['required']">Username is required.</span>
+                <span *ngIf="!f['username'].errors?.['required'] && f['username'].errors?.['invalidLength']">
+                  Username must be between 5 and 30 characters.
+                </span>
+                <span *ngIf="!f['username'].errors?.['required'] && !f['username'].errors?.['invalidLength'] && f['username'].errors?.['mustStartWithLetter']">
+                  Username must start with a letter.
+                </span>
+                <span *ngIf="!f['username'].errors?.['required'] && !f['username'].errors?.['invalidLength'] && !f['username'].errors?.['mustStartWithLetter'] && f['username'].errors?.['invalidCharacters']">
+                  Only letters, numbers, '.', '-', and '_' are allowed.
+                </span>
+                <span *ngIf="f['username'].errors?.['containsSpaces']">Username cannot contain spaces.</span>
+                <span *ngIf="f['username'].errors?.['consecutiveSpecials']">No consecutive '.', '-', or '_'.</span>
+                <span *ngIf="f['username'].errors?.['leadingOrTrailingSpecial']">Cannot start or end with '.', '-', or '_'.</span>
+                <span *ngIf="f['username'].errors?.['reservedWord']">This username is reserved.</span>
+                <span *ngIf="f['username'].errors?.['commonPattern']">This username follows a common or weak pattern.</span>
+                <span *ngIf="f['username'].errors?.['usernameExists']">Username already exists. Please choose another one.</span>
+              </div>
+              
+              
+            </div>
+
+            <div class="input-group gender-group" *ngIf="isSignupMode">
+              <label class="gender-label">Gender:</label>
+              <div class="gender-options">
+                <label class="gender-option">
+                  <input type="radio" formControlName="gender" value="Male" />
+                  <span>
+                    <i class="fas fa-mars" style="color: rgb(5, 92, 205);"></i>
+                  </span>
+                </label>
+                <label class="gender-option">
+                  <input
+                  type="radio"
+                  formControlName="gender"
+                  value="Female"
+                  [ngClass]="{ 'is-invalid': f['gender'].invalid && (submitted) }"
+                  />
+                  <span>
+                    <i class="fas fa-venus" style="color: palevioletred;"></i>
+                  </span>
+                </label>
+              </div>
+            
+              <!-- 🛠️ Add this part to show validation error -->
+              <div class="tooltip-error-left" *ngIf="submitted && f['gender']?.invalid">
+                <span *ngIf="f['gender'].errors?.['required']">Gender is required.</span>
+              </div>
+            </div>
+            
+            
+
+            <!-- Date of Birth input -->
+            <div class="input-group" *ngIf="isSignupMode">
+              <i class="fa-regular fa-calendar"></i>
+              <input
+              type="date"
+              placeholder="Date of Birth"
+              formControlName="dob"
+              [ngClass]="{ 'is-invalid': f['dob'].invalid && (f['dob'].touched || submitted) }"
+              />
+              <div class="tooltip-error-left" *ngIf="(submitted) && f['dob']?.invalid">
+                <small *ngIf="f['dob'].errors?.['required']">Date of birth is required</small>
+                <small *ngIf="!f['dob'].errors?.['required'] && f['dob'].errors?.['invalidAge']">You must be between 1 and 120 years old</small>
+              </div>
+
+              <div class="d-flex justify-content-center">
+                <div
+                  class="border rounded"
+                  data-coreui-locale="en-US"
+                  data-coreui-start-date="2024/02/13"
+                  data-coreui-toggle="calendar"
+                ></div>
+              </div>
+            </div>
+
+            
+
+
+            <!-- Email input -->
+            <div class="input-group">
+              <i class="fas fa-envelope"></i>
+              <input
+              type="email"
+              formControlName="email"
+              placeholder="Email"
+              [ngClass]="{ 'is-invalid': f['email'].invalid && (f['email'].touched || submitted) }"
+            />
+                          
+              <div class="tooltip-error-left" *ngIf="(submitted) && f['email']?.invalid">
+                <small *ngIf="f['email'].errors?.['required']">Email is required.</small>
+                <small *ngIf="f['email'].errors?.['email']">Enter a valid email address.</small>
+                <small *ngIf="f['email'].errors?.['emailExists']">Email already exists. Please use another one.</small> <!-- 👈 added this line -->
+                <small *ngIf="f['email'].errors?.['invalidEmail']">Enter a valid email address.</small>
+
+              </div>
+            </div>
+
+
+
+            <!-- Password Field -->
+            <div class="input-group-password-class">
+              <i class="fas fa-lock lock-icon"></i>
+              <input
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Password"
+                [ngClass]="{ 'is-invalid': f['password'].invalid && (f['password'].touched || submitted) }"
+              />
+              <i 
+                class="fa-solid toggle-eye" 
+                [class.fa-eye]="!showPassword" 
+                [class.fa-eye-slash]="showPassword" 
+                (click)="togglePasswordVisibility()"
+              ></i>
+              
+              <!-- Error Tooltip -->
+              <div class="tooltip-error-left" *ngIf="submitted && f['password']?.invalid">
+                <span *ngIf="f['password'].errors?.['required']">Password is required.</span>
+                <span *ngIf="f['password'].errors?.['minlength']">Password must be at least 8 characters.</span>
+                <span *ngIf="f['password'].errors?.['maxlength']">Password can't exceed 64 characters.</span>
+                <span *ngIf="f['password'].errors?.['weakPassword']">
+                  Must include uppercase, lowercase, number, and special character.
+                </span>
+              </div>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="input-group-password-class" *ngIf="isSignupMode">
+              <i class="fas fa-lock lock-icon"></i>
+              <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              placeholder="Confirm Password"
+              (input)="onConfirmPasswordTouched()"
+              [ngClass]="{ 'is-invalid': f['confirmPassword'].invalid && (f['confirmPassword'].touched || submitted) || passwordsDoNotMatch }"
+            />
+              <i 
+                class="fa-solid toggle-eye" 
+                [class.fa-eye]="!showConfirmPassword" 
+                [class.fa-eye-slash]="showConfirmPassword" 
+                (click)="toggleConfirmPasswordVisibility()"
+              ></i>
+              
+              <!-- Error Tooltip -->
+              <div class="tooltip-error-left" *ngIf="submitted && (f['confirmPassword']?.invalid || passwordsDoNotMatch)">
+                <span *ngIf="f['confirmPassword'].errors?.['required']">Confirm Password is required.</span>
+                <span *ngIf="passwordsDoNotMatch">Passwords do not match.</span>
+              </div>              
+            </div>
+
+            
+              
+            
+            <div class="forgot-password-wrapper" *ngIf="!isSignupMode">
+              <a (click)="forgetPasswordClick()" class="forgot-password-link">
+                <i class="fa fa-key"></i> Forgot Password?
+              </a>
+            </div>
+            
+            <div *ngIf="authError" class="error-message">
+              <i class="fa fa-exclamation-circle"></i> {{ authError }}
+            </div>
+            
+            
+            
+
+            <button class="main-button" type="submit" >
+              {{ isSignupMode ? 'SIGN UP' : 'SIGN IN' }}
+            </button>
+        
+          </form>
+        </div>
+
+
+        <app-forgot-password
+        *ngIf="forgetPassword"
+        (backToSignIn)="backToSignIn()"
+      ></app-forgot-password>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+

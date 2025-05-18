@@ -1,0 +1,10 @@
+<!-- src/app/app.component.html -->
+<app-navbar *ngIf="showNavbar"></app-navbar>
+
+<!-- your little bell with preview lives here -->
+<app-alert-button></app-alert-button>
+
+<!-- everything else goes here -->
+<main class="app-content">
+  <router-outlet></router-outlet>
+</main>

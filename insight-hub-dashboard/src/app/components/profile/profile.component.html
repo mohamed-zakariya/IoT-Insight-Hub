@@ -1,0 +1,188 @@
+<div class="profile-wrapper">
+    <h2>👤 Account Preferences</h2>
+  
+    <div class="profile-header">
+      <img src="assets/profile.jpeg" alt="Profile" class="profile-pic" />
+      <div class="profile-buttons">
+        <button class="btn outline">📁 Change</button>
+        <button class="btn outline danger">🗑️ Remove</button>
+      </div>
+    </div>
+  
+    <form #profileForm="ngForm" (ngSubmit)="updateProfile(profileForm)">
+      <div class="profile-form">
+        <div class="input-group">
+          <label>First name</label>
+          <input type="text" [(ngModel)]="user.firstName" name="firstName" required />
+        </div>
+    
+        <div class="input-group">
+          <label>Last name</label>
+          <input type="text" [(ngModel)]="user.lastName" name="lastName" required />
+        </div>
+
+
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" [(ngModel)]="user.username" name="username" readonly class="readonly-dark"  />
+        </div>
+        
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="user.email" name="email" readonly class="readonly-dark" />
+        </div>
+
+
+        <div class="input-group">
+          <label>Gender</label>
+          <input type="text" [value]="user.gender" readonly class="readonly-dark" />
+        </div>
+        
+        
+        <div class="input-group">
+          <label>age</label>
+          <input type="number" [(ngModel)]="user.age" name="age" readonly class="readonly-dark" />
+        </div>
+    
+        <div class="input-group">
+          <label>Current position</label>
+          <input type="text" [(ngModel)]="user.current_postion" name="position" />
+        </div>
+    
+        <div class="input-group">
+          <label>Location</label>
+          <input type="text" [(ngModel)]="user.location" name="location" />
+        </div>
+    
+        <div class="input-group full">
+          <label>Description</label>
+          <textarea rows="5" [(ngModel)]="user.description" name="description"></textarea>
+        </div>
+      </div>
+    
+      <div *ngIf="updateMessage" [ngClass]="{
+        'success-message': updateSuccess,
+        'error-message': updateError
+      }">
+        {{ updateMessage }}
+      </div>
+      
+      
+      <!-- Profile Update Buttons -->
+      <div class="profile-actions">
+        <button class="btn outline" type="button" (click)="cancelEdit()">Cancel</button>
+        <button class="btn primary" type="submit">Update</button>
+      </div>
+    </form>
+    
+    <!-- ✅ Password Change Section with Separate Button -->
+    <!-- ✅ Template-Driven Angular Form -->
+    <form #passwordForm="ngForm" (ngSubmit)="changePassword(passwordForm)" class="password-section">
+      <h3>🔐 Change Password</h3>
+
+      <!-- OLD PASSWORD -->
+    <div class="input-group password-toggle">
+      <label for="oldPassword">Old Password</label>
+      <div class="password-wrapper">
+        <input
+          [type]="showOldPassword ? 'text' : 'password'"
+          id="oldPassword"
+          name="oldPassword"
+          [(ngModel)]="passwordData.oldPassword"
+          (input)="oldPasswordError = false"
+          required
+          placeholder="Enter old password"
+        />
+        <i
+          class="fa-solid"
+          [class.fa-eye]="!showOldPassword"
+          [class.fa-eye-slash]="showOldPassword"
+          (click)="showOldPassword = !showOldPassword"
+        ></i>
+      </div>
+    </div>
+
+    <!-- NEW PASSWORD -->
+    <div class="input-group password-toggle">
+      <label for="newPassword">New Password</label>
+      <div class="password-wrapper">
+        <input
+          [type]="showNewPassword ? 'text' : 'password'"
+          id="newPassword"
+          name="newPassword"
+          [(ngModel)]="passwordData.newPassword"
+          required
+          placeholder="Enter new password"
+        />
+        <i
+          class="fa-solid"
+          [class.fa-eye]="!showNewPassword"
+          [class.fa-eye-slash]="showNewPassword"
+          (click)="showNewPassword = !showNewPassword"
+        ></i>
+      </div>
+    </div>
+
+    <!-- CONFIRM PASSWORD -->
+    <div class="input-group password-toggle">
+      <label for="confirmPassword">Confirm New Password</label>
+      <div class="password-wrapper">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="passwordData.confirmPassword"
+          required
+          placeholder="Re-enter new password"
+        />
+        <i
+          class="fa-solid"
+          [class.fa-eye]="!showConfirmPassword"
+          [class.fa-eye-slash]="showConfirmPassword"
+          (click)="showConfirmPassword = !showConfirmPassword"
+        ></i>
+      </div>
+    </div>
+  
+
+
+  
+    <div
+    *ngIf="passwordMismatch"
+    class="error-message"
+  >
+    🚫 New password and confirmation do not match.
+  </div>
+
+  <div
+    *ngIf="oldPasswordError"
+    class="error-message"
+  >
+    ⚠️ The current password you entered is incorrect.
+  </div>
+
+  <div
+    *ngIf="passwordChangeSuccess"
+    class="success-message"
+  >
+    ✅ Your password has been updated successfully.
+  </div>
+
+  <!-- Server-Side Error Message
+  <div *ngIf="serverErrorMessage" class="error-message">
+    ⚠️ {{ serverErrorMessage }}
+  </div> -->
+
+
+
+
+
+  <div class="password-actions">
+    <button type="button" class="btn outline" (click)="resetForm(passwordForm)">Cancel</button>
+    <button type="submit" class="btn primary" [disabled]="!passwordForm.valid">Change Password</button>
+  </div>
+</form>
+
+  
+  
+  

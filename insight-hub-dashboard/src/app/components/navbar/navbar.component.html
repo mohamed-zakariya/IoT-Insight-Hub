@@ -1,0 +1,58 @@
+<!-- Hamburger toggle button for mobile -->
+<button class="hamburger" *ngIf="!sidebarVisible" (click)="toggleSidebar()">☰</button>
+
+<!-- Sidebar navigation -->
+<nav class="navbar" [class.show]="sidebarVisible">
+  <button class="close-btn" *ngIf="sidebarVisible" (click)="toggleSidebar()">✖</button>
+
+  <div class="navbar-top">
+    <!-- Brand / logo -->
+    <div class="brand">📊 Insight Hub</div>
+
+    <!-- Optional loading spinner -->
+    <app-loading-spinner *ngIf="loading" class="sidebar-spinner"></app-loading-spinner>
+
+    <!-- Primary navigation -->
+    <div class="nav-section">
+      <a routerLink="/home"            routerLinkActive="active">
+        <i class="fa-solid fa-table-columns"></i> Dashboard
+      </a>
+      <a routerLink="/environmental"   routerLinkActive="active">
+        <i class="fa-solid fa-leaf"></i> Environmental
+      </a>
+      <a routerLink="/traffic"         routerLinkActive="active">
+        <i class="fa-solid fa-car"></i> Traffic
+      </a>
+    </div>
+
+    <!-- System section -->
+    <div class="nav-section">
+      <div class="section-title">SYSTEM</div>
+
+      <a routerLink="/profile"        routerLinkActive="active">
+        <i class="fa-solid fa-user"></i> Profile
+      </a>
+      <a routerLink="/alerts" routerLinkActive="active">
+        <i class="fa-solid fa-bell"></i> Alerts
+      </a>
+      <!-- FIXED: absolute path to settings -->
+      <a routerLink="/settings"       routerLinkActive="active">
+        <i class="fa-solid fa-gear"></i> Settings
+      </a>
+
+      <a routerLink="/help"           routerLinkActive="active">
+        <i class="fa-solid fa-circle-info"></i> Help & Support
+      </a>
+
+      <a (click)="signOut()" class="signout-link" style="cursor: pointer;">
+        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+      </a>
+    </div>
+  </div>
+
+  <!-- Footer / system status -->
+  <div class="system-status">
+    <div class="status-dot"></div>
+    <span>All systems operational</span>
+  </div>
+</nav>

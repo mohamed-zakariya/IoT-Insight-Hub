@@ -1,0 +1,189 @@
+body {
+  background-color: #f9f9fb; /* light background */
+  color: #333; /* dark text for better readability */
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.dashboard-container {
+  margin-left: 250px;
+  padding: 30px;
+  background-color: #f9f9fb;
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Header Section */
+.dashboard-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+  color: black;
+}
+
+.dashboard-header p {
+  font-size: 0.95rem;
+  color: #aaa;
+}
+
+/* Stat Cards */
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  background-color: #1e2130;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: rgb(67, 57, 57);
+}
+
+.stat-desc {
+  font-size: 0.85rem;
+  margin-top: 8px;
+  color: #66cc99;
+}
+
+
+/* Charts */
+.charts {
+  min-height: 200px;
+  background-color: #1e2130;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-container {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .stat-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.sensor-card {
+  background-color: #1e2130;
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.2);
+}
+
+.sensor-card h4 {
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: #e0e0e0;
+}
+
+.sensor-card .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.sensor-card .location {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-top: 5px;
+}
+
+/* Sensor status accents */
+
+
+
+.stat-card,
+.sensor-card,
+.charts {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-left: 4px solid transparent;
+}
+
+/* Stat Card Colors */
+.stat-card.purple {
+  border-left-color: #a78bfa;
+}
+.stat-card.green {
+  border-left-color: #34d399;
+}
+.stat-card.red {
+  border-left-color: #f87171;
+}
+.stat-card.yellow {
+  border-left-color: #fcd34d;
+}
+
+.sensor-card.online {
+  border-left-color: #34d399;
+}
+.sensor-card.warning {
+  border-left-color: #fcd34d;
+}
+.sensor-card.critical {
+  border-left-color: #f87171;
+}
+.sensor-card h4 {
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: #ccc;
+}
+
+.sensor-card .value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: rgb(67, 57, 57);
+}
+
+.sensor-card .location {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 5px;
+}
+
+.stat-icon {
+  font-size: 1.8rem;
+  margin-bottom: 10px;
+  color: #4b5563; /* dark gray */
+}
+
+.stat-card.purple .stat-icon {
+  color: #7c3aed;
+}
+.stat-card.green .stat-icon {
+  color: #22c55e;
+}
+.stat-card.red .stat-icon {
+  color: #ef4444;
+}
+.stat-card.yellow .stat-icon {
+  color: #facc15;
+}

@@ -1,0 +1,64 @@
+<!-- src/app/components/settings/settings.component.html -->
+
+<div class="settings-container">
+  <h2>Configure Alert Thresholds</h2>
+
+  <!-- 1) Sensor Category Dropdown -->
+  <div class="form-group">
+    <label for="sensor-select">Sensor Category:</label>
+    <select
+      id="sensor-select"
+      [(ngModel)]="selectedSensor"
+      (change)="onSensorSelect(selectedSensor)"
+    >
+      <option value="" disabled>-- select category --</option>
+      <option *ngFor="let c of sensors" [value]="c">{{ c }}</option>
+    </select>
+  </div>
+
+  <!-- 2) Threshold Settings Table -->
+  <table *ngIf="selectedSensor" class="metrics-table">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Alert Type</th>
+        <th>Threshold</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let m of metrics">
+        <!-- Metric Label -->
+        <td>{{ m.label }}</td>
+
+        <!-- Above/Below -->
+        <td>
+          <select [(ngModel)]="form[m.key].alertType">
+            <option *ngFor="let t of alertTypes" [value]="t">{{ t }}</option>
+          </select>
+        </td>
+
+        <!-- Numeric Threshold Input -->
+        <td>
+          <input
+            type="number"
+            [step]="m.type === 'float' ? 'any' : '1'"
+            [(ngModel)]="form[m.key].threshold"
+            (ngModelChange)="validate(m)"
+            [class.invalid]="errors[m.key]"
+          />
+          <div class="error-msg" *ngIf="errors[m.key]">
+            {{ errors[m.key] }}
+          </div>
+        </td>
+
+        <!-- Adjust Button -->
+        <td>
+          <button (click)="onAdjust(m)" [disabled]="!!errors[m.key]">
+            Adjust
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

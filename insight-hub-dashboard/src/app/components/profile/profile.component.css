@@ -1,0 +1,241 @@
+/* Main Wrapper */
+.profile-wrapper {
+  background: white;
+  padding: 15px 24px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+/* Heading */
+.profile-wrapper h2 {
+  font-size: 1.5rem;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+/* Header with image + buttons */
+.profile-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.profile-pic {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.btn.outline {
+  background: transparent;
+  border: 1px solid #8e62fe;
+  color: #8e62fe;
+}
+
+.btn.outline:hover {
+  background-color: #f3ebff;
+}
+
+.btn.outline.danger {
+  border-color: #f13e3e;
+  color: #f13e3e;
+}
+
+.btn.outline.danger:hover {
+  background-color: #ffecec;
+}
+
+.btn.primary {
+  background-color: #8e62fe;
+  color: white;
+  border: none;
+}
+
+.btn.primary:hover {
+  background-color: #774ed9;
+}
+
+/* Form Layout */
+.profile-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-weight: 500;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.input-group input,
+.input-group textarea {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: #8e62fe;
+  outline: none;
+}
+
+.input-group.full {
+  grid-column: span 2;
+}
+
+/* Password Section */
+.password-section {
+  margin-top: 30px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.password-section h3 {
+  font-size: 1.2rem;
+  color: #444;
+  margin-bottom: 16px;
+}
+
+.password-section .input-group {
+  max-width: 100%;
+}
+
+/* Actions */
+.profile-actions,
+.password-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* Readonly Styling */
+.readonly-dark {
+  background-color: #e0e0e0;
+  color: #333;
+  cursor: not-allowed;
+}
+
+/* Error/Success Messages */
+.error-message,
+.success-message {
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-top: 8px;
+  font-size: 0.8rem;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.error-message {
+  color: #f13e3e;
+  background-color: #ffecec;
+  border: 1px solid #f13e3e;
+}
+
+.success-message {
+  color: #2e7d32;
+  background-color: #e6f4ea;
+  border: 1px solid #81c784;
+}
+
+/* Password Wrapper */
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding-right: 2rem;
+}
+
+.password-wrapper i {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.password-wrapper i:hover {
+  color: #333;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .profile-wrapper {
+    padding: 20px;
+    margin: 10px;
+  }
+
+  .input-group.full {
+    grid-column: span 1;
+  }
+
+  .profile-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-wrapper h2 {
+    font-size: 1.3rem;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-buttons {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .profile-actions,
+  .password-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .password-section .input-group {
+    max-width: 100%;
+  }
+}
