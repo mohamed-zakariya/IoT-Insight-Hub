@@ -84,3 +84,11 @@
 .view-all a:hover {
   color: #155a9a;
 }
+
+/* 
+.main-app-layout{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+} */

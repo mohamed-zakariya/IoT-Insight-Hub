@@ -1,5 +1,6 @@
 <div class="page">
-  
+  <!-- Dashboard Grid Layout -->
+  <div class="dashboard-grid">
     <!-- Filters -->
     <mat-card class="filter-card">
       <div class="filter-row">
@@ -31,27 +32,29 @@
   
     <!-- Visualization Controls -->
     <div class="visualization-controls">
-      <button mat-raised-button color="primary" [matMenuTriggerFor]="visualizationMenu">
-        <mat-icon>insights</mat-icon>
-        {{currentVisualization | titlecase}} View
-      </button>
-      <mat-menu #visualizationMenu="matMenu">
-        <button mat-menu-item (click)="setVisualization('line')">
-          <mat-icon>show_chart</mat-icon> Line Chart
+      <div class="visualization-selector">
+        <button mat-raised-button color="primary" [matMenuTriggerFor]="visualizationMenu">
+          <mat-icon>insights</mat-icon>
+          {{currentVisualization | titlecase}} View
         </button>
-        <button mat-menu-item (click)="setVisualization('bar')">
-          <mat-icon>bar_chart</mat-icon> Bar Chart
-        </button>
-        <button mat-menu-item (click)="setVisualization('doughnut')">
-          <mat-icon>donut_large</mat-icon> Doughnut Chart
-        </button>
-        <button mat-menu-item (click)="setVisualization('pie')">
-          <mat-icon>pie_chart</mat-icon> Pie Chart
-        </button>
-        <button mat-menu-item (click)="setVisualization('radar')">
-          <mat-icon>scatter_plot</mat-icon> Radar Chart
-        </button>
-      </mat-menu>
+        <mat-menu #visualizationMenu="matMenu">
+          <button mat-menu-item (click)="setVisualization('line')">
+            <mat-icon>show_chart</mat-icon> Line Chart
+          </button>
+          <button mat-menu-item (click)="setVisualization('bar')">
+            <mat-icon>bar_chart</mat-icon> Bar Chart
+          </button>
+          <button mat-menu-item (click)="setVisualization('doughnut')">
+            <mat-icon>donut_large</mat-icon> Doughnut Chart
+          </button>
+          <button mat-menu-item (click)="setVisualization('pie')">
+            <mat-icon>pie_chart</mat-icon> Pie Chart
+          </button>
+          <button mat-menu-item (click)="setVisualization('radar')">
+            <mat-icon>scatter_plot</mat-icon> Radar Chart
+          </button>
+        </mat-menu>
+      </div>
   
       <div class="zoom-controls" *ngIf="currentVisualization === 'line' || currentVisualization === 'bar'">
         <button mat-button (click)="toggleShowAllData()" class="show-all-toggle">
@@ -89,7 +92,7 @@
     <mat-card class="table-card">
       <div class="table-header">
         <h3>Detailed Sensor Readings</h3>
-        <button mat-icon-button [matMenuTriggerFor]="tableMenu" class="sort-menu">
+        <button mat-flat-button class="sort-menu" [matMenuTriggerFor]="tableMenu">
           <mat-icon>sort</mat-icon>
           <span>Sort</span>
         </button>
@@ -153,4 +156,5 @@
       <mat-paginator [pageSize]="10" [pageSizeOptions]="[5,10,25]" showFirstLastButtons>
       </mat-paginator>
     </mat-card>
+  </div>
 </div>

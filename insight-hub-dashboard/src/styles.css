@@ -19,8 +19,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 /* center every page by default */
 .app-content {
   margin: 0 auto;
-  max-width: 1200px;
-  padding: 1rem;
+  max-width: 100%;
   transition: margin-left 0.3s ease;
 }
 

@@ -1,48 +1,69 @@
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { ProfileComponent } from '../profile/profile.component';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterModule }    from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 import { AuthService } from '../../services/auth_service/auth.service';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-navbar',
+  standalone: true,
   imports: [
     CommonModule,
-    RouterModule,            // ← gives you routerLink + routerLinkActive
+    RouterModule,
     LoadingSpinnerComponent
   ],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
 
   loading = false;
-
-  logout() {
-    // Your logout logic here
-  }
-
   sidebarVisible = false;
+  isDesktop = true;
 
-  toggleSidebar() {
-    this.sidebarVisible = !this.sidebarVisible;
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.checkScreenSize();
   }
 
-  constructor(private router: Router, private authService: AuthService) {}
-
-  signOut() {
-    this.loading = true; // Show spinner
-
-  // Optional: Add a delay for smoother UX (1s here)
-  setTimeout(() => {
-    this.authService.logoutAndRedirect();
-    // this.router.navigate(['auth/login']); // Or your login route
-
-    this.loading = false; // Hide spinner after navigation
-  }, 1000);
+  @HostListener('window:resize')
+  onResize(): void {
+    this.checkScreenSize();
   }
-  
+
+  checkScreenSize(): void {
+    this.isDesktop = window.innerWidth > 768;
+    if (this.isDesktop) {
+      this.sidebarVisible = true;
+    } else {
+      this.sidebarVisible = false;
+    }
+  }
+
+  toggleSidebar(): void {
+    if (!this.isDesktop) {
+      this.sidebarVisible = !this.sidebarVisible;
+    }
+  }
+
+  closeSidebar(): void {
+    if (!this.isDesktop) {
+      this.sidebarVisible = false;
+    }
+  }
+
+  signOut(): void {
+    this.loading = true;
+
+    setTimeout(() => {
+      this.authService.logoutAndRedirect();
+      this.loading = false;
+    }, 1000);
+  }
 }
