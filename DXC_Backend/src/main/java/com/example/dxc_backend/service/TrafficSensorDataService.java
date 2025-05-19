@@ -3,8 +3,12 @@ package com.example.dxc_backend.service;
 import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.repository.TrafficSensorDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -47,7 +51,7 @@ public class TrafficSensorDataService {
         return false; // Indicate that the ID was not found
     }
 
-    //now will make a a new function for the random generation
+    // now will make a new function for the random generation
     private final Random random = new Random();
 
     public TrafficSensorData generateRandomTrafficSensorData() {
@@ -60,61 +64,28 @@ public class TrafficSensorDataService {
         data.setCongestionLevel(new String[]{"Low", "Moderate", "High", "Severe"}[random.nextInt(4)]);
         return data;
     }
-
-    public List<TrafficSensorData> getFilteredData(
+    public Page<TrafficSensorData> getFilteredData(
             LocalDateTime timestampStart,
             LocalDateTime timestampEnd,
             String location,
             String congestionLevel,
-            String sortBy
+            int page,
+            int size,
+            String sortBy,
+            String sortDirection
     ) {
-        List<TrafficSensorData> data = repository.findAll();
+        List<String> allowedSortFields = List.of("trafficDensity", "avgSpeed", "timestamp");
 
-        if (timestampStart != null) {
-            data = data.stream()
-                    .filter(d -> d.getTimestamp().isAfter(timestampStart) || d.getTimestamp().isEqual(timestampStart))
-                    .toList();
+        if (!allowedSortFields.contains(sortBy)) {
+            throw new IllegalArgumentException("Invalid sort field: " + sortBy +
+                    ". Allowed fields: trafficDensity, avgSpeed, timestamp.");
         }
 
-        if (timestampEnd != null) {
-            data = data.stream()
-                    .filter(d -> d.getTimestamp().isBefore(timestampEnd) || d.getTimestamp().isEqual(timestampEnd))
-                    .toList();
-        }
+        Sort.Direction sortDirectionEnum = Sort.Direction.fromString(sortDirection);
+        Sort sort = Sort.by(sortDirectionEnum, sortBy);
 
-        if (location != null && !location.isEmpty()) {
-
-            data = data.stream()
-                    .filter(d -> d.getLocation().equalsIgnoreCase(location))
-                    .toList();
-        }
-
-        if (congestionLevel != null && !congestionLevel.isEmpty()) {
-            data = data.stream()
-                    .filter(d -> d.getCongestionLevel().equalsIgnoreCase(congestionLevel))
-                    .toList();
-        }
-
-        if (sortBy != null) {
-            switch (sortBy) {
-                case "trafficDensity":
-                    data = data.stream()
-                            .sorted(Comparator.comparingInt(TrafficSensorData::getTrafficDensity).reversed())
-                            .toList();
-                    break;
-                case "avgSpeed":
-                    data = data.stream()
-                            .sorted(Comparator.comparingDouble(TrafficSensorData::getAvgSpeed).reversed())
-                            .toList();
-                    break;
-                case "timestamp":
-                    data = data.stream()
-                            .sorted(Comparator.comparing(TrafficSensorData::getTimestamp).reversed())
-                            .toList();
-                    break;
-            }
-        }
-
-        return data;
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return repository.findFiltered(location, timestampStart, timestampEnd, congestionLevel, pageable);
     }
 }
+
