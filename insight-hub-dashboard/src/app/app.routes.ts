@@ -7,8 +7,16 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { SensorSimulatorComponent } from './components/sensor-simulator/sensor-simulator.component';
 import { AlertsComponent } from './components/alerts/alerts.component';
 import { TrafficDashboardComponent }   from './components/traffic-dashboard/traffic-dashboard.component';
+import { EntryPointComponent } from './components/entry-point/entry-point.component'
+import { TrafficMonitoringComponent } from './components/dashboards/traffic-monitoring/traffic-monitoring.component';
+import { StreetLightManagementComponent } from './components/dashboards/street-light-management/street-light-management.component';
+import { AirPollutionMonitoringComponent } from './components/dashboards/air-pollution-monitoring/air-pollution-monitoring.component';
+
+
 
 export const routes: Routes = [
+    { path: 'entry', component: EntryPointComponent },
+    
     {
         path: '',
         redirectTo: 'auth',

@@ -1,8 +1,37 @@
+@tailwind base;        
+@tailwind components;  
+@tailwind utilities;  
+
+
+html, body { 
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 body, html {
     height: 100%;
     margin: 0;
     padding: 0;
   }
+
+
+  /*---------------*/
   
   .wrapper {
     height: 100vh;
