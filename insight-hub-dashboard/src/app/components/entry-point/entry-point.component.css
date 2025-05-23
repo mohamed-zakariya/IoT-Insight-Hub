@@ -1,0 +1,13 @@
+/* entry-point.component.css */
+.page {
+    background: #F5F8FA;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-height: 100vh;
+    width: 83%;
+    position: absolute;
+    right: 0;
+}
+

@@ -14,7 +14,7 @@ export class EntryPointComponent {
     {
       title: 'Traffic Monitoring',
       description: 'Tracks live traffic, congestion levels, and suggests alternate routes.',
-      route: '/traffic-monitoring',
+      route: '/traffic',
       image: 'assets/traffic.png'
     },
     {
