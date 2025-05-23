@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './entry-point.component.html',
-  styleUrls: ['./entry-point.component.css']
+  styleUrls: ['./entry-point.component.css',"../style/tailwind.css"]
 })
 export class EntryPointComponent {
   dashboards = [
@@ -27,7 +27,7 @@ export class EntryPointComponent {
       title: 'Air Pollution Monitoring',
       description: 'Measures AQI, detects pollutants, and issues air quality alerts.',
       route: '/air-pollution-monitoring',
-      image: 'assets/airpollution.png'
+      image: '.././../../assets/airpollution.png'
     }
   ];
 
