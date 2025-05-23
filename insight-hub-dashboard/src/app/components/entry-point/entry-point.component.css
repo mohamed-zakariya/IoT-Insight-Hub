@@ -1,4 +1,3 @@
-/* entry-point.component.css */
 .page {
     background: #F5F8FA;
     padding: 2rem;
@@ -6,8 +5,13 @@
     flex-direction: column;
     gap: 2rem;
     min-height: 100vh;
-    width: 83%;
-    position: absolute;
-    right: 0;
-}
-
+  
+    /* fluid, full-width by default */
+    margin-left: 0;
+    width: 100%;
+    position: relative;
+  
+    /* animate sliding and resizing */
+    transition: margin-left 0.3s ease, width 0.3s ease;
+  }
+  

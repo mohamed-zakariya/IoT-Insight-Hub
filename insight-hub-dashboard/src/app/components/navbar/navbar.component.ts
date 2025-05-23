@@ -1,27 +1,30 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd, Event } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
-import { AuthService } from '../../services/auth_service/auth.service';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { AuthService } from '../../services/auth_service/auth.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
-    LoadingSpinnerComponent
+    RouterModule,           
+    LoadingSpinnerComponent 
   ],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
-
   loading = false;
   sidebarVisible = false;
   isDesktop = true;
+
+  /** only show on actual sensor routes */
+  showSubMenu = false;
 
   constructor(
     private router: Router,
@@ -29,38 +32,37 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkScreenSize();
+    // <-- no argument here
+    this.onResize();
+
+    this.router.events
+      .pipe(
+        filter((evt: Event): evt is NavigationEnd => evt instanceof NavigationEnd)
+      )
+      .subscribe(evt => {
+        const url = evt.urlAfterRedirects;
+        this.showSubMenu =
+          url.startsWith('/traffic') ||
+          url.startsWith('/environmental') ||
+          url.startsWith('/street-light');
+      });
   }
 
   @HostListener('window:resize')
   onResize(): void {
-    this.checkScreenSize();
-  }
-
-  checkScreenSize(): void {
-    this.isDesktop = window.innerWidth > 768;
-    if (this.isDesktop) {
-      this.sidebarVisible = true;
-    } else {
+    this.isDesktop = window.innerWidth >= 768;
+    if (!this.isDesktop) {
       this.sidebarVisible = false;
     }
   }
 
   toggleSidebar(): void {
-    if (!this.isDesktop) {
-      this.sidebarVisible = !this.sidebarVisible;
-    }
-  }
-
-  closeSidebar(): void {
-    if (!this.isDesktop) {
-      this.sidebarVisible = false;
-    }
+    this.sidebarVisible = !this.sidebarVisible;
+    document.body.classList.toggle('sidebar-open', this.sidebarVisible);
   }
 
   signOut(): void {
     this.loading = true;
-
     setTimeout(() => {
       this.authService.logoutAndRedirect();
       this.loading = false;

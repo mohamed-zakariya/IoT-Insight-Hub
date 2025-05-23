@@ -1,49 +1,42 @@
-<!-- Hamburger toggle button for mobile -->
 <button class="hamburger" *ngIf="!sidebarVisible" (click)="toggleSidebar()">☰</button>
 
-<!-- Sidebar navigation -->
 <nav class="navbar" [class.show]="sidebarVisible">
   <button class="close-btn" *ngIf="sidebarVisible" (click)="toggleSidebar()">✖</button>
 
   <div class="navbar-top">
-    <!-- Brand / logo -->
     <div class="brand">📊 Insight Hub</div>
-
-    <!-- Optional loading spinner -->
     <app-loading-spinner *ngIf="loading" class="sidebar-spinner"></app-loading-spinner>
 
-    <!-- Primary navigation -->
     <div class="nav-section">
-      <!-- Dashboard parent link -->
-      <a 
-        routerLink="/entry" 
-        routerLinkActive="active" 
-        #dash="routerLinkActive"
+      <!-- Dashboard (always visible, exact match) -->
+      <a
+        routerLink="/entry"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
         (click)="toggleSidebar()"
       >
-        <i class="fa-solid fa-table-columns"></i> Dashboard
+        <i class="fa-solid fa-table-columns"></i>
+        Dashboard
       </a>
 
-      <!-- Sub-nav: only visible when Dashboard is active -->
-      <div class="sub-nav" *ngIf="dash.isActive">
-        <a routerLink="/traffic" routerLinkActive="active" (click)="toggleSidebar()">
+      <!-- Only show when on one of the three sensor pages -->
+      <div class="sub-nav" *ngIf="showSubMenu">
+        <a routerLink="/traffic"       routerLinkActive="active" (click)="toggleSidebar()">
           <i class="fa-solid fa-car"></i> Traffic Sensor
         </a>
-        <a routerLink="/environmental" routerLinkActive="active" (click)="toggleSidebar()">
+        <a routerLink="/environmental"  routerLinkActive="active" (click)="toggleSidebar()">
           <i class="fa-solid fa-leaf"></i> Air Pollution Sensor
         </a>
-        <a routerLink="/street-light" routerLinkActive="active" (click)="toggleSidebar()">
+        <a routerLink="/street-light"   routerLinkActive="active" (click)="toggleSidebar()">
           <i class="fa-solid fa-lightbulb"></i> Street Light Sensor
         </a>
       </div>
 
-      <!-- Other top-level items -->
       <a routerLink="/alerts" routerLinkActive="active">
         <i class="fa-solid fa-bell"></i> Alerts
       </a>
     </div>
 
-    <!-- System section -->
     <div class="nav-section">
       <div class="section-title">SYSTEM</div>
       <a routerLink="/profile" routerLinkActive="active">
@@ -61,7 +54,6 @@
     </div>
   </div>
 
-  <!-- Footer / system status -->
   <div class="system-status">
     <div class="status-dot"></div>
     <span>All systems operational</span>

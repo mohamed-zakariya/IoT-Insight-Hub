@@ -22,3 +22,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .traffic-page .app-content {
   margin-left: 150px;
 }
+.page {
+  transition: margin-left 0.3s ease, width 0.3s ease;
+  margin-left: 0;
+  width: 100%;
+  position: relative;
+}
+
+/* when sidebar is open, shift & shrink all pages */
+body.sidebar-open .page {
+  margin-left: 260px;                /* match your sidebar width */
+  width: calc(100% - 260px);
+}

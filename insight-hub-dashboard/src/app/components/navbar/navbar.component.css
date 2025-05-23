@@ -185,3 +185,15 @@
   position: relative;
   z-index: 1;
 }
+.content-area .page {
+  transition: margin-left 0.3s ease, width 0.3s ease;
+  margin-left: 0;
+  width: 100%;
+  position: relative;
+}
+
+/* When the sidebar is open (has .show), shift & shrink */
+.navbar.show ~ .content-area .page {
+  margin-left: 260px;             /* match your sidebar width */
+  width: calc(100% - 260px);
+}
