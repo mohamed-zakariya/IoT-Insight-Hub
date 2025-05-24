@@ -64,25 +64,37 @@ pipeline {
             '''
 
             script {
-                    // Optionally, you can add steps to verify deployment or run tests
+                   
                     echo 'Deployment completed successfully.'
                 }
             }
         }
 
-        stage('Run Backend Tests') {
-            steps {
-                script {
-                     echo 'starting building.'
-                    // Build test image from Dockerfile.test in DXC_Backend
-                    docker.build("${DOCKER_REGISTRY}/dxc_backend:test", "-f DXC_Backend/dockerfile.test DXC_Backend")
-                }
-                // Run tests inside container; fail pipeline if tests fail
-                echo 'Running backend tests...'
-                sh "docker run --rm ${DOCKER_REGISTRY}/dxc_backend:test"
-                echo 'j units tested succfuuly.'
+stage('Run Backend Tests') {
+    steps {
+        script {
+            echo 'Starting backend build and tests.'
+
+            // Define the image name
+            def imageName = "${DOCKER_REGISTRY}/dxc_backend:test"
+            
+            // Build test image from Dockerfile.test in DXC_Backend
+            echo 'Building Docker test image...'
+            docker.build(imageName, "-f DXC_Backend/dockerfile.test DXC_Backend")
+            
+            // Run tests inside the container
+            echo 'Running backend tests inside the Docker container...'
+            try {
+                sh "docker run --rm --network iot-hub-network ${imageName}"
+                echo 'JUnit tests executed successfully.'
+            } catch (Exception e) {
+                echo 'Tests failed. Please check the logs for details.'
+                error("Backend tests failed: ${e.message}")
             }
         }
+    }
+}
+
 
 
     }
