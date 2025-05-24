@@ -1,4 +1,29 @@
-FROM alpine:latest
-COPY jenkins_data.tar.gz /jenkins_data.tar.gz
-RUN mkdir -p /var/jenkins_home && tar xzvf /jenkins_data.tar.gz -C /var/jenkins_home
-VOLUME /var/jenkins_home
+# Use the official Jenkins LTS image
+FROM jenkins/jenkins:lts
+
+# Switch to root to modify permissions
+USER root
+
+# Install Docker CLI (needed for Jenkins to run Docker commands)
+RUN apt-get update && \
+    apt-get install -y apt-transport-https ca-certificates curl gnupg && \
+    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
+    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list && \
+    apt-get update && \
+    apt-get install -y docker.io
+
+# Add Jenkins user to the Docker group (GID must match host's Docker group)
+RUN groupadd -g 103 docker && \
+    usermod -aG docker jenkins
+
+# Change Docker socket permissions (temporary workaround)
+RUN echo '#!/bin/bash' > /tmp/startup.sh && \
+    echo 'chmod 666 /var/run/docker.sock' >> /tmp/startup.sh && \
+    echo '/usr/local/bin/jenkins.sh' >> /tmp/startup.sh && \
+    chmod +x /tmp/startup.sh
+
+# Switch back to Jenkins user (for security)
+USER jenkins
+
+# Run the modified startup script
+ENTRYPOINT ["/tmp/startup.sh"]
