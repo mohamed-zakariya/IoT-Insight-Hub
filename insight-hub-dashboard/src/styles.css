@@ -34,3 +34,11 @@ body.sidebar-open .page {
   margin-left: 260px;                /* match your sidebar width */
   width: calc(100% - 260px);
 }
+/* hide the pseudo-checkbox next to our search row */
+.location-panel .mat-option.search-option .mat-pseudo-checkbox {
+  display: none !important;
+}
+/* remove leftover padding so the input spans the full width */
+.location-panel .mat-option.search-option .mat-option-text {
+  padding-left: 0 !important;
+}

@@ -154,3 +154,12 @@ canvas {
         height: 300px;
     }
 }
+/* 1. hide the pseudo-checkbox icon inside our search-option */
+.mat-select-panel mat-option.search-option .mat-pseudo-checkbox {
+    display: none !important;
+  }
+  
+  /* 2. remove the left padding so the input spans fully */
+  .mat-select-panel mat-option.search-option .mat-option-text {
+    padding-left: 0 !important;
+  }

@@ -101,6 +101,7 @@ export class TrafficDashboardComponent implements OnInit {
   selectedDate = new FormControl<Date | null>(null);
   locationFilter = new FormControl<string[]>([]);
   congestionFilter = new FormControl<string[]>([]);
+  locationSearch    = new FormControl<string>('');
   locations: string[] = [];
   congestionLevels = ['Low', 'Moderate', 'High'];
 
@@ -241,7 +242,19 @@ export class TrafficDashboardComponent implements OnInit {
       error: (err) => console.error('Error refreshing data:', err)
     });
   }
+  get filteredLocations(): string[] {
+    const term = this.locationSearch.value?.toLowerCase() || '';
+    return this.locations.filter(loc => !term || loc.toLowerCase().includes(term));
+  }
 
+  /** Clears date, location, congestion AND the location‐search field */
+  resetFilters(): void {
+    this.selectedDate.setValue(null);
+    this.locationFilter.setValue([]);
+    this.congestionFilter.setValue([]);
+    this.locationSearch.setValue('');
+    // subscriptions on .valueChanges will auto-apply the cleared filter
+  }
   private handleDataUpdate(data: TrafficReading[]): void {
     if (!data || data.length === 0) {
       console.warn('Received empty dataset');
@@ -375,49 +388,40 @@ export class TrafficDashboardComponent implements OnInit {
   }
 
   private setupFilterPredicate(): void {
-    this.dataSource.filterPredicate = (row: TrafficReading, filterString: string): boolean => {
-      const filter = JSON.parse(filterString) as {
-        date?: string;
-        locations: string[];
-        congestions: string[];
-      };
-  
+    this.dataSource.filterPredicate = (row, filterString) => {
+      const filter = JSON.parse(filterString) as { date?: string; locations: string[]; congestions: string[]; };
       const ts = new Date(row.timestamp).getTime();
       let meetsDate = true;
       if (filter.date) {
         const sel = new Date(filter.date);
-        const startOfDay = new Date(sel);
-        startOfDay.setHours(0, 0, 0, 0);
-        const endOfDay = new Date(sel);
-        endOfDay.setHours(24, 0, 0, 0);
-        meetsDate = ts >= startOfDay.getTime() && ts < endOfDay.getTime();
+        const start = new Date(sel).setHours(0,0,0,0);
+        const end   = new Date(sel).setHours(24,0,0,0);
+        meetsDate = ts >= start && ts < end;
       }
-  
-      const meetsLoc = filter.locations.length === 0 ||
-                       filter.locations.includes(row.location);
-      const meetsCong = filter.congestions.length === 0 ||
-                        filter.congestions.includes(row.congestionLevel);
-  
+      const meetsLoc  = !filter.locations.length || filter.locations.includes(row.location);
+      const meetsCong = !filter.congestions.length || filter.congestions.includes(row.congestionLevel);
       return meetsDate && meetsLoc && meetsCong;
     };
-  
+
     const applyFilters = () => {
-      const dateVal = this.selectedDate.value;
       const f: any = {
         locations: this.locationFilter.value || [],
         congestions: this.congestionFilter.value || []
       };
-      if (dateVal) {
-        f.date = dateVal.toISOString();
+      if (this.selectedDate.value) {
+        f.date = this.selectedDate.value.toISOString();
       }
       this.dataSource.filter = JSON.stringify(f);
       this.paginator?.firstPage();
       this.updateVisualization();
     };
-  
+
     this.selectedDate.valueChanges.subscribe(applyFilters);
     this.locationFilter.valueChanges.subscribe(applyFilters);
     this.congestionFilter.valueChanges.subscribe(applyFilters);
+
+    // initial
+    applyFilters();
   }
 }  
 
