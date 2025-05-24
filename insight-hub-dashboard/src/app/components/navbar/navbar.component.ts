@@ -1,42 +1,71 @@
-import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import { ProfileComponent } from '../profile/profile.component';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { Router, NavigationEnd, Event } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth_service/auth.service';
+import { RouterModule } from '@angular/router';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
+import { AuthService } from '../../services/auth_service/auth.service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, CommonModule, LoadingSpinnerComponent],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,           
+    LoadingSpinnerComponent 
+  ],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrls: ['./navbar.component.css']
 })
-export class NavbarComponent {
-
+export class NavbarComponent implements OnInit {
   loading = false;
-
-  logout() {
-    // Your logout logic here
-  }
-
   sidebarVisible = false;
+  isDesktop = true;
 
-  toggleSidebar() {
+  /** only show on actual sensor routes */
+  showSubMenu = false;
+
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    // <-- no argument here
+    this.onResize();
+
+    this.router.events
+      .pipe(
+        filter((evt: Event): evt is NavigationEnd => evt instanceof NavigationEnd)
+      )
+      .subscribe(evt => {
+        const url = evt.urlAfterRedirects;
+        this.showSubMenu =
+          url.startsWith('/traffic') ||
+          url.startsWith('/environmental') ||
+          url.startsWith('/street-light'); 
+      });
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.isDesktop = window.innerWidth >= 768;
+    if (!this.isDesktop) {
+      this.sidebarVisible = false;
+    }
+  }
+
+  toggleSidebar(): void {
     this.sidebarVisible = !this.sidebarVisible;
+    document.body.classList.toggle('sidebar-open', this.sidebarVisible);
   }
 
-  constructor(private router: Router, private authService: AuthService) {}
-
-  signOut() {
-    this.loading = true; // Show spinner
-
-  // Optional: Add a delay for smoother UX (1s here)
-  setTimeout(() => {
-    this.authService.logoutAndRedirect();
-    // this.router.navigate(['auth/login']); // Or your login route
-
-    this.loading = false; // Hide spinner after navigation
-  }, 1000);
+  signOut(): void {
+    this.loading = true;
+    setTimeout(() => {
+      this.authService.logoutAndRedirect();
+      this.loading = false;
+    }, 1000);
   }
-  
 }
