@@ -98,7 +98,7 @@ export class TrafficDashboardComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   // Filters
-  dateRange = new FormControl<{ begin: Date; end: Date } | null>(null);
+  selectedDate = new FormControl<Date | null>(null);
   locationFilter = new FormControl<string[]>([]);
   congestionFilter = new FormControl<string[]>([]);
   locations: string[] = [];
@@ -375,58 +375,51 @@ export class TrafficDashboardComponent implements OnInit {
   }
 
   private setupFilterPredicate(): void {
-    this.dataSource.filterPredicate = (row: TrafficReading, fstr: string): boolean => {
-      const filter = JSON.parse(fstr) as {
-        begin?: string;
-        end?: string;
+    this.dataSource.filterPredicate = (row: TrafficReading, filterString: string): boolean => {
+      const filter = JSON.parse(filterString) as {
+        date?: string;
         locations: string[];
         congestions: string[];
       };
-      
-      const timestamp = new Date(row.timestamp).getTime();
-      const meetsDateCriteria = (
-        (!filter.begin || timestamp >= new Date(filter.begin).getTime()) &&
-        (!filter.end || timestamp <= new Date(filter.end).getTime())
-      );
-      
-      const meetsLocationCriteria = (
-        filter.locations.length === 0 || 
-        filter.locations.includes(row.location)
-      );
-      
-      const meetsCongestionCriteria = (
-        filter.congestions.length === 0 || 
-        filter.congestions.includes(row.congestionLevel)
-      );
-
-      return meetsDateCriteria && meetsLocationCriteria && meetsCongestionCriteria;
+  
+      const ts = new Date(row.timestamp).getTime();
+      let meetsDate = true;
+      if (filter.date) {
+        const sel = new Date(filter.date);
+        const startOfDay = new Date(sel);
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date(sel);
+        endOfDay.setHours(24, 0, 0, 0);
+        meetsDate = ts >= startOfDay.getTime() && ts < endOfDay.getTime();
+      }
+  
+      const meetsLoc = filter.locations.length === 0 ||
+                       filter.locations.includes(row.location);
+      const meetsCong = filter.congestions.length === 0 ||
+                        filter.congestions.includes(row.congestionLevel);
+  
+      return meetsDate && meetsLoc && meetsCong;
     };
-
+  
     const applyFilters = () => {
-      const dateRange = this.dateRange.value;
-      const filter: any = {
+      const dateVal = this.selectedDate.value;
+      const f: any = {
         locations: this.locationFilter.value || [],
         congestions: this.congestionFilter.value || []
       };
-
-      if (dateRange) {
-        filter.begin = dateRange.begin.toISOString();
-        filter.end = dateRange.end.toISOString();
+      if (dateVal) {
+        f.date = dateVal.toISOString();
       }
-
-      this.dataSource.filter = JSON.stringify(filter);
-      if (this.paginator) {
-        this.paginator.firstPage();
-      }
-      
+      this.dataSource.filter = JSON.stringify(f);
+      this.paginator?.firstPage();
       this.updateVisualization();
     };
-
-    this.dateRange.valueChanges.subscribe(applyFilters);
+  
+    this.selectedDate.valueChanges.subscribe(applyFilters);
     this.locationFilter.valueChanges.subscribe(applyFilters);
     this.congestionFilter.valueChanges.subscribe(applyFilters);
   }
-}
+}  
 
 function compare(a: any, b: any, isAsc: boolean): number {
   return (a < b ? -1 : a > b ? 1 : 0) * (isAsc ? 1 : -1);
