@@ -30,6 +30,20 @@ pipeline {
             }
         }
 
+         stage('Run Maven Tests') {
+            agent {
+                docker {
+                    image 'maven:3.9.4-jdk-21'
+                    args '-v $HOME/.m2:/root/.m2'  // optional, to cache maven dependencies between builds
+                }
+            }
+            steps {
+                dir('DXC_Backend') {
+                    sh 'mvn clean test'
+                }
+            }
+        }
+
         stage('Push Docker Images') {
             steps {
                 withDockerRegistry(credentialsId: 'dockerhub-credentials', url: '') {
@@ -62,21 +76,14 @@ pipeline {
             docker-compose  down
            docker-compose up -d
             '''
-            }
-        }
 
-        stage('Test') {
-            steps {
-                script {
-                    // Run Backend Tests
-                    echo 'Running Backend Tests...'
-                    sh '''
-                        cd DXC_Backend
-                        mvn clean test
-                    '''
+            script {
+                    // Optionally, you can add steps to verify deployment or run tests
+                    echo 'Deployment completed successfully.'
                 }
             }
         }
+
 
     }
 
