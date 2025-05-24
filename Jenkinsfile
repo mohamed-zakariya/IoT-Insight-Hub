@@ -75,7 +75,7 @@ pipeline {
                 script {
                      echo 'starting building.'
                     // Build test image from Dockerfile.test in DXC_Backend
-                    docker.build("${DOCKER_REGISTRY}/dxc_backend:test", "-f DXC_Backend/Dockerfile.test DXC_Backend")
+                    docker.build("${DOCKER_REGISTRY}/dxc_backend:test", "-f DXC_Backend/dockerfile.test DXC_Backend")
                 }
                 // Run tests inside container; fail pipeline if tests fail
                 echo 'Running backend tests...'
