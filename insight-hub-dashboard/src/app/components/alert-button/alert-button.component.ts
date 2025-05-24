@@ -76,11 +76,17 @@ export class AlertButtonComponent implements OnInit, OnDestroy {
     this.alertsSub = this.allAlerts$
       .pipe(startWith([] as AlertSummary[]), pairwise())
       .subscribe(([prev, curr]) => {
-        if (curr.length > prev.length) {
-          const newAlert = curr[curr.length - 1];
-          this.showToast(newAlert.message);
-          this.unreadCount++;
-        }
+      if (curr.length > prev.length) {
+        // pick the alert with the max timestamp
+        const newAlert = curr.reduce((latest, a) =>
+          new Date(a.timestamp).getTime() > new Date(latest.timestamp).getTime()
+            ? a
+            : latest
+        , curr[0]);
+  
+        this.showToast(newAlert.message);
+        this.unreadCount++;
+      }
       });
   }
 
