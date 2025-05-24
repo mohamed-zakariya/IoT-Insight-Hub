@@ -10,7 +10,7 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8080/api/users';
+  private apiUrl = 'http://localhost:8081/api/users';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 

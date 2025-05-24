@@ -16,7 +16,7 @@ export interface SettingsDTO {
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  private baseUrl = 'http://localhost:8080/api/settings';
+  private baseUrl = 'http://localhost:8081/api/settings';
 
   constructor(private http: HttpClient) {}
 
