@@ -64,6 +64,20 @@ pipeline {
             '''
             }
         }
+
+        stage('Test') {
+            steps {
+                script {
+                    // Run Backend Tests
+                    echo 'Running Backend Tests...'
+                    sh '''
+                        cd DXC_Backend
+                        mvn clean test
+                    '''
+                }
+            }
+        }
+
     }
 
     post {
