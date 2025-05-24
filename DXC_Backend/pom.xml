@@ -117,27 +117,8 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit 5 dependencies -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.7.2</version> <!-- Or latest stable version -->
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.7.2</version> <!-- Or latest stable version -->
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>5.7.2</version> <!-- Or latest stable version -->
-            <scope>test</scope>
-        </dependency>
         <!-- Mockito for JUnit 5 -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -158,6 +139,11 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version> <!-- latest stable as of May 2025 -->
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
