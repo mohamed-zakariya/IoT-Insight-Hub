@@ -30,16 +30,7 @@ pipeline {
             }
         }
 
-stage('Run Backend Tests') {
-            steps {
-                script {
-                    // Build test image from Dockerfile.test in DXC_Backend
-                    docker.build("${DOCKER_IMAGE_BACKEND}:test", "-f DXC_Backend/Dockerfile.test DXC_Backend")
-                }
-                // Run tests inside container; fail pipeline if tests fail
-                sh "docker run --rm ${DOCKER_IMAGE_BACKEND}:test"
-            }
-        }
+
 
 
         stage('Push Docker Images') {
@@ -79,6 +70,20 @@ stage('Run Backend Tests') {
                     // Optionally, you can add steps to verify deployment or run tests
                     echo 'Deployment completed successfully.'
                 }
+            }
+        }
+
+        stage('Run Backend Tests') {
+            steps {
+                script {
+                     echo 'starting building.'
+                    // Build test image from Dockerfile.test in DXC_Backend
+                    docker.build("${DOCKER_IMAGE_BACKEND}:test", "-f DXC_Backend/Dockerfile.test DXC_Backend")
+                }
+                // Run tests inside container; fail pipeline if tests fail
+                echo 'Running backend tests...'
+                sh "docker run --rm ${DOCKER_IMAGE_BACKEND}:test"
+                echo 'j units tested succfuuly.'
             }
         }
 
