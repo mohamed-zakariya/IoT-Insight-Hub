@@ -30,25 +30,16 @@ pipeline {
             }
         }
 
-stage('Run Maven Tests') {
-    agent {
-        docker {
-            image 'openjdk:21'
-            args '-v $HOME/.m2:/root/.m2'  // Cache Maven repo to speed up
+stage('Run Backend Tests') {
+            steps {
+                script {
+                    // Build test image from Dockerfile.test in DXC_Backend
+                    docker.build("${DOCKER_IMAGE_BACKEND}:test", "-f DXC_Backend/Dockerfile.test DXC_Backend")
+                }
+                // Run tests inside container; fail pipeline if tests fail
+                sh "docker run --rm ${DOCKER_IMAGE_BACKEND}:test"
+            }
         }
-    }
-    steps {
-        dir('DXC_Backend') {
-            sh '''
-                # Install Maven manually
-                apt-get update && apt-get install -y maven
-                
-                # Run tests
-                mvn clean test
-            '''
-        }
-    }
-}
 
 
         stage('Push Docker Images') {
