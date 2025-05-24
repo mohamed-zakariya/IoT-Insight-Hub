@@ -3,13 +3,14 @@ package com.example.dxc_backend.service;
 import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.repository.TrafficSensorDataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 
 
@@ -65,4 +66,27 @@ public class TrafficSensorDataService {
         return data;
     }
 
+    public Page<TrafficSensorData> getFilteredData(
+            LocalDateTime timestampStart,
+            LocalDateTime timestampEnd,
+            String location,
+            String congestionLevel,
+            int page,
+            int size,
+            String sortBy,
+            String sortDirection
+    ) {
+        List<String> allowedSortFields = List.of("trafficDensity", "avgSpeed", "timestamp");
+
+        if (!allowedSortFields.contains(sortBy)) {
+            throw new IllegalArgumentException("Invalid sort field: " + sortBy +
+                    ". Allowed fields: trafficDensity, avgSpeed, timestamp.");
+        }
+
+        Sort.Direction sortDirectionEnum = Sort.Direction.fromString(sortDirection);
+        Sort sort = Sort.by(sortDirectionEnum, sortBy);
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return repository.findFiltered(location, timestampStart, timestampEnd, congestionLevel,  pageable);
+    }
 }
