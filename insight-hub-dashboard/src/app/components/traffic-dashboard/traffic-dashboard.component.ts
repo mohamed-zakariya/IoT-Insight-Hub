@@ -249,11 +249,29 @@ export class TrafficDashboardComponent implements OnInit {
 
   /** Clears date, location, congestion AND the location‐search field */
   resetFilters(): void {
+    // 1) clear all of your form-controls
     this.selectedDate.setValue(null);
     this.locationFilter.setValue([]);
     this.congestionFilter.setValue([]);
     this.locationSearch.setValue('');
-    // subscriptions on .valueChanges will auto-apply the cleared filter
+  
+    // 2) clear the MatTableDataSource filter so the table shows everything
+    this.dataSource.filter = '';
+  
+    // 3) reset sort state and emit so the table actually re-sorts
+    if (this.sort) {
+      this.sort.active    = '';
+      this.sort.direction = '';
+      this.sort.sortChange.emit({ active: '', direction: '' });
+    }
+  
+    // 4) jump back to page 1
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+  
+    // 5) refresh your chart with the full, un-filtered data
+    this.updateVisualization();
   }
   private handleDataUpdate(data: TrafficReading[]): void {
     if (!data || data.length === 0) {
