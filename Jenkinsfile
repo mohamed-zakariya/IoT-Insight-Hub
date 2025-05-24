@@ -30,19 +30,26 @@ pipeline {
             }
         }
 
-         stage('Run Maven Tests') {
-            agent {
-                docker {
-                    image 'maven:3.9.4-jdk-21'
-                    args '-v $HOME/.m2:/root/.m2'  // optional, to cache maven dependencies between builds
-                }
-            }
-            steps {
-                dir('DXC_Backend') {
-                    sh 'mvn clean test'
-                }
-            }
+stage('Run Maven Tests') {
+    agent {
+        docker {
+            image 'openjdk:21'
+            args '-v $HOME/.m2:/root/.m2'  // Cache Maven repo to speed up
         }
+    }
+    steps {
+        dir('DXC_Backend') {
+            sh '''
+                # Install Maven manually
+                apt-get update && apt-get install -y maven
+                
+                # Run tests
+                mvn clean test
+            '''
+        }
+    }
+}
+
 
         stage('Push Docker Images') {
             steps {
