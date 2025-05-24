@@ -32,17 +32,17 @@
         </a>
       </div>
 
-      <a routerLink="/alerts" routerLinkActive="active">
+      <a routerLink="/alerts" routerLinkActive="active" (click)="toggleSidebar()">
         <i class="fa-solid fa-bell"></i> Alerts
       </a>
     </div>
 
     <div class="nav-section">
       <div class="section-title">SYSTEM</div>
-      <a routerLink="/profile" routerLinkActive="active">
+      <a routerLink="/profile" routerLinkActive="active" (click)="toggleSidebar()">
         <i class="fa-solid fa-user"></i> Profile
       </a>
-      <a routerLink="/settings" routerLinkActive="active">
+      <a routerLink="/settings" routerLinkActive="active" (click)="toggleSidebar()">
         <i class="fa-solid fa-gear"></i> Settings
       </a>
       <a routerLink="/help" routerLinkActive="active">

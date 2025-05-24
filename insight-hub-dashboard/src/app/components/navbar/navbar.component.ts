@@ -44,7 +44,7 @@ export class NavbarComponent implements OnInit {
         this.showSubMenu =
           url.startsWith('/traffic') ||
           url.startsWith('/environmental') ||
-          url.startsWith('/street-light');
+          url.startsWith('/street-light'); 
       });
   }
 
