@@ -1,31 +1,44 @@
 <!-- src/app/components/alert-button/alert-button.component.html -->
 <div class="alert-button">
-    <button
-      class="btn-notif"
-      (click)="toggle()"
-      [class.open]="dropdownOpen"
-    >
-      <i class="fa-solid fa-bell"></i>
-      <span class="badge" *ngIf="allAlerts$ | async as all">{{ all.length }}</span>
-    </button>
-  
-    <div class="preview-dropdown" [class.open]="dropdownOpen">
-      <div class="alerts-scroll">
-        <ng-container *ngIf="grouped$ | async as groups">
-          <div *ngFor="let g of groups" class="group">
-            <div class="group-label">{{ g.dateLabel }}</div>
-            <div class="group-items">
-              <div *ngFor="let a of g.alerts" class="alert-item">
-                <div class="msg">{{ a.message }}</div>
-                <div class="ts">{{ a.timestamp | date:'shortTime' }}</div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-      </div>
-      <div class="view-all">
-        <a routerLink="/alerts">View all alerts →</a>
-      </div>
+
+  <!-- BANNER POPUPS (full-width, top) -->
+  <div id="banner-container">
+    <div *ngFor="let toast of toasts"
+         class="banner"
+         [class.show]="toast.show">
+      <i class="fa-solid fa-bell banner-icon"></i>
+      <span class="banner-text">{{ toast.message }}</span>
+      <button class="close-btn" (click)="removeToast(toast.id)">×</button>
     </div>
   </div>
-  
+
+  <!-- Bell + unread badge -->
+  <button class="btn-notif"
+          (click)="toggle()"
+          [class.open]="dropdownOpen">
+    <i class="fa-solid fa-bell"></i>
+    <span class="badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+  </button>
+
+  <!-- Preview dropdown -->
+  <div class="preview-dropdown" [class.open]="dropdownOpen">
+    <div class="alerts-scroll">
+      <ng-container *ngIf="grouped$ | async as groups">
+        <div *ngFor="let g of groups" class="group">
+          <div class="group-label">{{ g.dateLabel }}</div>
+          <div class="group-items">
+            <div *ngFor="let a of g.alerts" class="alert-item">
+              <i class="fa-solid fa-bell item-icon"></i>
+              <div class="msg">{{ a.message }}</div>
+              <div class="ts">{{ a.timestamp | date:'shortTime' }}</div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+    <div class="view-all">
+      <a routerLink="/alerts">View all alerts →</a>
+    </div>
+  </div>
+
+</div>
