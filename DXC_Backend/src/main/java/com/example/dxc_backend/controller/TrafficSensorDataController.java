@@ -23,7 +23,7 @@ public class TrafficSensorDataController {
     }
 
 
-    @GetMapping
+    @GetMapping("/new")  // && bassel
     public Page<TrafficSensorData> getFilteredTrafficSensorData(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampStart,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampEnd,
@@ -37,6 +37,10 @@ public class TrafficSensorDataController {
         return service.getFilteredData(timestampStart, timestampEnd, location, congestionLevel, page, size, sortBy, sortDirection);
     }
 
+    @GetMapping
+    public List<TrafficSensorData> getAllTrafficSensorData() {
+        return service.getAllTrafficSensorData();
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<TrafficSensorData> getTrafficSensorDataById(@PathVariable UUID id) {
