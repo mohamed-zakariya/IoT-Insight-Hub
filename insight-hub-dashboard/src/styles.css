@@ -1,9 +1,4 @@
-body, html {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
-  
+
   .wrapper {
     height: 100vh;
     display: flex;
@@ -16,3 +11,34 @@ body, html {
   }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* center every page by default */
+.app-content {
+  margin: 0 auto;
+  max-width: 100%;
+  transition: margin-left 0.3s ease;
+}
+
+/* only when .traffic-page is on the root do we push it right */
+.traffic-page .app-content {
+  margin-left: 150px;
+}
+.page {
+  transition: margin-left 0.3s ease, width 0.3s ease;
+  margin-left: 0;
+  width: 100%;
+  position: relative;
+}
+
+/* when sidebar is open, shift & shrink all pages */
+body.sidebar-open .page {
+  margin-left: 260px;                /* match your sidebar width */
+  width: calc(100% - 260px);
+}
+/* hide the pseudo-checkbox next to our search row */
+.location-panel .mat-option.search-option .mat-pseudo-checkbox {
+  display: none !important;
+}
+/* remove leftover padding so the input spans the full width */
+.location-panel .mat-option.search-option .mat-option-text {
+  padding-left: 0 !important;
+}

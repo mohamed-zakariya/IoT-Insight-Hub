@@ -1,0 +1,10 @@
+FROM maven:3.9.9-eclipse-temurin-21
+
+WORKDIR /app
+
+COPY pom.xml .
+COPY src ./src
+
+ 
+# Run the tests and keep the container running (for example, tail -f /dev/null) or just run tests  exit
+CMD ["mvn", "clean", "test"]

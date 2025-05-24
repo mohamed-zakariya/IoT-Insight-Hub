@@ -1,0 +1,193 @@
+<div class="page">
+  <!-- Dashboard Grid Layout -->
+  <div class="dashboard-grid">
+    <!-- Filters -->
+    <mat-card class="filter-card">
+      <div class="filter-row">
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Date</mat-label>
+          <input
+            matInput
+            placeholder="Choose a date"
+            [matDatepicker]="picker"
+            [formControl]="selectedDate">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Locations</mat-label>
+        <mat-select [formControl]="locationFilter" multiple>
+      
+          <!-- search input – now stays focused and accepts full typing -->
+          <mat-option
+            disableRipple
+            class="search-option"
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()">
+            <mat-form-field appearance="outline" class="filter-field">
+              <input
+                matInput
+                placeholder="Search location"
+                [formControl]="locationSearch"
+                (click)="$event.stopPropagation()"
+                (keydown)="$event.stopPropagation()">
+            </mat-form-field>
+          </mat-option>
+      
+          <!-- actual selectable locations -->
+          <mat-option
+            *ngFor="let loc of filteredLocations"
+            [value]="loc">
+            {{loc}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      
+  
+        <mat-form-field appearance="outline" class="filter-field">
+          <mat-label>Congestion Levels</mat-label>
+          <mat-select [formControl]="congestionFilter" multiple>
+            <mat-option *ngFor="let c of congestionLevels" [value]="c">{{c}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card>
+    <!-- Reset + Sort Action Buttons -->
+    <div class="filter-actions">
+      <!-- Reset Filters -->
+         <button mat-raised-button color="primary" (click)="resetFilters()">
+           <mat-icon>refresh</mat-icon>
+           Reset
+         </button>
+      </div>
+    <!-- Visualization Controls -->
+    <div class="visualization-controls">
+      <div class="visualization-selector">
+        <button mat-raised-button color="primary" [matMenuTriggerFor]="visualizationMenu">
+          <mat-icon>insights</mat-icon>
+          {{currentVisualization | titlecase}} View
+        </button>
+        <mat-menu #visualizationMenu="matMenu">
+          <button mat-menu-item (click)="setVisualization('line')">
+            <mat-icon>show_chart</mat-icon> Line Chart
+          </button>
+          <button mat-menu-item (click)="setVisualization('bar')">
+            <mat-icon>bar_chart</mat-icon> Bar Chart
+          </button>
+          <button mat-menu-item (click)="setVisualization('doughnut')">
+            <mat-icon>donut_large</mat-icon> Doughnut Chart
+          </button>
+          <button mat-menu-item (click)="setVisualization('pie')">
+            <mat-icon>pie_chart</mat-icon> Pie Chart
+          </button>
+          <button mat-menu-item (click)="setVisualization('radar')">
+            <mat-icon>scatter_plot</mat-icon> Radar Chart
+          </button>
+        </mat-menu>
+      </div>
+  
+      <div class="zoom-controls" *ngIf="currentVisualization === 'line' || currentVisualization === 'bar'">
+        <button mat-button (click)="toggleShowAllData()" class="show-all-toggle">
+          <mat-icon>{{showAllData ? 'visibility_off' : 'visibility'}}</mat-icon>
+          {{showAllData ? 'Showing All' : 'Showing Window'}}
+        </button>
+        
+        <div class="scale-controls">
+          <mat-icon>horizontal_align_left</mat-icon>
+          <mat-slider min="0.5" max="2" step="0.25" thumbLabel [displayWith]="formatScaleLabel">
+            <input matSliderThumb [(ngModel)]="xAxisScale" (input)="onXAxisScaleChange()">
+          </mat-slider>
+          <mat-icon>horizontal_align_right</mat-icon>
+          <span class="scale-value">{{xAxisScale | number:'1.2-2'}}x</span>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Main Chart -->
+    <div class="charts">
+      <mat-card class="chart-container">
+        <div class="chart-header">
+          <h3>{{getChartTitle()}}</h3>
+          <span class="data-count">
+            {{ chartData.datasets[0].data.length }} data points
+          </span>
+        </div>
+        <canvas baseChart
+                [data]="chartData"
+                [options]="chartOptions"
+                [type]="currentVisualization">
+        </canvas>
+      </mat-card>
+    </div>
+  
+    <!-- Data Table -->
+    <mat-card class="table-card">
+      <div class="table-header">
+        <h3>Detailed Sensor Readings</h3>
+        <button mat-flat-button class="sort-menu" [matMenuTriggerFor]="tableMenu">
+          <mat-icon>sort</mat-icon>
+          <span>Sort</span>
+        </button>
+        <mat-menu #tableMenu="matMenu">
+          <button mat-menu-item (click)="sortData('location')">
+            <mat-icon>location_on</mat-icon> By Location
+          </button>
+          <button mat-menu-item (click)="sortData('timestamp')">
+            <mat-icon>schedule</mat-icon> By Time
+          </button>
+          <button mat-menu-item (click)="sortData('trafficDensity')">
+            <mat-icon>traffic</mat-icon> By Density
+          </button>
+          <button mat-menu-item (click)="sortData('avgSpeed')">
+            <mat-icon>speed</mat-icon> By Speed
+          </button>
+          <button mat-menu-item (click)="sortData('congestionLevel')">
+            <mat-icon>warning</mat-icon> By Congestion
+          </button>
+        </mat-menu>
+      </div>
+      
+      <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="location">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Location</th>
+          <td mat-cell *matCellDef="let r">{{r.location}}</td>
+        </ng-container>
+  
+        <ng-container matColumnDef="timestamp">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Timestamp</th>
+          <td mat-cell *matCellDef="let r">{{r.timestamp | date:'medium'}}</td>
+        </ng-container>
+  
+        <ng-container matColumnDef="trafficDensity">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Density</th>
+          <td mat-cell *matCellDef="let r">{{r.trafficDensity | number:'1.0-1'}}</td>
+        </ng-container>
+  
+        <ng-container matColumnDef="avgSpeed">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Avg Speed</th>
+          <td mat-cell *matCellDef="let r">{{r.avgSpeed | number:'1.0-1'}} km/h</td>
+        </ng-container>
+  
+        <ng-container matColumnDef="congestionLevel">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Congestion</th>
+          <td mat-cell *matCellDef="let r">
+            <span [ngClass]="{
+              'low': r.congestionLevel==='Low',
+              'med': r.congestionLevel==='Moderate',
+              'high': r.congestionLevel==='High'
+            }">
+              {{r.congestionLevel}}
+            </span>
+          </td>
+        </ng-container>
+  
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+  
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5,10,25]" showFirstLastButtons>
+      </mat-paginator>
+    </mat-card>
+  </div>
+</div>

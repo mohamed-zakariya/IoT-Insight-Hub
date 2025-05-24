@@ -11,7 +11,7 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = 'http://localhost:8081/api';
   private http = inject(HttpClient);
   private router = inject(Router);
 

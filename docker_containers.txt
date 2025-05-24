@@ -1,0 +1,66 @@
+Docker 
+
+docker login
+
+
+docker build -t iotinshighthub/iot_backend:latest .
+docker push iotinshighthub/iot_backend:latest
+
+
+
+docker build -t iotinshighthub/iot_frontend:latest .
+docker push iotinshighthub/iot_frontend:latest
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+to run
+
+Run the MySQL Database
+
+docker run -d --name iot_mysql \
+  
+  
+  -e MYSQL_ROOT_PASSWORD=my_password \
+  -e MYSQL_DATABASE=my_database \
+  -p 3306:3306 \
+  -v mysql_data:/var/lib/mysql \
+  mysql:8.3
+
+ Run the Backend Service
+docker run -d --name iot_backend \
+
+  -e SPRING_DATASOURCE_URL=jdbc:mysql://iot_mysql:3306/sql8774445 \
+  -e SPRING_DATASOURCE_USERNAME=root \
+  -e SPRING_DATASOURCE_PASSWORD=my_password \
+  -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
+  -e SPRING_MAIL_HOST=smtp.gmail.com \
+  -e SPRING_MAIL_PORT=587 \
+  -e SPRING_MAIL_USERNAME=my_email@gmail.com \
+  -e SPRING_MAIL_PASSWORD=my_email_password \
+  -e SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true \
+  -e SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=true \
+  -p 8080:8080 \
+  iotinsighthub/dxc_backend:2.1
+
+
+ Run the Frontend Service
+docker run -d --name iot_frontend \
+
+  -p 4200:80 \
+  iotinsighthub/insight-hub-dashboard:2.1
+
+
+

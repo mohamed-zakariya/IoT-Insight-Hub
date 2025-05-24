@@ -8,7 +8,7 @@ import { catchError, map } from 'rxjs/operators';
 })
 export class OtpPasswordService {
 
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = 'http://localhost:8081/api/auth';
   http: HttpClient = inject(HttpClient);
 
 
