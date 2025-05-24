@@ -5,13 +5,14 @@
     <mat-card class="filter-card">
       <div class="filter-row">
         <mat-form-field appearance="outline" class="filter-field">
-          <mat-label>Date Range</mat-label>
-          <mat-date-range-input [formControl]="dateRange" [rangePicker]="picker">
-            <input matStartDate placeholder="Start date">
-            <input matEndDate placeholder="End date">
-          </mat-date-range-input>
+          <mat-label>Date</mat-label>
+          <input
+            matInput
+            placeholder="Choose a date"
+            [matDatepicker]="picker"
+            [formControl]="selectedDate">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-date-range-picker #picker></mat-date-range-picker>
+          <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
   
         <mat-form-field appearance="outline" class="filter-field">
@@ -78,7 +79,9 @@
       <mat-card class="chart-container">
         <div class="chart-header">
           <h3>{{getChartTitle()}}</h3>
-          <span class="data-count">{{chartData.datasets[0]?.data?.length || 0}} data points</span>
+          <span class="data-count">
+            {{ chartData.datasets[0].data.length }} data points
+          </span>
         </div>
         <canvas baseChart
                 [data]="chartData"

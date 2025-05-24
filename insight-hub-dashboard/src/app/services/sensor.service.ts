@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 export interface TrafficReading {
   id:              string;
   location:        string;
-  timestamp:       string;
+  timestamp: string | Date;
   trafficDensity:  number;
   avgSpeed:        number;
   congestionLevel: 'Low' | 'Moderate' | 'High';
