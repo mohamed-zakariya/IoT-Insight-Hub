@@ -78,11 +78,11 @@ stage('Run Backend Tests') {
             // Define the image name
             def imageName = "${DOCKER_REGISTRY}/dxc_backend:test"
             
-            // Build test image from Dockerfile.test in DXC_Backend
+            
             echo 'Building Docker test image...'
             docker.build(imageName, "-f DXC_Backend/dockerfile.test DXC_Backend")
             
-            // Run tests inside the container
+           
             echo 'Running backend tests inside the Docker container...'
             try {
                 sh "docker run --rm --network iot-hub-network ${imageName}"
