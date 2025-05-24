@@ -1,0 +1,4 @@
+FROM alpine:latest
+COPY jenkins_data.tar.gz /jenkins_data.tar.gz
+RUN mkdir -p /var/jenkins_home && tar xzvf /jenkins_data.tar.gz -C /var/jenkins_home
+VOLUME /var/jenkins_home
