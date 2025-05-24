@@ -1,102 +1,294 @@
 /* src/app/components/settings/settings.component.css */
 
+.page {
+  background: #F5F8FA;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-height: 100vh;
+  margin-left: 0;
+  width: 100%;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+/* Desktop with sidebar */
+@media (min-width: 768px) {
+  .page {
+    padding: 2rem;
+    gap: 2rem;
+  }
+  
+  /* Only apply sidebar offset if body doesn't have sidebar-open class */
+  body:not(.sidebar-open) .page {
+    margin-left: 0;
+    width: 100%;
+  }
+  
+  body.sidebar-open .page {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+  }
+}
+
 .settings-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+@media (min-width: 768px) {
+  .settings-container {
+    padding: 2rem;
   }
-  
+}
+
+.settings-container h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  color: #333;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
   .settings-container h2 {
-    margin-bottom: 1rem;
     font-size: 1.75rem;
-    color: #333;
+    margin-bottom: 2rem;
   }
-  
+}
+
+/* Form Group - Stack on mobile, inline on desktop */
+.form-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
   .form-group {
-    margin-bottom: 1.5rem;
-    display: flex;
+    flex-direction: row;
     align-items: center;
+    gap: 1rem;
   }
-  
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+@media (min-width: 768px) {
   .form-group label {
     flex: 0 0 180px;
-    font-weight: 600;
-    color: #444;
+    font-size: 1rem;
   }
-  
-  /* Make form inputs/selects auto-size but never shrink below a comfortable width */
+}
+
+.form-group select,
+.form-group input {
+  padding: 0.75rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+@media (min-width: 768px) {
   .form-group select,
   .form-group input {
     flex: 1;
-    min-width: 160px;
-    padding: 0.4rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
+    min-width: 200px;
+  }
+}
+
+/* Responsive Table */
+.table-container {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px; /* Ensure table doesn't get too cramped */
+}
+
+.metrics-table th,
+.metrics-table td {
+  padding: 1rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.metrics-table th {
+  background-color: #f8fafc;
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metrics-table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.metrics-table input,
+.metrics-table select {
+  width: 100%;
+  max-width: 160px;
+  padding: 0.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.metrics-table input:focus,
+.metrics-table select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* Invalid state */
+.metrics-table input.invalid,
+.metrics-table select.invalid {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+/* Error messages */
+.error-msg {
+  margin-top: 0.3rem;
+  color: #ef4444;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Adjust buttons */
+.metrics-table button {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #4f46e5, #3b82f6);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  min-width: 70px;
+}
+
+.metrics-table button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.metrics-table button:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Mobile Card Layout for very small screens */
+@media (max-width: 600px) {
+  .table-container {
+    border: none;
+    background: transparent;
   }
   
-  .metrics-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
+  .metrics-table,
+  .metrics-table thead,
+  .metrics-table tbody,
   .metrics-table th,
+  .metrics-table td,
+  .metrics-table tr {
+    display: block;
+  }
+  
+  .metrics-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  .metrics-table tr {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+  }
+  
   .metrics-table td {
-    padding: 0.8rem 0.6rem;
-    text-align: left;
-    border-bottom: 1px solid #eee;
+    border: none;
+    padding: 0.5rem 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  
+  .metrics-table td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #475569;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
   
   .metrics-table input,
   .metrics-table select {
-    width: auto;        /* let content dictate width */
-    min-width: 140px;   /* adjust as needed */
-    padding: 0.4rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.95rem;
+    max-width: none;
+    width: 100%;
   }
   
-  /* invalid state */
-  .metrics-table input.invalid,
-  .metrics-table select.invalid {
-    border-color: #d32f2f;
-  }
-  
-  /* hint and error messages */
-  .param-hint {
-    display: block;
-    margin-top: 0.2rem;
-    color: #777;
-    font-size: 0.85rem;
-  }
-  
-  .error-msg {
-    margin-top: 0.2rem;
-    color: #d32f2f;
-    font-size: 0.85rem;
-  }
-  
-  /* adjust buttons */
   .metrics-table button {
-    padding: 0.4rem 0.8rem;
-    background: #1976d2;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.2s;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .form-group select,
+  .form-group input,
+  .metrics-table input,
+  .metrics-table select {
+    border-width: 3px;
   }
   
-  .metrics-table button:disabled {
-    background: #aaa;
-    cursor: not-allowed;
+  .metrics-table button {
+    border: 2px solid #000;
   }
-  
-  .metrics-table button:hover:not(:disabled) {
-    background: #155a9a;
-  }
-  
+}
