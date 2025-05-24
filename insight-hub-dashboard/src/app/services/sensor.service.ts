@@ -37,7 +37,7 @@ export interface StreetLightReading {
   providedIn: 'root'
 })
 export class SensorService {
-  private readonly baseUrl = 'http://localhost:8080/api';
+  private readonly baseUrl = 'http://localhost:8081/api';
 
   constructor(private http: HttpClient) {}
 
