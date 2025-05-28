@@ -14,6 +14,9 @@ import java.util.UUID;
 public interface SettingsRepository extends JpaRepository<Settings, UUID> {
 
     Optional<Settings> findByTypeAndMetric(SensorType type, String metric);
+
     void deleteByTypeAndMetric(SensorType type, String metric);
+
     List<Settings> findAllByType(SensorType type);
 }
+

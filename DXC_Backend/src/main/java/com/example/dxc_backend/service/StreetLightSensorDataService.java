@@ -1,7 +1,7 @@
 package com.example.dxc_backend.service;
 
+import com.example.dxc_backend.enums.Status;
 import com.example.dxc_backend.model.StreetLightSensorData;
-import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.repository.StreetLightSensorDataRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +15,7 @@ import java.util.UUID;
 public class StreetLightSensorDataService {
 
     private final StreetLightSensorDataRepository repository;
+    private final Random random = new Random();
 
     public StreetLightSensorDataService(StreetLightSensorDataRepository repository) {
         this.repository = repository;
@@ -42,22 +43,21 @@ public class StreetLightSensorDataService {
         return false; // Indicate that the ID was not found
     }
 
-
-
-
-    //now will make a a new function for the random generation
-    private final Random random = new Random();
-
     public StreetLightSensorData generateRandomStreetLightSensorData() {
         StreetLightSensorData data = new StreetLightSensorData();
-        //data.setId(UUID.randomUUID()); we generate the uuid from the call dont forget because we cant send it in the random // be well ^_~^_~^_~^_~^_~
-        data.setLocation("Location-" + random.nextInt(100)); //  Location-1, Location-2
+
+        // UUID generation should be done externally or by the database
+        // data.setId(UUID.randomUUID()); // Uncomment if needed here
+
+        data.setLocation("Location-" + random.nextInt(100)); // Location-0 to Location-99
         data.setTimestamp(LocalDateTime.now());
-        data.setBrightnessLevel(random.nextInt(101)); // from 0 and 100
-        data.setPowerConsumption(random.nextFloat() * 5000); // from 0 and 5000
-        data.setStatus(new String[]{"ON", "OFF"}[random.nextInt(2)]);
+        data.setBrightnessLevel(random.nextInt(101)); // 0 to 100 inclusive
+        data.setPowerConsumption(random.nextFloat() * 5000); // 0 to 5000
+
+        // Correctly assign Status enum randomly
+        Status[] statuses = Status.values();
+        data.setStatus(statuses[random.nextInt(statuses.length)]);
+
         return data;
     }
-
-
 }

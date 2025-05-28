@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SettingsService {
@@ -19,27 +20,29 @@ public class SettingsService {
     @Autowired
     private SettingsRepository settingsRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
     @Transactional
     public Settings createSetting(SensorType sensorType, String metric,
                                   Float thresholdValue, AlertType alertType) {
-        // ✅ Validate sensor type
+        // Validate sensor type
         if (sensorType == null || !SensorMetricValidation.SENSOR_METRIC_MAP.containsKey(sensorType)) {
             throw new IllegalArgumentException("Sensor type '" + sensorType + "' is not recognized.");
         }
 
-        // ✅ Validate metric
-        Set<String> validMetrics = SensorMetricValidation.SENSOR_METRIC_MAP.get(sensorType);
-        if (validMetrics == null || !validMetrics.contains(metric)) {
+        // Validate metric
+        var validMetrics = SensorMetricValidation.SENSOR_METRIC_MAP.get(sensorType);
+        if (validMetrics == null || !validMetrics.stream().map(Enum::name).toList().contains(metric)) {
             throw new IllegalArgumentException("Metric '" + metric + "' is not valid for sensor type '" + sensorType + "'");
         }
 
-        // ✅ Get the valid range for the given metric
-        Map<String, Range> metricRangeMap = SensorMetricValidation.METRIC_VALID_RANGES.get(sensorType);
+        // Validate threshold range
+        var metricRangeMap = SensorMetricValidation.METRIC_VALID_RANGES.get(sensorType);
         if (metricRangeMap != null) {
-            Range validRange = metricRangeMap.get(metric);
+            var validRange = metricRangeMap.get(
+                    validMetrics.stream()
+                            .filter(e -> e.name().equals(metric))
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid metric"))
+            );
             if (validRange != null && !validRange.isValid(thresholdValue)) {
                 throw new IllegalArgumentException("Threshold value for metric '" + metric + "' is out of range. Valid range: "
                         + validRange.getMin() + " to " + validRange.getMax());
@@ -47,9 +50,8 @@ public class SettingsService {
         }
 
         // Remove existing setting (if any)
-        settingsRepository.findByTypeAndMetric(sensorType, metric)
-                .ifPresent(existing -> settingsRepository.deleteByTypeAndMetric(sensorType, metric));
-
+        Optional<Settings> existingSetting = settingsRepository.findByTypeAndMetric(sensorType, metric);
+        existingSetting.ifPresent(setting -> settingsRepository.delete(setting));
 
         // Create and save new setting
         Settings settings = new Settings();
@@ -57,6 +59,7 @@ public class SettingsService {
         settings.setMetric(metric);
         settings.setThresholdValue(thresholdValue);
         settings.setAlertType(alertType);
+
         return settingsRepository.save(settings);
     }
 
@@ -67,6 +70,4 @@ public class SettingsService {
     public List<Settings> getSettingsByType(SensorType type) {
         return settingsRepository.findAllByType(type);
     }
-
-
 }

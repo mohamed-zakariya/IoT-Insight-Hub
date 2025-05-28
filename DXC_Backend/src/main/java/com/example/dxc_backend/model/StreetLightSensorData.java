@@ -1,5 +1,6 @@
 package com.example.dxc_backend.model;
 
+import com.example.dxc_backend.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -28,7 +29,8 @@ public class StreetLightSensorData {
     private float powerConsumption;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @PrePersist
     public void prePersist() {

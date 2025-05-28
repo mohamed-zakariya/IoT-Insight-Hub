@@ -2,6 +2,7 @@ package com.example.dxc_backend.controller;
 
 import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.service.TrafficSensorDataService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class TrafficSensorDataController {
     }
 
     @PostMapping
-    public TrafficSensorData createTrafficSensorData(@RequestBody TrafficSensorData data) {
+    public TrafficSensorData createTrafficSensorData(@RequestBody @Valid TrafficSensorData data) {
 
         return service.saveTrafficSensorData(data);
     }

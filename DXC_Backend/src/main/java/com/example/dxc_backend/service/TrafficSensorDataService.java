@@ -1,29 +1,31 @@
 package com.example.dxc_backend.service;
 
+import com.example.dxc_backend.enums.CongestionLevel;
+import com.example.dxc_backend.enums.SensorType;
+import com.example.dxc_backend.enums.TrafficSensor;
 import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.repository.TrafficSensorDataRepository;
+import com.example.dxc_backend.sensor.SensorProcessor;
+import com.example.dxc_backend.sensor.SensorProcessorFactory;
+import com.example.dxc_backend.util.Range;
+import com.example.dxc_backend.validation.SensorMetricValidation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
-import java.util.UUID;
-
-
+import java.util.*;
 
 @Service
 public class TrafficSensorDataService {
 
-     @Autowired private TrafficSensorDataRepository repository;
+    private final TrafficSensorDataRepository repository;
+    private final Random random = new Random();
 
+    @Autowired
     public TrafficSensorDataService(TrafficSensorDataRepository repository) {
         this.repository = repository;
     }
@@ -37,37 +39,37 @@ public class TrafficSensorDataService {
     }
 
     public TrafficSensorData saveTrafficSensorData(TrafficSensorData data) {
-        // Print each attribute of the TrafficSensorData object
-        System.out.println("Saving Traffic Sensor Data: ");
-        System.out.println("ID: " + data.getId());
-        System.out.println("Location: " + data.getLocation());
-        System.out.println("Timestamp: " + data.getTimestamp());
-        System.out.println("Traffic Density: " + data.getTrafficDensity());
-        System.out.println("Average Speed: " + data.getAvgSpeed());
-        System.out.println("Congestion Level: " + data.getCongestionLevel());
-
+        SensorProcessor processor = SensorProcessorFactory.getProcessor(data);
+        processor.processData();  // Validation or preprocessing
         return repository.save(data);
     }
+
+
+
 
     public boolean deleteTrafficSensorData(UUID id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
-            return true; // Indicate successful deletion
+            return true;
         }
-        return false; // Indicate that the ID was not found
+        return false;
     }
-
-    //now will make a a new function for the random generation
-    private final Random random = new Random();
 
     public TrafficSensorData generateRandomTrafficSensorData() {
         TrafficSensorData data = new TrafficSensorData();
-        //data.setId(UUID.randomUUID()); we generate the uuid from the call dont forget because we cant send it in the random // be well ^_~^_~^_~^_~^_~
-        data.setLocation("Location-" + random.nextInt(100)); //  Location-1, Location-2
+
+        // Note: UUID should be set externally, e.g. by caller or DB (if auto-generated)
+        // data.setId(UUID.randomUUID()); // Uncomment if you want to generate here
+
+        data.setLocation("Location-" + random.nextInt(100));
         data.setTimestamp(LocalDateTime.now());
-        data.setTrafficDensity(random.nextInt(501)); // from 0 and 500
-        data.setAvgSpeed(random.nextFloat() * 120); // from 0 and 120
-        data.setCongestionLevel(new String[]{"Low", "Moderate", "High", "Severe"}[random.nextInt(4)]);
+        data.setTrafficDensity(random.nextInt(501)); // 0 to 500 inclusive
+        data.setAvgSpeed(random.nextFloat() * 120); // 0 to 120 km/h approx
+
+        // Assign a random CongestionLevel enum value correctly:
+        CongestionLevel[] levels = CongestionLevel.values();
+        data.setCongestionLevel(levels[random.nextInt(levels.length)]);
+
         return data;
     }
 
@@ -81,7 +83,7 @@ public class TrafficSensorDataService {
             String sortBy,
             String sortDirection
     ) {
-        List<String> allowedSortFields = List.of("trafficDensity", "avgSpeed", "timestamp");
+        List<TrafficSensor> allowedSortFields = List.of(TrafficSensor.TRAFFIC_DENSITY, TrafficSensor.AVG_SPEED, TrafficSensor.TIME_STAMP);
 
         if (!allowedSortFields.contains(sortBy)) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy +
