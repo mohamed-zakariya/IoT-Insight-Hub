@@ -40,8 +40,8 @@ public class SettingsServiceTest {
         Map<String, Map<String, Range>> rangesMap = new HashMap<>();
         rangesMap.put("Traffic", metricRange);
 
-        SensorMetricValidation.SENSOR_METRIC_MAP = sensorMap;
-        SensorMetricValidation.METRIC_VALID_RANGES = rangesMap;
+//        SensorMetricValidation.SENSOR_METRIC_MAP = sensorMap;
+//        SensorMetricValidation.METRIC_VALID_RANGES = rangesMap;   //TODO: uncomment this
     }
 
     @Test

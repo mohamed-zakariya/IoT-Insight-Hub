@@ -28,8 +28,6 @@ public class AirPollutionSensorDataService {
     }
 
     public AirPollutionSensorData saveSensorData(AirPollutionSensorData data) {
-        System.out.println("Saving Air Pollution Sensor Data:");
-        System.out.println(data);
         return repository.save(data);
     }
 
