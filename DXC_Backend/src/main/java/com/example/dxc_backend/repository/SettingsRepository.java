@@ -1,5 +1,6 @@
 package com.example.dxc_backend.repository;
 
+import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.model.Settings;
 import com.example.dxc_backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,9 +13,7 @@ import java.util.UUID;
 @Repository
 public interface SettingsRepository extends JpaRepository<Settings, UUID> {
 
-    List<Settings> findAllByType(String type);
-
-    Optional<Settings> findByTypeAndMetric(String type, String metric);
-
-    void deleteByTypeAndMetric(String type, String metric);
+    Optional<Settings> findByTypeAndMetric(SensorType type, String metric);
+    void deleteByTypeAndMetric(SensorType type, String metric);
+    List<Settings> findAllByType(SensorType type);
 }

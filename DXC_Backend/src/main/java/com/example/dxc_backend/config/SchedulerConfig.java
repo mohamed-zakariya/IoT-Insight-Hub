@@ -45,7 +45,7 @@ public class SchedulerConfig {
         TrafficSensorData randomData = trafficSensorDataService.generateRandomTrafficSensorData();
         System.out.println("Generated Traffic Sensor Data: " + randomData);
         trafficSensorDataController.createTrafficSensorData(randomData);
-        alertService.checkAndTriggerAlerts(); // ✅ ensure alert runs after latest data is posted
+        alertService.checkAndTriggerAlerts();
     }
 
     @Scheduled(fixedRate = 300000)

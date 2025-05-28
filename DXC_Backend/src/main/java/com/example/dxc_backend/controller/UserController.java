@@ -75,7 +75,6 @@ public class UserController {
         String password = credentials.get("password");
 
         User user = userRepository.findByEmail(email);
-        System.out.println("sssssssssssssss" + user);
 
 
         if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
@@ -189,16 +188,12 @@ public class UserController {
             @RequestHeader("accessToken") String token) {
 
 
-        System.out.println("old passwordddddddddddd" + request.getOldPassword());
 
         if (!tokenService.isValidAccessToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
         }
-        System.out.println("enterreddddddddddddddddd");
         String username = tokenService.extractUsernameFromToken(token);
-        System.out.println("usernameeeeeeee" + username);
         Long tokenUserId = userService.getUserIdByUsername(username);
-        System.out.println("idddddddddddddddddd" + tokenUserId);
 
 
         if (!tokenUserId.equals(id)) {
@@ -208,7 +203,6 @@ public class UserController {
             userService.updatePassword(id, request.getOldPassword(), request.getNewPassword());
             return ResponseEntity.ok(Map.of("message", "Password updated successfully."));
         } catch (RuntimeException e) {
-            System.out.println("catchhhhhhh"+e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

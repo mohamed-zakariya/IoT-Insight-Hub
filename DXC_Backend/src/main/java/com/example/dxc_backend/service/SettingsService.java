@@ -47,8 +47,9 @@ public class SettingsService {
         }
 
         // Remove existing setting (if any)
-        settingsRepository.findByTypeAndMetric(sensorType.name(), metric)
-                .ifPresent(existing -> settingsRepository.deleteByTypeAndMetric(sensorType.name(), metric));
+        settingsRepository.findByTypeAndMetric(sensorType, metric)
+                .ifPresent(existing -> settingsRepository.deleteByTypeAndMetric(sensorType, metric));
+
 
         // Create and save new setting
         Settings settings = new Settings();
@@ -63,7 +64,7 @@ public class SettingsService {
         return settingsRepository.findAll();
     }
 
-    public List<Settings> getSettingsByType(String type) {
+    public List<Settings> getSettingsByType(SensorType type) {
         return settingsRepository.findAllByType(type);
     }
 

@@ -1,5 +1,7 @@
 package com.example.dxc_backend.service;
 
+import com.example.dxc_backend.enums.AlertType;
+import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.model.Settings;
 import com.example.dxc_backend.repository.SettingsRepository;
 import com.example.dxc_backend.util.Range;
@@ -31,25 +33,25 @@ public class SettingsServiceTest {
         Set<String> trafficMetrics = new HashSet<>();
         trafficMetrics.add("avgSpeed");
 
-        Map<String, Set<String>> sensorMap = new HashMap<>();
-        sensorMap.put("Traffic", trafficMetrics);
+        Map<SensorType, Set<String>> sensorMap = new HashMap<>();
+        sensorMap.put(SensorType.TRAFFIC, trafficMetrics);
 
         Map<String, Range> metricRange = new HashMap<>();
         metricRange.put("avgSpeed", new Range(0f, 120f));
 
-        Map<String, Map<String, Range>> rangesMap = new HashMap<>();
-        rangesMap.put("Traffic", metricRange);
+        Map<SensorType, Map<String, Range>> rangesMap = new HashMap<>();
+        rangesMap.put(SensorType.TRAFFIC, metricRange);
 
-//        SensorMetricValidation.SENSOR_METRIC_MAP = sensorMap;
-//        SensorMetricValidation.METRIC_VALID_RANGES = rangesMap;   //TODO: uncomment this
+        SensorMetricValidation.SENSOR_METRIC_MAP = sensorMap;
+        SensorMetricValidation.METRIC_VALID_RANGES = rangesMap;
     }
 
     @Test
     public void testCreateSetting_Success() {
-        String sensorType = "Traffic";
+        SensorType sensorType = SensorType.TRAFFIC;
         String metric = "avgSpeed";
         Float threshold = 100f;
-        String alertType = "BELOW";
+        AlertType alertType = AlertType.BELOW;
 
         when(settingsRepository.findByTypeAndMetric(sensorType, metric)).thenReturn(Optional.empty());
         when(settingsRepository.save(any(Settings.class))).thenAnswer(inv -> inv.getArgument(0));

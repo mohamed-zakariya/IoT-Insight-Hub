@@ -17,6 +17,7 @@ public class Alert {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Enumerated(EnumType.STRING)
     private SensorType type;
 
     private String metric; // e.g., "avgSpeed", "co", "brightnessLevel"
@@ -25,6 +26,7 @@ public class Alert {
 
     private float thresholdValue; // From the Settings table
 
+    @Enumerated(EnumType.STRING)
     private AlertType alertType;
 
     private String message; // Human-readable explanation
