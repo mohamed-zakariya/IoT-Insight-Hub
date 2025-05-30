@@ -3,6 +3,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface TrafficReading {
   id:              string;
@@ -37,7 +38,7 @@ export interface StreetLightReading {
   providedIn: 'root'
 })
 export class SensorService {
-  private readonly baseUrl = 'http://localhost:8081/api';
+  private readonly baseUrl = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 

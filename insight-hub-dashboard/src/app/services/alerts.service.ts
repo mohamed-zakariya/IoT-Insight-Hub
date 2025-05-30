@@ -3,10 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AlertSummary } from '../models/alert-summary.model';
+import { environment } from '../../environments/environment'
 
 @Injectable({ providedIn: 'root' })
 export class AlertsService {
-  private url = 'http://localhost:8081/api/alerts';
+  private url = `${environment.apiUrl}/alerts`;
 
   constructor(private http: HttpClient) {}
 
