@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl, FormsModule } from '@angular/forms';
 import { MatSliderModule } from '@angular/material/slider';
 
-import { SensorService, TrafficReading } from '../../services/sensor.service';
+// import { SensorService, TrafficReading } from '../../services/sensor.service';
+import { SensorService} from '../../services/sensor.service';
+import { TrafficReading } from '../../models/traffic-reading.model';
 
 // Angular Material modules
 import { MatCardModule } from '@angular/material/card';

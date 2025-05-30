@@ -1,38 +1,11 @@
-// src/app/services/sensor.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-export interface TrafficReading {
-  id:              string;
-  location:        string;
-  timestamp: string | Date;
-  trafficDensity:  number;
-  avgSpeed:        number;
-  congestionLevel: 'Low' | 'Moderate' | 'High';
-}
-
-export interface AirPollutionReading {
-  id:             string;
-  location:       string;
-  timestamp:      string;
-  co:             number;
-  no2:            number;
-  so2:            number;
-  ozone:          number;
-  pollutionLevel: string;
-}
-
-export interface StreetLightReading {
-  id:               string;
-  location:         string;
-  timestamp:        string;
-  brightnessLevel:  number;
-  powerConsumption: number;
-  status:           'ON' | 'OFF';
-}
+import { TrafficReading } from '../models/traffic-reading.model';
+import { AirPollutionReading } from '../models/air-pollution-reading.model';
+import { StreetLightReading } from '../models/street-light-reading.model';
 
 @Injectable({
   providedIn: 'root'
@@ -42,21 +15,24 @@ export class SensorService {
 
   constructor(private http: HttpClient) {}
 
+  /**
+   * Fetch traffic sensor data from backend.
+   */
   getTraffic(): Observable<TrafficReading[]> {
-    return this.http.get<TrafficReading[]>(
-      `${this.baseUrl}/traffic-sensors`
-    );
+    return this.http.get<TrafficReading[]>(`${this.baseUrl}/traffic-sensors`);
   }
 
+  /**
+   * Fetch air pollution sensor data from backend.
+   */
   getAirPollution(): Observable<AirPollutionReading[]> {
-    return this.http.get<AirPollutionReading[]>(
-      `${this.baseUrl}/air-pollution-sensors`
-    );
+    return this.http.get<AirPollutionReading[]>(`${this.baseUrl}/air-pollution-sensors`);
   }
 
+  /**
+   * Fetch street light sensor data from backend.
+   */
   getStreetLight(): Observable<StreetLightReading[]> {
-    return this.http.get<StreetLightReading[]>(
-      `${this.baseUrl}/street-light-sensors`
-    );
+    return this.http.get<StreetLightReading[]>(`${this.baseUrl}/street-light-sensors`);
   }
 }
