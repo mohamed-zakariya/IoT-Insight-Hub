@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TrafficSensorDataService extends BaseSensorDataService<TrafficSensorData, UUID> {
@@ -46,24 +47,28 @@ public class TrafficSensorDataService extends BaseSensorDataService<TrafficSenso
     public Page<TrafficSensorData> getFilteredData(
             LocalDateTime timestampStart,
             LocalDateTime timestampEnd,
-            String location,
-            String congestionLevel,
+            List<String> locations,
+            List<String> congestionLevels,
             int page,
             int size,
             String sortBy,
             String sortDirection
     ) {
-        List<TrafficSensor> allowedSortFields = List.of(TrafficSensor.TRAFFIC_DENSITY, TrafficSensor.AVG_SPEED, TrafficSensor.TIME_STAMP);
-
-        if (!allowedSortFields.contains(sortBy)) {
-            throw new IllegalArgumentException("Invalid sort field: " + sortBy +
-                    ". Allowed fields: trafficDensity, avgSpeed, timestamp.");
-        }
-
         Sort.Direction sortDirectionEnum = Sort.Direction.fromString(sortDirection);
         Sort sort = Sort.by(sortDirectionEnum, sortBy);
 
+        if (locations != null) {
+            locations = locations.stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+        }
+        if (congestionLevels != null) {
+            congestionLevels = congestionLevels.stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+        }
+
         Pageable pageable = PageRequest.of(page, size, sort);
-        return repository.findFiltered(location, timestampStart, timestampEnd, congestionLevel, pageable);
+        return repository.findFiltered(locations, timestampStart, timestampEnd, congestionLevels, pageable);
     }
 }

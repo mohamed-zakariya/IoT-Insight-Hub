@@ -24,14 +24,14 @@ public class TrafficSensorDataController {
     }
 
 
-    @GetMapping("/new")  // && bassel
+    @GetMapping("/new")
     public Page<TrafficSensorData> getFilteredTrafficSensorData(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampStart,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampEnd,
-            @RequestParam(required = false) String location,
-            @RequestParam(required = false) String congestionLevel,
+            @RequestParam(required = false) List<String> location,
+            @RequestParam(required = false) List<String> congestionLevel,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,    // number of records returned per page
+            @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "timestamp") String sortBy,
             @RequestParam(defaultValue = "DESC") String sortDirection
     ) {

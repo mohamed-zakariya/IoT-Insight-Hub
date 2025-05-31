@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,15 +20,15 @@ public interface TrafficSensorDataRepository extends JpaRepository<TrafficSensor
 
     // Dynamic filtering with pagination
     @Query("SELECT t FROM TrafficSensorData t WHERE " +
-            "(:location IS NULL OR LOWER(t.location) LIKE LOWER(CONCAT('%', :location, '%'))) AND " +
+            "(:locations IS NULL OR LOWER(t.location) IN :locations) AND " +
             "(:start IS NULL OR t.timestamp >= :start) AND " +
             "(:end IS NULL OR t.timestamp <= :end) AND " +
-            "(:congestionLevel IS NULL OR LOWER(t.congestionLevel) = LOWER(:congestionLevel))")
+            "(:congestionLevels IS NULL OR LOWER(t.congestionLevel) IN :congestionLevels)")
     Page<TrafficSensorData> findFiltered(
-            @Param("location") String location,
+            @Param("locations") List<String> locations,
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
-            @Param("congestionLevel") String congestionLevel,
+            @Param("congestionLevels") List<String> congestionLevels,
             Pageable pageable
     );
 }
