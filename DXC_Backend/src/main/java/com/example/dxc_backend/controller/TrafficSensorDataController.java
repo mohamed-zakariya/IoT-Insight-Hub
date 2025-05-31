@@ -1,8 +1,10 @@
 package com.example.dxc_backend.controller;
 
 import com.example.dxc_backend.model.TrafficSensorData;
+import com.example.dxc_backend.service.TokenService;
 import com.example.dxc_backend.service.TrafficSensorDataService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/traffic-sensors")
 public class TrafficSensorDataController {
+    @Autowired
+    private TokenService tokenService;
 
     private final TrafficSensorDataService service;
 
@@ -25,7 +29,7 @@ public class TrafficSensorDataController {
 
 
     @GetMapping("/new")
-    public Page<TrafficSensorData> getFilteredTrafficSensorData(
+    public ResponseEntity<?> getFilteredTrafficSensorData(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampStart,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampEnd,
             @RequestParam(required = false) List<String> location,
@@ -33,9 +37,16 @@ public class TrafficSensorDataController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "timestamp") String sortBy,
-            @RequestParam(defaultValue = "DESC") String sortDirection
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @RequestHeader("accessToken") String token
     ) {
-        return service.getFilteredData(timestampStart, timestampEnd, location, congestionLevel, page, size, sortBy, sortDirection);
+        if (!tokenService.isValidAccessToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
+        }
+
+        Page<TrafficSensorData> result = service.getFilteredData(timestampStart, timestampEnd, location, congestionLevel, page, size, sortBy, sortDirection);
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping
