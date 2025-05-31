@@ -1,5 +1,9 @@
-package com.example.dxc_backend.sensor;
+package com.example.dxc_backend.factory;
 
+import com.example.dxc_backend.factory.processor.AirPollutionSensorProcessor;
+import com.example.dxc_backend.factory.processor.SensorProcessor;
+import com.example.dxc_backend.factory.processor.StreetLightSensorProcessor;
+import com.example.dxc_backend.factory.processor.TrafficSensorProcessor;
 import com.example.dxc_backend.model.*;
 
 public class SensorProcessorFactory {

@@ -1,4 +1,4 @@
-package com.example.dxc_backend.sensor;
+package com.example.dxc_backend.factory.processor;
 
 public interface SensorProcessor {
     void processData();

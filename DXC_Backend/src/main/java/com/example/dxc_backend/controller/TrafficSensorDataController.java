@@ -40,12 +40,12 @@ public class TrafficSensorDataController {
 
     @GetMapping
     public List<TrafficSensorData> getAllTrafficSensorData() {
-        return service.getAllTrafficSensorData();
+        return service.getAllSensorData();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TrafficSensorData> getTrafficSensorDataById(@PathVariable UUID id) {
-        return service.getTrafficSensorDataById(id)
+        return service.getSensorDataById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -53,12 +53,12 @@ public class TrafficSensorDataController {
     @PostMapping
     public TrafficSensorData createTrafficSensorData(@RequestBody @Valid TrafficSensorData data) {
 
-        return service.saveTrafficSensorData(data);
+        return service.saveSensorData(data);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTrafficSensorData(@PathVariable UUID id) {
-        boolean isDeleted = service.deleteTrafficSensorData(id);
+        boolean isDeleted = service.deleteSensorData(id);
         if (isDeleted) {
             return ResponseEntity.ok("Traffic sensor data with ID " + id + " successfully deleted.");
         } else {

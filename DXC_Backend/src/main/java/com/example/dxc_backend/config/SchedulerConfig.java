@@ -40,25 +40,18 @@ public class SchedulerConfig {
     @Autowired
     private AlertService alertService;
 
-    @Scheduled(fixedRate = 300000) // every 5 minutes
-    public void generateAndPostTrafficSensorData() {
-        TrafficSensorData randomData = trafficSensorDataService.generateRandomTrafficSensorData();
-        System.out.println("Generated Traffic Sensor Data: " + randomData);
-        trafficSensorDataController.createTrafficSensorData(randomData);
-        alertService.checkAndTriggerAlerts();
+    @Scheduled(fixedRate = 300000)
+    public void runSensorGenerationAndAlertCheck() {
+        TrafficSensorData trafficData = trafficSensorDataService.generateRandomTrafficSensorData();
+        trafficSensorDataController.createTrafficSensorData(trafficData);
+
+        AirPollutionSensorData airData = airPollutionSensorDataService.generateRandomAirPollutionSensorData();
+        airPollutionSensorDataController.createSensorData(airData);
+
+        StreetLightSensorData streetLightData = streetLightSensorDataService.generateRandomStreetLightSensorData();
+        streetLightSensorDataController.createSensorData(streetLightData);
+
+        alertService.checkAndTriggerAlerts();  // Only called once after all data is posted
     }
 
-    @Scheduled(fixedRate = 300000)
-    public void generateAndPostAirPollutionSensorData() {
-        AirPollutionSensorData randomData = airPollutionSensorDataService.generateRandomAirPollutionSensorData();
-        System.out.println("Generated Air Pollution Sensor Data: " + randomData);
-        airPollutionSensorDataController.createSensorData(randomData);
-    }
-
-    @Scheduled(fixedRate = 300000)
-    public void generateAndPostStreetLightSensorData() {
-        StreetLightSensorData randomData = streetLightSensorDataService.generateRandomStreetLightSensorData();
-        System.out.println("Generated Street Light Sensor Data: " + randomData);
-        streetLightSensorDataController.createSensorData(randomData);
-    }
 }

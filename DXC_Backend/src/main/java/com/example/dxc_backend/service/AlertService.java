@@ -3,6 +3,7 @@ package com.example.dxc_backend.service;
 import com.example.dxc_backend.enums.*;
 import com.example.dxc_backend.model.*;
 import com.example.dxc_backend.repository.*;
+import com.example.dxc_backend.strategy.alert.SensorAlertHandler;
 import com.example.dxc_backend.util.EmailTemplateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,132 +16,112 @@ public class AlertService {
     @Autowired
     private SettingsRepository settingsRepository;
     @Autowired
-    private TrafficSensorDataRepository trafficRepo;
-    @Autowired
-    private AirPollutionSensorDataRepository airRepo;
-    @Autowired
-    private StreetLightSensorDataRepository lightRepo;
-    @Autowired
     private AlertRepository alertRepository;
     @Autowired
     private EmailService emailService;
     @Autowired
     private UserRepository userRepository;
 
+    private final List<SensorAlertHandler> handlers;
+
+
+
+    public AlertService(List<SensorAlertHandler> handlers,
+                        AlertRepository alertRepository,
+                        SettingsRepository settingsRepository,
+                        UserRepository userRepository,
+                        EmailService emailService) {
+        this.handlers = handlers;
+        this.alertRepository = alertRepository;
+        this.settingsRepository = settingsRepository;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+    }
+
+
     public void checkAndTriggerAlerts() {
         List<Settings> allSettings = settingsRepository.findAll();
 
         for (Settings setting : allSettings) {
-            SensorType sensorType = setting.getType();
-            String metricStr = setting.getMetric();
-            float threshold = setting.getThresholdValue();
-            AlertType alertType = setting.getAlertType();
+            SensorAlertHandler handler = handlers.stream()
+                    .filter(h -> h.getSensorType() == setting.getType())
+                    .findFirst()
+                    .orElse(null);
 
-            float latestValue = 0f;
+            if (handler == null) {
+                System.err.println("No handler found for sensor type: " + setting.getType());
+                continue;
+            }
 
             try {
-                switch (sensorType) {
-                    case TRAFFIC:
-                        TrafficSensor metricTraffic = TrafficSensor.valueOf(metricStr);
-                        TrafficSensorData latestTraffic = trafficRepo.findTopByOrderByTimestampDesc()
-                                .orElseThrow(() -> new IllegalStateException("No traffic data available"));
-                        latestValue = getTrafficMetricValue(latestTraffic, metricTraffic);
-                        break;
+                float latestValue = handler.getLatestMetricValue(setting.getMetric());
 
-                    case AIR_POLLUTION:
-                        AirPollutionSensor metricAir = AirPollutionSensor.valueOf(metricStr);
-                        AirPollutionSensorData latestAir = airRepo.findTopByOrderByTimestampDesc()
-                                .orElseThrow(() -> new IllegalStateException("No Air Pollution data available"));
-                        latestValue = getAirMetricValue(latestAir, metricAir);
-                        break;
+                boolean alertTriggered =
+                        (setting.getAlertType() == AlertType.ABOVE && latestValue > setting.getThresholdValue()) ||
+                                (setting.getAlertType() == AlertType.BELOW && latestValue < setting.getThresholdValue());
 
-                    case STREET_LIGHT:
-                        StreetLightSensor metricLight = StreetLightSensor.valueOf(metricStr);
-                        StreetLightSensorData latestLight = lightRepo.findTopByOrderByTimestampDesc()
-                                .orElseThrow(() -> new IllegalStateException("No Street Light data available"));
-                        latestValue = getStreetLightMetricValue(latestLight, metricLight);
-                        break;
+                if (alertTriggered) {
+                    Alert alert = new Alert();
+                    alert.setType(setting.getType());
+                    alert.setMetric(setting.getMetric());
+                    alert.setMetricValue(latestValue);
+                    alert.setThresholdValue(setting.getThresholdValue());
+                    alert.setAlertType(setting.getAlertType());
+                    alert.setMessage(String.format(
+                            "Alert: %s sensor for '%s' is %s threshold. Value = %.2f, Threshold = %.2f",
+                            setting.getType(), setting.getMetric(),
+                            setting.getAlertType().getDisplayText().toLowerCase(),
+                            latestValue, setting.getThresholdValue()
+                    ));
+                    alertRepository.save(alert);
 
-                    default:
-                        // Optionally log unknown sensor type
-                        continue;
-                }
-            } catch (IllegalArgumentException e) {
-                // metricStr not matching enum value
-                System.err.println("Invalid metric '" + metricStr + "' for sensor type " + sensorType);
-                continue; // skip this setting
-            } catch (IllegalStateException e) {
-                // No sensor data available
-                System.err.println(e.getMessage());
-                continue; // skip this setting
-            }
-
-            boolean alertTriggered =
-                    (alertType == AlertType.ABOVE && latestValue > threshold) ||
-                            (alertType == AlertType.BELOW && latestValue < threshold);
-
-            if (alertTriggered) {
-                Alert alert = new Alert();
-                alert.setType(sensorType);
-                alert.setMetric(metricStr);  // store metric as String
-                alert.setMetricValue(latestValue);
-                alert.setThresholdValue(threshold);
-                alert.setAlertType(alertType);
-                alert.setMessage(String.format(
-                        "Alert: %s sensor for '%s' is %s threshold. Value = %.2f, Threshold = %.2f",
-                        sensorType, metricStr, alertType.getDisplayText().toLowerCase(), latestValue, threshold
-                ));
-                alertRepository.save(alert);
-
-                String htmlContent = EmailTemplateUtil.buildAlertHtml(
-                        sensorType, metricStr, latestValue, threshold, alertType.getDisplayText()
-                );
-
-                List<String> emails = userRepository.findAllEmails();
-
-                try {
+                    String htmlContent = EmailTemplateUtil.buildAlertHtml(
+                            setting.getType(), setting.getMetric(), latestValue,
+                            setting.getThresholdValue(), setting.getAlertType().getDisplayText()
+                    );
+                    List<String> emails = userRepository.findAllEmails();
                     emailService.sendAlertEmail(emails, "🚨 Sensor Alert Triggered", htmlContent);
-                } catch (Exception e) {
-                    System.err.println("Failed to send alert email: " + e.getMessage());
                 }
+            } catch (Exception e) {
+                System.err.println("Failed to process alert: " + e.getMessage());
             }
         }
     }
 
-    private float getTrafficMetricValue(TrafficSensorData data, TrafficSensor metric) {
-        switch (metric) {
-            case TRAFFIC_DENSITY:
-                return data.getTrafficDensity();
-            case AVG_SPEED:
-                return data.getAvgSpeed();
-            default:
-                return 0f;
-        }
-    }
-
-    private float getAirMetricValue(AirPollutionSensorData data, AirPollutionSensor metric) {
-        switch (metric) {
-            case CO:
-                return data.getCo();
-            case OZONE:
-                return data.getOzone();
-            case NO2:
-                return data.getNo2();
-            case SO2:
-                return data.getSo2();
-            default:
-                return 0f;
-        }
-    }
-
-    private float getStreetLightMetricValue(StreetLightSensorData data, StreetLightSensor metric) {
-        switch (metric) {
-            case BRIGHTNESS_LEVEL:
-                return data.getBrightnessLevel();
-            case POWER_CONSUMPTION:
-                return data.getPowerConsumption();
-            default:
-                return 0f;
-        }
-    }
+//    private float getTrafficMetricValue(TrafficSensorData data, TrafficSensor metric) {
+//        switch (metric) {
+//            case TRAFFIC_DENSITY:
+//                return data.getTrafficDensity();
+//            case AVG_SPEED:
+//                return data.getAvgSpeed();
+//            default:
+//                return 0f;
+//        }
+//    }
+//
+//    private float getAirMetricValue(AirPollutionSensorData data, AirPollutionSensor metric) {
+//        switch (metric) {
+//            case CO:
+//                return data.getCo();
+//            case OZONE:
+//                return data.getOzone();
+//            case NO2:
+//                return data.getNo2();
+//            case SO2:
+//                return data.getSo2();
+//            default:
+//                return 0f;
+//        }
+//    }
+//
+//    private float getStreetLightMetricValue(StreetLightSensorData data, StreetLightSensor metric) {
+//        switch (metric) {
+//            case BRIGHTNESS_LEVEL:
+//                return data.getBrightnessLevel();
+//            case POWER_CONSUMPTION:
+//                return data.getPowerConsumption();
+//            default:
+//                return 0f;
+//        }
+//    }
 }

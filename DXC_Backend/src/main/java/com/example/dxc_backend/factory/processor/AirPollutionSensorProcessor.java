@@ -1,4 +1,4 @@
-package com.example.dxc_backend.sensor;
+package com.example.dxc_backend.factory.processor;
 
 import com.example.dxc_backend.enums.AirPollutionSensor;
 import com.example.dxc_backend.enums.SensorType;
