@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { SensorDashboardComponent } from './sensor-dashboard.component';
 
 describe('SensorDashboardComponent', () => {
@@ -9,8 +8,7 @@ describe('SensorDashboardComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SensorDashboardComponent]
-    })
-    .compileComponents();
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SensorDashboardComponent);
     component = fixture.componentInstance;

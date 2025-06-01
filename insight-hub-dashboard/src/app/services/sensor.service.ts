@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -15,23 +15,33 @@ export class SensorService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Fetch traffic sensor data from backend.
-   */
   getTraffic(): Observable<TrafficReading[]> {
     return this.http.get<TrafficReading[]>(`${this.baseUrl}/traffic-sensors`);
   }
 
-  /**
-   * Fetch air pollution sensor data from backend.
-   */
+  getTrafficFiltered(params: any): Observable<{
+    items: TrafficReading[];
+    totalItems: number;
+    page: number;
+    size: number;
+  }> {
+    return this.http.get<{
+      items: TrafficReading[];
+      totalItems: number;
+      page: number;
+      size: number;
+    }>(`${this.baseUrl}/traffic-sensors/new`, { params });
+  }
+
+  /** ✅ Add this method */
+  // getTrafficLocations(): Observable<string[]> {
+  //   return this.http.get<string[]>(`${this.baseUrl}/traffic-sensors/locations`);
+  // }
+
   getAirPollution(): Observable<AirPollutionReading[]> {
     return this.http.get<AirPollutionReading[]>(`${this.baseUrl}/air-pollution-sensors`);
   }
 
-  /**
-   * Fetch street light sensor data from backend.
-   */
   getStreetLight(): Observable<StreetLightReading[]> {
     return this.http.get<StreetLightReading[]>(`${this.baseUrl}/street-light-sensors`);
   }

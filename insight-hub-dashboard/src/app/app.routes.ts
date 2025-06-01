@@ -11,6 +11,7 @@ import { EntryPointComponent } from './components/entry-point/entry-point.compon
 import { TrafficMonitoringComponent } from './components/dashboards/traffic-monitoring/traffic-monitoring.component';
 import { StreetLightManagementComponent } from './components/dashboards/street-light-management/street-light-management.component';
 import { AirPollutionMonitoringComponent } from './components/dashboards/air-pollution-monitoring/air-pollution-monitoring.component';
+import { SensorDashboardComponent } from './components/sensor-dashboard/sensor-dashboard.component';
 
 
 
@@ -50,5 +51,9 @@ export const routes: Routes = [
     {
         path: 'traffic',
         component: TrafficDashboardComponent
-      }
+      },
+      {
+    path: 'sensor-dashboard',
+    component: SensorDashboardComponent
+    }
 ];
