@@ -1,12 +1,21 @@
 package com.example.dxc_backend.repository;
 
+import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.model.AirPollutionSensorData;
-import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
-import java.util.UUID;
 
-public interface AirPollutionSensorDataRepository extends JpaRepository<AirPollutionSensorData, UUID> {
+@Repository
+public interface AirPollutionSensorDataRepository
+        extends SensorRepositoryProvider<AirPollutionSensorData> {
 
-    Optional<AirPollutionSensorData> findTopByOrderByTimestampDesc(); // Get latest data by timestamp
+    @Override
+    default SensorType getSensorType() {
+        return SensorType.AIR_POLLUTION;
+    }
+
+    Optional<AirPollutionSensorData> findTopByOrderByTimestampDesc();
 }
+

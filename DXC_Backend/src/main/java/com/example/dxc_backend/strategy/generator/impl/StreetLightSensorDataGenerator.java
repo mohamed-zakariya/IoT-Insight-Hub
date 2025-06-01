@@ -1,14 +1,20 @@
-// path: com.example.dxc_backend.generator.impl.StreetLightSensorDataGenerator.java
-package com.example.dxc_backend.generator.impl;
+// path: com.example.dxc_backend.strategy.impl.generator.StreetLightSensorDataGenerator.java
+package com.example.dxc_backend.strategy.generator.impl;
 
+import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.enums.Status;
-import com.example.dxc_backend.generator.BaseSensorDataGenerator;
-import com.example.dxc_backend.generator.SensorDataGenerator;
+import com.example.dxc_backend.strategy.generator.BaseSensorDataGenerator;
+import com.example.dxc_backend.strategy.generator.SensorDataGenerator;
 import com.example.dxc_backend.model.StreetLightSensorData;
 import org.springframework.stereotype.Component;
 
 @Component
 public class StreetLightSensorDataGenerator extends BaseSensorDataGenerator implements SensorDataGenerator<StreetLightSensorData> {
+
+    @Override
+    public SensorType getSensorType() {
+        return SensorType.STREET_LIGHT;
+    }
 
     @Override
     public StreetLightSensorData generateRandomSensorData() {
@@ -22,6 +28,8 @@ public class StreetLightSensorDataGenerator extends BaseSensorDataGenerator impl
 
         return data;
     }
+
+
 
 
 }

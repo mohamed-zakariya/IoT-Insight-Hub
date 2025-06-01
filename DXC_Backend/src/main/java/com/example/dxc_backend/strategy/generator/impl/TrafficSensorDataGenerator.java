@@ -1,15 +1,21 @@
-// path: com.example.dxc_backend.generator.impl.TrafficSensorDataGenerator.java
-package com.example.dxc_backend.generator.impl;
+// path: com.example.dxc_backend.strategy.impl.generator.TrafficSensorDataGenerator.java
+package com.example.dxc_backend.strategy.generator.impl;
 
 import com.example.dxc_backend.enums.CongestionLevel;
-import com.example.dxc_backend.generator.BaseSensorDataGenerator;
-import com.example.dxc_backend.generator.SensorDataGenerator;
+import com.example.dxc_backend.enums.SensorType;
+import com.example.dxc_backend.strategy.generator.BaseSensorDataGenerator;
+import com.example.dxc_backend.strategy.generator.SensorDataGenerator;
 import com.example.dxc_backend.model.TrafficSensorData;
 import org.springframework.stereotype.Component;
 
 
 @Component
 public class TrafficSensorDataGenerator extends BaseSensorDataGenerator implements SensorDataGenerator<TrafficSensorData> {
+
+    @Override
+    public SensorType getSensorType() {
+        return SensorType.TRAFFIC;
+    }
 
     @Override
     public TrafficSensorData generateRandomSensorData() {
@@ -23,5 +29,7 @@ public class TrafficSensorDataGenerator extends BaseSensorDataGenerator implemen
 
         return data;
     }
+
+
 
 }

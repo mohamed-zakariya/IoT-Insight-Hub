@@ -1,10 +1,10 @@
-// path: com.example.dxc_backend.generator.BaseSensorDataGenerator.java
-package com.example.dxc_backend.generator;
+// path: com.example.dxc_backend.strategy.generator.BaseSensorDataGenerator.java
+package com.example.dxc_backend.strategy.generator;
 
 import java.time.LocalDateTime;
 import java.util.Random;
 
-public abstract class BaseSensorDataGenerator {
+public class BaseSensorDataGenerator {
     protected final Random random = new Random();
 
     protected String generateRandomLocation() {

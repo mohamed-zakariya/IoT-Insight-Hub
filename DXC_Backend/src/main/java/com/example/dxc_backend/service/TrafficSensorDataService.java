@@ -1,7 +1,6 @@
 package com.example.dxc_backend.service;
 
-import com.example.dxc_backend.enums.TrafficSensor;
-import com.example.dxc_backend.generator.SensorDataGenerator;
+import com.example.dxc_backend.strategy.generator.SensorDataGenerator;
 import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.factory.processor.SensorProcessor;
 import com.example.dxc_backend.factory.SensorProcessorFactory;

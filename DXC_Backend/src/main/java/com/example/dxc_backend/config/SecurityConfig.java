@@ -43,6 +43,8 @@ public class SecurityConfig {
 
                                 "/api/traffic-sensors/{id}",
                                 "/api/traffic-sensors",
+                                "/api/sensors/*",
+
 
                                 "/api/air-pollution-sensors",
                                 "/api/air-pollution-sensors/{id}",
