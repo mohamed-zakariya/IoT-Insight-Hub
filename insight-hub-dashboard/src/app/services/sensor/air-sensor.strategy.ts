@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SensorStrategy } from './sensor-strategy.interface';
 import { AirPollutionReading } from '../../models/air-pollution-reading.model';
-import { SensorService } from '../sensor.servicetemp';
+import { SensorService } from '../sensor.service';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
