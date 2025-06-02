@@ -1,5 +1,8 @@
 package com.example.dxc_backend.repository;
 
+import com.example.dxc_backend.enums.AirPollutionSensor;
+import com.example.dxc_backend.enums.AlertType;
+import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.model.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,14 +32,15 @@ public class SettingsRepositoryTest {
     @Test
     public void testFindByTypeAndMetric(){
         Settings settings = new Settings();
-        settings.setType("Air_Pollution");
-        settings.setMetric("co");
-        settings.setThresholdValue(30);
-        settings.setAlertType("Above");
+        settings.setType(SensorType.AIR_POLLUTION);
+        settings.setMetric(AirPollutionSensor.CO.name());  // <-- convert enum to String here
+        settings.setThresholdValue(30f);  // should be Float
+        settings.setAlertType(AlertType.ABOVE);
 
         settingsRepository.save(settings);
 
-        Optional<Settings> result = settingsRepository.findByTypeAndMetric("Air_Pollution","co");
+        Optional<Settings> result = settingsRepository.findByTypeAndMetric(SensorType.AIR_POLLUTION, AirPollutionSensor.CO.name()); // <-- String again
         assertTrue(result.isPresent());
     }
+
 }

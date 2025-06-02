@@ -1,5 +1,8 @@
 package com.example.dxc_backend.service;
 
+import com.example.dxc_backend.enums.AlertType;
+import com.example.dxc_backend.enums.SensorType;
+import com.example.dxc_backend.enums.TrafficSensor;
 import com.example.dxc_backend.model.Settings;
 import com.example.dxc_backend.repository.SettingsRepository;
 import com.example.dxc_backend.util.Range;
@@ -28,17 +31,19 @@ public class SettingsServiceTest {
 
     @BeforeEach
     void setupValidation() {
-        Set<String> trafficMetrics = new HashSet<>();
-        trafficMetrics.add("avgSpeed");
+        Set<Enum> trafficMetrics = new HashSet<>();
+        trafficMetrics.add(TrafficSensor.TRAFFIC_DENSITY);
+        trafficMetrics.add(TrafficSensor.AVG_SPEED);
 
-        Map<String, Set<String>> sensorMap = new HashMap<>();
-        sensorMap.put("Traffic", trafficMetrics);
+        Map<SensorType, Set<Enum>> sensorMap = new HashMap<>();
+        sensorMap.put(SensorType.TRAFFIC, trafficMetrics);
 
-        Map<String, Range> metricRange = new HashMap<>();
-        metricRange.put("avgSpeed", new Range(0f, 120f));
+        Map<Enum, Range> metricRange = new HashMap<>();
+        metricRange.put(TrafficSensor.AVG_SPEED, new Range(0f, 120f));
+        metricRange.put(TrafficSensor.TRAFFIC_DENSITY, new Range(0f, 1000f));
 
-        Map<String, Map<String, Range>> rangesMap = new HashMap<>();
-        rangesMap.put("Traffic", metricRange);
+        Map<SensorType, Map<Enum, Range>> rangesMap = new HashMap<>();
+        rangesMap.put(SensorType.TRAFFIC, metricRange);
 
         SensorMetricValidation.SENSOR_METRIC_MAP = sensorMap;
         SensorMetricValidation.METRIC_VALID_RANGES = rangesMap;
@@ -46,10 +51,10 @@ public class SettingsServiceTest {
 
     @Test
     public void testCreateSetting_Success() {
-        String sensorType = "Traffic";
-        String metric = "avgSpeed";
+        SensorType sensorType = SensorType.TRAFFIC;
+        String metric = TrafficSensor.AVG_SPEED.name();
         Float threshold = 100f;
-        String alertType = "BELOW";
+        AlertType alertType = AlertType.BELOW;
 
         when(settingsRepository.findByTypeAndMetric(sensorType, metric)).thenReturn(Optional.empty());
         when(settingsRepository.save(any(Settings.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -62,3 +67,4 @@ public class SettingsServiceTest {
         assertEquals(alertType, result.getAlertType());
     }
 }
+
