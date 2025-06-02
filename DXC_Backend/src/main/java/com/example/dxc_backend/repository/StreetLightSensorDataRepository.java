@@ -13,8 +13,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public interface StreetLightSensorDataRepository extends SensorRepositoryProvider<StreetLightSensorData> {
@@ -26,17 +29,43 @@ public interface StreetLightSensorDataRepository extends SensorRepositoryProvide
     // Fetch the latest streetlight sensor record
     Optional<StreetLightSensorData> findTopByOrderByTimestampDesc();
 
-    @Override
+    @SuppressWarnings("unchecked")
     default Page<StreetLightSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, MultiValueMap<String, ?> filters) {
-        return findFilteredCustom(start, end, pageable);
+
+        List<String> status = null;
+        if (filters.containsKey("status")) {
+            Object locationObj = filters.get("status");
+            status = ((List<String>) locationObj).stream()
+                    .map(String::trim)
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+        }
+
+        // Handle multiple location values
+        List<String> locations = null;
+        if (filters.containsKey("location")) {
+            Object locationObj = filters.get("location");
+            locations = ((List<String>) locationObj).stream()
+                    .map(String::trim)
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+        }
+
+        return findFilteredCustom(start, end, pageable, locations, status);
     }
 
-    @Query("SELECT t FROM TrafficSensorData t WHERE " +
+
+    @Query("SELECT t FROM StreetLightSensorData t WHERE " +
+            "(COALESCE(:locations, NULL) IS NULL OR LOWER(t.location) IN (:locations)) AND " +
             "(:start IS NULL OR t.timestamp >= :start) AND " +
-            "(:end IS NULL OR t.timestamp <= :end)")
+            "(:end IS NULL OR t.timestamp <= :end) AND " +
+            "(COALESCE(:status, NULL) IS NULL OR LOWER(t.status) IN (:status))"
+    )
     Page<StreetLightSensorData> findFilteredCustom(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
-            Pageable pageable
+            Pageable pageable,
+            @Param("locations") List<String> locations,
+            @Param("status") List<String> status
     );
 }

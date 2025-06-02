@@ -29,10 +29,9 @@ public interface TrafficSensorDataRepository extends SensorRepositoryProvider<Tr
         List<String> congestionLevels = null;
         if (filters.containsKey("congestionLevel")) {
             Object congestionLevelObj = filters.get("congestionLevel");
-
             if (congestionLevelObj instanceof String) {
                 congestionLevels = Collections.singletonList(((String) congestionLevelObj).trim().toLowerCase());
-
+                System.out.println(congestionLevels);
             } else if (congestionLevelObj instanceof List) {
                 congestionLevels = ((List<String>) congestionLevelObj).stream()
                         .map(String::trim)
@@ -40,34 +39,21 @@ public interface TrafficSensorDataRepository extends SensorRepositoryProvider<Tr
                         .collect(Collectors.toList());
             }
         }
-        System.out.println(filters);
         // Handle multiple location values
         List<String> locations = null;
         if (filters.containsKey("location")) {
             Object locationObj = filters.get("location");
-
             if (locationObj instanceof String) {
                 locations = Collections.singletonList(((String) locationObj).trim().toLowerCase());
-                System.out.println("str" + locations);
             } else if (locationObj instanceof List) {
                 locations = ((List<String>) locationObj).stream()
                         .map(String::trim)
                         .map(String::toLowerCase)
                         .collect(Collectors.toList());
-                System.out.println("list" + locations);
             }
         }
 
         return findFilteredCustom(start, end, pageable, locations, congestionLevels);
-    }
-
-    public static <V> V getIgnoreCaseKey(Map<String, V> map, String key) {
-        for (String k : map.keySet()) {
-            if (k.equalsIgnoreCase(key)) {
-                return map.get(k);
-            }
-        }
-        return null;
     }
 
     @Query("SELECT t FROM TrafficSensorData t WHERE " +
