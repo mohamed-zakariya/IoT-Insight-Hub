@@ -4,14 +4,17 @@ import com.example.dxc_backend.enums.AirPollutionSensor;
 import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.model.AirPollutionSensorData;
 import com.example.dxc_backend.repository.AirPollutionSensorDataRepository;
+import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
+import com.example.dxc_backend.service.SensorDataUnifiedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AirPollutionAlertHandler implements SensorAlertHandler {
+public class AirPollutionAlertHandler extends AbstractSensorAlertHandler<AirPollutionSensorData, AirPollutionSensor> {
 
-    @Autowired
-    private AirPollutionSensorDataRepository airRepo;
+    public AirPollutionAlertHandler(SensorRepositoryProvider<AirPollutionSensorData> airRepo) {
+        super(airRepo, AirPollutionSensor.class);
+    }
 
     @Override
     public SensorType getSensorType() {
@@ -19,23 +22,14 @@ public class AirPollutionAlertHandler implements SensorAlertHandler {
     }
 
     @Override
-    public float getLatestMetricValue(String metricStr) {
-        AirPollutionSensor metric;
-        try {
-            metric = AirPollutionSensor.valueOf(metricStr.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid Air Pollution metric: " + metricStr, e);
-        }
-
-        AirPollutionSensorData latest = airRepo.findTopByOrderByTimestampDesc()
-                .orElseThrow(() -> new IllegalStateException("No Air Pollution data available"));
-
+    protected float extractMetricValue(AirPollutionSensorData data, AirPollutionSensor metric) {
         return switch (metric) {
-            case CO -> latest.getCo();
-            case SO2 -> latest.getSo2();
-            case NO2 -> latest.getNo2();
-            case OZONE -> latest.getOzone();
-            case TIME_STAMP -> latest.getTimestamp().getSecond();
+            case CO -> data.getCo();
+            case SO2 -> data.getSo2();
+            case NO2 -> data.getNo2();
+            case OZONE -> data.getOzone();
+            case TIME_STAMP -> data.getTimestamp().getSecond();
         };
     }
 }
+

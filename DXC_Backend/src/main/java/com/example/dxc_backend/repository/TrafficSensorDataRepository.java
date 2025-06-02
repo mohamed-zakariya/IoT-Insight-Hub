@@ -21,7 +21,6 @@ public interface TrafficSensorDataRepository extends SensorRepositoryProvider<Tr
         return SensorType.TRAFFIC;
     }
 
-    Optional<TrafficSensorData> findTopByOrderByTimestampDesc();
 
     @SuppressWarnings("unchecked")
     default Page<TrafficSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, MultiValueMap<String, ?> filters) {

@@ -4,14 +4,16 @@ import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.enums.StreetLightSensor;
 import com.example.dxc_backend.model.StreetLightSensorData;
 import com.example.dxc_backend.repository.StreetLightSensorDataRepository;
+import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class StreetLightAlertHandler implements SensorAlertHandler {
+public class StreetLightAlertHandler extends AbstractSensorAlertHandler<StreetLightSensorData, StreetLightSensor> {
 
-    @Autowired
-    private StreetLightSensorDataRepository lightRepo;
+    public StreetLightAlertHandler(SensorRepositoryProvider<StreetLightSensorData> lightRepo) {
+        super(lightRepo, StreetLightSensor.class);
+    }
 
     @Override
     public SensorType getSensorType() {
@@ -19,21 +21,12 @@ public class StreetLightAlertHandler implements SensorAlertHandler {
     }
 
     @Override
-    public float getLatestMetricValue(String metricStr) {
-        StreetLightSensor metric;
-        try {
-            metric = StreetLightSensor.valueOf(metricStr.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid Street Light metric: " + metricStr, e);
-        }
-
-        StreetLightSensorData latest = lightRepo.findTopByOrderByTimestampDesc()
-                .orElseThrow(() -> new IllegalStateException("No Street Light data available"));
-
+    protected float extractMetricValue(StreetLightSensorData data, StreetLightSensor metric) {
         return switch (metric) {
-            case BRIGHTNESS_LEVEL -> latest.getBrightnessLevel();
-            case POWER_CONSUMPTION -> latest.getPowerConsumption();
-            case TIME_STAMP -> latest.getTimestamp().getSecond();
+            case BRIGHTNESS_LEVEL -> data.getBrightnessLevel();
+            case POWER_CONSUMPTION -> data.getPowerConsumption();
+            case TIME_STAMP -> data.getTimestamp().getSecond();
         };
     }
 }
+

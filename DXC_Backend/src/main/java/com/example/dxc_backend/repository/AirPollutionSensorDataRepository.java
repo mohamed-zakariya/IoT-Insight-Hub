@@ -24,7 +24,6 @@ public interface AirPollutionSensorDataRepository
         return SensorType.AIR_POLLUTION;
     }
 
-    Optional<AirPollutionSensorData> findTopByOrderByTimestampDesc();
 
     @Override
     default Page<AirPollutionSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, MultiValueMap<String, ?> filters) {

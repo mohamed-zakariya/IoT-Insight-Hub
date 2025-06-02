@@ -4,14 +4,16 @@ import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.enums.TrafficSensor;
 import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.repository.TrafficSensorDataRepository;
+import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TrafficAlertHandler implements SensorAlertHandler {
+public class TrafficAlertHandler extends AbstractSensorAlertHandler<TrafficSensorData, TrafficSensor> {
 
-    @Autowired
-    private TrafficSensorDataRepository trafficRepo;
+    public TrafficAlertHandler(SensorRepositoryProvider<TrafficSensorData> trafficRepo) {
+        super(trafficRepo, TrafficSensor.class);
+    }
 
     @Override
     public SensorType getSensorType() {
@@ -19,21 +21,11 @@ public class TrafficAlertHandler implements SensorAlertHandler {
     }
 
     @Override
-    public float getLatestMetricValue(String metricStr) {
-        TrafficSensor metric;
-        try {
-            metric = TrafficSensor.valueOf(metricStr.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid Traffic metric: " + metricStr, e);
-        }
-
-        TrafficSensorData latestData = trafficRepo.findTopByOrderByTimestampDesc()
-                .orElseThrow(() -> new IllegalStateException("No traffic data available"));
-
+    protected float extractMetricValue(TrafficSensorData data, TrafficSensor metric) {
         return switch (metric) {
-            case TRAFFIC_DENSITY -> latestData.getTrafficDensity();
-            case AVG_SPEED -> latestData.getAvgSpeed();
-            case TIME_STAMP -> latestData.getTimestamp().getSecond();
+            case TRAFFIC_DENSITY -> data.getTrafficDensity();
+            case AVG_SPEED -> data.getAvgSpeed();
+            case TIME_STAMP -> data.getTimestamp().getSecond();
         };
     }
 }
