@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
+import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -17,6 +18,6 @@ import java.util.UUID;
 public interface SensorRepositoryProvider<T> extends JpaRepository<T, UUID> {
     SensorType getSensorType();
 
-    Page<T> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, Map<String, ?> filters);
+    Page<T> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, MultiValueMap<String, ?> filters);
 }
 

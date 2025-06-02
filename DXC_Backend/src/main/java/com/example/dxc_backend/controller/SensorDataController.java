@@ -1,6 +1,6 @@
 // path: com.example.dxc_backend.controller.SensorDataController.java
 package com.example.dxc_backend.controller;
-
+import org.springframework.util.MultiValueMap;
 import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
 import com.example.dxc_backend.service.SensorDataUnifiedService;
@@ -31,7 +31,7 @@ public class SensorDataController {
             @PathVariable SensorType type,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampStart,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampEnd,
-            @RequestParam Map<String, String> allRequestParams,
+            @RequestParam MultiValueMap<String, String> allRequestParams,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "timestamp") String sortBy,

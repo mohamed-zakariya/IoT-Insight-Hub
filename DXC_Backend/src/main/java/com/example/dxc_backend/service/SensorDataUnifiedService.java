@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -107,7 +108,7 @@ public <T> Page<T> getFilteredData(
         SensorType type,
         LocalDateTime timestampStart,
         LocalDateTime timestampEnd,
-        Map<String, ?> filters,
+        MultiValueMap<String, ?> filters,
         int page,
         int size,
         String sortBy,

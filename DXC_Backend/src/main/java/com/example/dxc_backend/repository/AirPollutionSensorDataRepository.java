@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -26,7 +27,7 @@ public interface AirPollutionSensorDataRepository
     Optional<AirPollutionSensorData> findTopByOrderByTimestampDesc();
 
     @Override
-    default Page<AirPollutionSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, Map<String, ?> filters) {
+    default Page<AirPollutionSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, MultiValueMap<String, ?> filters) {
         return findFilteredCustom(start, end, pageable);
     }
 
