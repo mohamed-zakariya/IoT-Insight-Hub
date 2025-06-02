@@ -2,6 +2,7 @@
 package com.example.dxc_backend.controller;
 
 import com.example.dxc_backend.enums.SensorType;
+import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
 import com.example.dxc_backend.service.SensorDataUnifiedService;
 import com.example.dxc_backend.service.TokenService;
 import org.springframework.data.domain.Page;
@@ -41,13 +42,8 @@ public class SensorDataController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
         }
 
-        // Remove pagination and sorting params before passing filters
-        allRequestParams.remove("page");
-        allRequestParams.remove("size");
-        allRequestParams.remove("sortBy");
-        allRequestParams.remove("sortDirection");
-
         Page<?> result = service.getFilteredData(type, timestampStart, timestampEnd, allRequestParams, page, size, sortBy, sortDirection);
         return ResponseEntity.ok(result);
     }
 }
+

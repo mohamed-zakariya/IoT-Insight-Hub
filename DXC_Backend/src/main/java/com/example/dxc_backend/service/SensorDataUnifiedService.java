@@ -103,26 +103,25 @@ public class SensorDataUnifiedService {
 //        return repository.findFiltered( timestampStart, timestampEnd, pageable);
 //    }
 
-
-    public Page<?> getFilteredData(
-            SensorType type,
-            LocalDateTime timestampStart,
-            LocalDateTime timestampEnd,
-            Map<String, ?> filters,
-            int page,
-            int size,
-            String sortBy,
-            String sortDirection
-    ) {
-        SensorRepositoryProvider<?> repo = (SensorRepositoryProvider<?>) repositoryMap.get(type);
-        if (repo == null) {
-            throw new IllegalArgumentException("No repository found for sensor type: " + type);
-        }
-
-        Sort.Direction direction = Sort.Direction.fromString(sortDirection);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-
-        return ((SensorRepositoryProvider<?>) repo).findFiltered(timestampStart, timestampEnd, pageable, filters);
+public <T> Page<T> getFilteredData(
+        SensorType type,
+        LocalDateTime timestampStart,
+        LocalDateTime timestampEnd,
+        Map<String, ?> filters,
+        int page,
+        int size,
+        String sortBy,
+        String sortDirection
+) {
+    SensorRepositoryProvider<?> repo = (SensorRepositoryProvider<?>) repositoryMap.get(type);
+    if (repo == null) {
+        throw new IllegalArgumentException("No repository found for sensor type: " + type);
     }
 
+    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+    Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+    // Proper cast after adding <T> to method signature
+    return ((SensorRepositoryProvider<T>) repo).findFiltered(timestampStart, timestampEnd, pageable, filters);
+}
 }
