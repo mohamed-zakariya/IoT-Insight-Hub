@@ -2,13 +2,14 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class OtpPasswordService {
 
-  private apiUrl = 'http://localhost:8081/api/auth';
+  private apiUrl = `${environment.authUrl}`;
   http: HttpClient = inject(HttpClient);
 
 
