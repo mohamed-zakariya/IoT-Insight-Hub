@@ -32,6 +32,7 @@ import { TrafficReading } from '../../models/traffic-reading.model';
 
 
 
+
 interface CustomChartScales {
   x?: {
     min?: number;
@@ -91,16 +92,13 @@ interface CustomChartOptions extends ChartOptions {
 
 
 export class SensorDashboardComponent implements OnInit, AfterViewInit {
-  displayedColumns: string[] = [
-    'location',
-    'timestamp',
-    'trafficDensity',
-    'avgSpeed',
-    'congestionLevel'
-  ];
+  displayedColumns: string[] = ['location', 'timestamp', 'trafficDensity', 'avgSpeed', 'congestionLevel'];
   dataSource = new MatTableDataSource<TrafficReading>([]);
-  pageSizeOptions = [5, 10, 25];
+  totalItems = 0;
   pageSize = 10;
+  currentPage = 0;
+  currentSort: Sort = { active: 'timestamp', direction: 'desc' };
+  pageSizeOptions = [5, 10, 25];
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -112,6 +110,7 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   locationSearch    = new FormControl<string>('');
   locations: string[] = [];
   congestionLevels = ['Low', 'Moderate', 'High'];
+  filteredLocations: string[] = [];
 
   // Chart data
   public currentVisualization: ChartType = 'line';
@@ -180,30 +179,109 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   public xAxisScale: number = 1;
   public showAllData: boolean = true;
 
-  constructor(private svc: SensorService) {}
+  constructor(private sensorService: SensorService) {}
 
   ngOnInit(): void {
+ 
     this.initializeChart();
-    this.loadInitialData();
-    this.setupAutoRefresh();
-    
-    // Initialize filter subscriptions
-    this.setupFilterPredicate();
+    this.selectedDate.valueChanges.subscribe(() => this.loadData());
+    this.locationFilter.valueChanges.subscribe(() => this.loadData());
+    this.congestionFilter.valueChanges.subscribe(() => this.loadData());
+    this.locationSearch.valueChanges.subscribe(value => this.filterLocationList(value));
+    this.loadData();
+    // this.loadAvailableLocations();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-    
-    // Update visualization when sort changes
-    this.sort.sortChange.subscribe(() => {
-      this.updateVisualization();
+  ngAfterViewInit(): void {
+    this.sort.sortChange.subscribe(sort => {
+      this.currentSort = sort;
+      this.loadData();
+    });
+
+    this.paginator.page.subscribe(event => {
+      this.currentPage = event.pageIndex;
+      this.pageSize = event.pageSize;
+      this.loadData();
     });
   }
 
-  formatScaleLabel(value: number): string {
-    return `${value.toFixed(2)}x`;
+
+  loadData(): void {
+  const params: any = {
+    page: this.currentPage,
+    size: this.pageSize,
+    sortBy: this.currentSort.active || 'timestamp'
+  };
+
+  // Only include congestionLevel if it's selected
+  const congestion = this.congestionFilter.value?.filter(Boolean);
+  if (congestion && congestion.length > 0) {
+    params.congestionLevel = congestion[0]; // assuming single value supported
   }
+
+  // Only include location if selected
+  const locations = this.locationFilter.value?.filter(Boolean);
+  if (locations && locations.length > 0) {
+    params.location = locations[0]; // assuming single value supported
+  }
+
+  // Only include date if selected
+  const date = this.selectedDate.value;
+  if (date) {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    params.timestampStart = start.toISOString();
+
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+    params.timestampEnd = end.toISOString();
+  }
+
+this.sensorService.getTrafficFiltered(params).subscribe({
+  next: res => {
+    console.log('Backend response:', res);
+
+    // 1) Pull the array of readings from res.content
+    const items: TrafficReading[] = res.content || [];
+    console.log('items outputs:', items);
+
+    // 2) Use res.totalElements instead of res.totalItems
+    this.dataSource.data = items;
+    this.totalItems = res.totalElements || 0;
+
+    // 3) Build chart data from `items` as before
+    this.chartData = {
+      labels: items.map(r => new Date(r.timestamp).toLocaleTimeString()),
+      datasets: [
+        { label: 'Traffic Density', data: items.map(r => r.trafficDensity) },
+        { label: 'Average Speed', data: items.map(r => r.avgSpeed) }
+      ]
+    };
+  },
+  error: err => {
+    console.error('Failed to fetch data:', err);
+    this.dataSource.data = [];
+    this.totalItems = 0;
+    this.chartData = { labels: [], datasets: [] };
+  }
+});
+
+}
+
+
+  // loadAvailableLocations(): void {
+  //   this.sensorService.getTrafficLocations().subscribe(locations => {
+  //     this.locations = locations;
+  //     this.filteredLocations = locations;
+  //   });
+  // }
+
+  resetFilters(): void {
+    this.locationFilter.setValue([]);
+    this.congestionFilter.setValue([]);
+    this.locationSearch.setValue('');
+  }
+
 
   private initializeChart(): void {
     this.chartData = {
@@ -235,54 +313,15 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
     };
   }
 
-  private loadInitialData(): void {
-    this.svc.getTraffic().subscribe({
-      next: (data) => this.handleDataUpdate(data),
-      error: (err) => console.error('Error loading initial data:', err)
-    });
-  }
+
 
   private setupAutoRefresh(): void {
-    timer(60000, 60000).pipe(
-      switchMap(() => this.svc.getTraffic())
-    ).subscribe({
-      next: (data) => this.handleDataUpdate(data),
-      error: (err) => console.error('Error refreshing data:', err)
-    });
-  }
-  get filteredLocations(): string[] {
-    const term = this.locationSearch.value?.toLowerCase() || '';
-    return this.locations.filter(loc => !term || loc.toLowerCase().includes(term));
-  }
-
-  /** Clears date, location, congestion AND the location‐search field */
-/** Clears date, location, congestion AND the location‐search field */
-resetFilters(): void {
-  // 1) clear all of your form-controls
-  this.selectedDate.setValue(null);
-  this.locationFilter.setValue([]);
-  this.congestionFilter.setValue([]);
-  this.locationSearch.setValue('');
-  // subscriptions on .valueChanges will auto-apply the cleared filter
-
-  // 2) clear the MatTableDataSource filter so the table shows everything
-  this.dataSource.filter = '';
-
-  // 3) reset sort state and emit so the table actually re-sorts
-  if (this.sort) {
-    this.sort.active    = '';
-    this.sort.direction = '';
-    this.sort.sortChange.emit({ active: '', direction: '' });
-  }
-
-  // 4) jump back to page 1
-  if (this.paginator) {
-    this.paginator.firstPage();
-  }
-
-  // 5) refresh your chart with the full, un-filtered data
-  this.updateVisualization();
+  timer(60000, 60000).subscribe(() => this.loadData());
 }
+
+
+
+
   private handleDataUpdate(data: TrafficReading[]): void {
     if (!data || data.length === 0) {
       console.warn('Received empty dataset');
@@ -291,7 +330,8 @@ resetFilters(): void {
 
     this.locations = [...new Set(data.map(r => r.location))].sort();
     this.updateTableData(data);
-    this.updateVisualization();
+    this.chartData.labels = data.map(r => new Date(r.timestamp).toLocaleTimeString());
+    this.chartData.datasets[0].data = data.map(r => r.trafficDensity);
   }
 
   private updateTableData(data: TrafficReading[]): void {
@@ -303,75 +343,17 @@ resetFilters(): void {
     }
   }
 
-  updateVisualization(): void {
-    if (this.dataSource.data.length === 0) return;
-
-    // Get filtered and sorted data
-    let displayData = this.dataSource.filteredData.length > 0 
-      ? this.dataSource.filteredData 
-      : this.dataSource.data;
-
-    // Apply current sorting
-    displayData = this.getSortedData(displayData);
-
-    // Apply scaling if showing window
-    if (!this.showAllData) {
-      const visiblePoints = Math.floor(displayData.length * this.xAxisScale);
-      const start = Math.max(0, displayData.length - visiblePoints);
-      displayData = displayData.slice(start, start + visiblePoints);
-    }
-
-    // Update chart data
-    const labels = displayData.map(r => new Date(r.timestamp).toLocaleTimeString());
-    const densityData = displayData.map(r => r.trafficDensity);
-    const speedData = displayData.map(r => r.avgSpeed);
-
-    this.chartData = {
-      ...this.chartData,
-      labels: labels,
-      datasets: [
-        {
-          ...this.chartData.datasets[0],
-          data: densityData
-        },
-        {
-          ...this.chartData.datasets[1],
-          data: speedData
-        }
-      ]
-    };
-
-    // Update chart options
-    this.chartOptions = {
-      ...this.chartOptions,
-      scales: {
-        ...this.chartOptions.scales,
-        x: {
-          ...this.chartOptions.scales?.['x'],
-          ticks: {
-            maxRotation: 45,
-            minRotation: 45,
-            autoSkip: true,
-            maxTicksLimit: this.showAllData ? Math.max(5, Math.floor(10 / this.xAxisScale)) : undefined
-          }
-        }
-      }
-    };
-  }
-
 
   private getSortedData(data: TrafficReading[]): TrafficReading[] {
     if (!this.sort || !this.sort.active || this.sort.direction === '') {
-      return [...data].sort((a, b) => 
-        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
-      );
+      return data;
     }
 
-    return [...data].sort((a, b) => {
-      const isAsc = this.sort?.direction === 'asc';
-      switch (this.sort?.active) {
+    return data.slice().sort((a, b) => {
+      const isAsc = this.sort.direction === 'asc';
+      switch (this.sort.active) {
         case 'location': return compare(a.location, b.location, isAsc);
-        case 'timestamp': return compare(a.timestamp, b.timestamp, isAsc);
+        case 'timestamp': return compare(new Date(a.timestamp).getTime(), new Date(b.timestamp).getTime(), isAsc);
         case 'trafficDensity': return compare(a.trafficDensity, b.trafficDensity, isAsc);
         case 'avgSpeed': return compare(a.avgSpeed, b.avgSpeed, isAsc);
         case 'congestionLevel': return compare(a.congestionLevel, b.congestionLevel, isAsc);
@@ -380,19 +362,25 @@ resetFilters(): void {
     });
   }
 
-  onXAxisScaleChange(): void {
-    this.updateVisualization();
+   setVisualization(type: ChartType): void {
+    this.currentVisualization = type;
   }
+  
 
   toggleShowAllData(): void {
     this.showAllData = !this.showAllData;
-    this.updateVisualization();
   }
 
-  setVisualization(type: ChartType): void {
-    this.currentVisualization = type;
-    this.updateVisualization();
+  onXAxisScaleChange(): void {
+    // Add logic to adjust chart zoom level
   }
+
+  
+  formatScaleLabel(value: number): string {
+    return `${value.toFixed(2)}x`;
+  }
+
+
 
   getChartTitle(): string {
     switch (this.currentVisualization) {
@@ -405,358 +393,26 @@ resetFilters(): void {
     }
   }
 
-  sortData(sortField: string): void {
-    const sortState: Sort = { 
-      active: sortField, 
-      direction: this.sort?.direction === 'asc' && this.sort?.active === sortField ? 'desc' : 'asc'
-    };
-    this.sort.active = sortState.active;
-    this.sort.direction = sortState.direction;
-    this.sort.sortChange.emit(sortState);
+sortData(field: string): void {
+    this.dataSource.sortingDataAccessor = (item: any, property: string) => item[property];
+    this.dataSource.sort?.sort({ id: field, start: 'asc', disableClear: false });
   }
 
-  private setupFilterPredicate(): void {
-    this.dataSource.filterPredicate = (row, filterString) => {
-      const filter = JSON.parse(filterString) as { date?: string; locations: string[]; congestions: string[]; };
-      const ts = new Date(row.timestamp).getTime();
-      let meetsDate = true;
-      if (filter.date) {
-        const sel = new Date(filter.date);
-        const start = new Date(sel).setHours(0,0,0,0);
-        const end   = new Date(sel).setHours(24,0,0,0);
-        meetsDate = ts >= start && ts < end;
-      }
-      const meetsLoc  = !filter.locations.length || filter.locations.includes(row.location);
-      const meetsCong = !filter.congestions.length || filter.congestions.includes(row.congestionLevel);
-      return meetsDate && meetsLoc && meetsCong;
-    };
-
-    const applyFilters = () => {
-      const f: any = {
-        locations: this.locationFilter.value || [],
-        congestions: this.congestionFilter.value || []
-      };
-      if (this.selectedDate.value) {
-        f.date = this.selectedDate.value.toISOString();
-      }
-      this.dataSource.filter = JSON.stringify(f);
-      this.paginator?.firstPage();
-      this.updateVisualization();
-    };
-
-    this.selectedDate.valueChanges.subscribe(applyFilters);
-    this.locationFilter.valueChanges.subscribe(applyFilters);
-    this.congestionFilter.valueChanges.subscribe(applyFilters);
-
-    // initial
-    applyFilters();
+  filterLocationList(searchTerm: string | null): void {
+    const allLocations = this.locations || [];
+    const lowerTerm = searchTerm?.toLowerCase() || '';
+    this.filteredLocations = allLocations.filter(loc =>
+      loc.toLowerCase().includes(lowerTerm)
+    );
   }
+
+
+
+
 }  
 
 function compare(a: any, b: any, isAsc: boolean): number {
   return (a < b ? -1 : a > b ? 1 : 0) * (isAsc ? 1 : -1);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//   displayedColumns: string[] = ['location', 'timestamp', 'trafficDensity', 'avgSpeed', 'congestionLevel'];
-//   dataSource = new MatTableDataSource<TrafficReading>([]);
-//   totalItems = 0;
-//   pageSize = 10;
-//   currentPage = 0;
-//   currentSort: Sort = { active: 'timestamp', direction: 'desc' };
-
-//   selectedDate = new FormControl<Date | null>(null);
-//   locationFilter = new FormControl<string[]>([]);
-//   congestionFilter = new FormControl<string[]>([]);
-//   locationSearch = new FormControl<string>('');
-//   congestionLevels: string[] = ['Low', 'Moderate', 'High'];
-
-//   filteredLocations: string[] = [];
-//   locations: string[] = [];
-
-// // Chart data
-//   public currentVisualization: ChartType = 'line';
-//   public chartData: ChartConfiguration['data'] = {
-//     labels: [],
-//     datasets: []
-//   };
-//   public chartOptions: CustomChartOptions = {
-//     responsive: true,
-//     maintainAspectRatio: false,
-//     animation: {
-//       duration: 1000,
-//       easing: 'easeOutQuart'
-//     },
-//     scales: {
-//       x: {
-//         grid: {
-//           display: false
-//         },
-//         ticks: {
-//           maxRotation: 45,
-//           minRotation: 45,
-//           autoSkip: true
-//         }
-//       },
-//       y: {
-//         beginAtZero: true,
-//         grid: {
-//           color: 'rgba(0, 0, 0, 0.05)'
-//         }
-//       }
-//     },
-//     plugins: {
-//       tooltip: {
-//         mode: 'index',
-//         intersect: false,
-//         callbacks: {
-//           label: (context) => {
-//             let label = context.dataset.label || '';
-//             if (label) label += ': ';
-//             if (context.parsed.y !== null) {
-//               label += context.parsed.y.toFixed(1);
-//               if (context.dataset.label?.includes('Speed')) {
-//                 label += ' km/h';
-//               }
-//             }
-//             return label;
-//           }
-//         }
-//       },
-//       legend: {
-//         position: 'top',
-//         labels: {
-//           boxWidth: 12,
-//           padding: 20,
-//           usePointStyle: true,
-//           font: {
-//             size: 12
-//           }
-//         }
-//       }
-//     }
-//   };
-//   showAllData: boolean = false;
-//   xAxisScale: number = 1;
-
-
-//   @ViewChild(MatPaginator) paginator!: MatPaginator;
-//   @ViewChild(MatSort) sort!: MatSort;
-
-//   // Define the chart type
-  
-
-//   constructor(private sensorService: SensorService) {}
-
-//   ngOnInit(): void {
-//     this.selectedDate.valueChanges.subscribe(() => this.loadData());
-//     this.locationFilter.valueChanges.subscribe(() => this.loadData());
-//     this.congestionFilter.valueChanges.subscribe(() => this.loadData());
-//     this.locationSearch.valueChanges.subscribe(value => this.filterLocationList(value));
-//     this.loadData();
-//     // this.loadAvailableLocations();
-//   }
-
-//   ngAfterViewInit(): void {
-//     this.sort.sortChange.subscribe(sort => {
-//       this.currentSort = sort;
-//       this.loadData();
-//     });
-
-//     this.paginator.page.subscribe(event => {
-//       this.currentPage = event.pageIndex;
-//       this.pageSize = event.pageSize;
-//       this.loadData();
-//     });
-//   }
-// loadData(): void {
-//   const params: any = {
-//     page: this.currentPage,
-//     size: this.pageSize,
-//     sortBy: this.currentSort.active || 'timestamp'
-//   };
-
-//   // Only include congestionLevel if it's selected
-//   const congestion = this.congestionFilter.value?.filter(Boolean);
-//   if (congestion && congestion.length > 0) {
-//     params.congestionLevel = congestion[0]; // assuming single value supported
-//   }
-
-//   // Only include location if selected
-//   const locations = this.locationFilter.value?.filter(Boolean);
-//   if (locations && locations.length > 0) {
-//     params.location = locations[0]; // assuming single value supported
-//   }
-
-//   // Only include date if selected
-//   const date = this.selectedDate.value;
-//   if (date) {
-//     const start = new Date(date);
-//     start.setHours(0, 0, 0, 0);
-//     params.timestampStart = start.toISOString();
-
-//     const end = new Date(date);
-//     end.setHours(23, 59, 59, 999);
-//     params.timestampEnd = end.toISOString();
-//   }
-
-// this.sensorService.getTrafficFiltered(params).subscribe({
-//   next: res => {
-//     const items = res?.items || [];
-
-//     this.dataSource.data = items;
-//     this.totalItems = res?.totalItems || 0;
-
-//     this.chartData = {
-//       labels: items.map(r => new Date(r.timestamp).toLocaleTimeString()),
-//       datasets: [
-//         { label: 'Traffic Density', data: items.map(r => r.trafficDensity) },
-//         { label: 'Average Speed', data: items.map(r => r.avgSpeed) }
-//       ]
-//     };
-//   },
-//   error: err => {
-//     console.error('Failed to fetch data:', err);
-//     this.dataSource.data = [];
-//     this.totalItems = 0;
-//     this.chartData = { labels: [], datasets: [] };
-//   }
-// });
-// }
-
-
-
-
-
-
-
-  // loadAvailableLocations(): void {
-  //   this.sensorService.getTrafficLocations().subscribe(locations => {
-  //     this.locations = locations;
-  //     this.filteredLocations = locations;
-  //   });
-  // }
-
-  // resetFilters(): void {
-  //   this.locationFilter.setValue([]);
-  //   this.congestionFilter.setValue([]);
-  //   this.locationSearch.setValue('');
-  // }
-
- 
-  // setVisualization(type: ChartType): void {
-  //   this.currentVisualization = type;
-  // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-  // toggleShowAllData(): void {
-  //   this.showAllData = !this.showAllData;
-  // }
-
-  // onXAxisScaleChange(): void {
-  //   // Add logic to adjust chart zoom level
-  // }
-
-  // formatScaleLabel(value: number): string {
-  //   return value + 'x';
-  // }
-
-  // getChartTitle(): string {
-  //   return 'Traffic Sensor Overview';
-  // }
-
-  
-
-
-
-
-
-
-
-
-  
-
-
-
-//   sortData(field: string): void {
-//     this.dataSource.sortingDataAccessor = (item: any, property: string) => item[property];
-//     this.dataSource.sort?.sort({ id: field, start: 'asc', disableClear: false });
-//   }
-
-//   filterLocationList(searchTerm: string | null): void {
-//     const allLocations = this.locations || [];
-//     const lowerTerm = searchTerm?.toLowerCase() || '';
-//     this.filteredLocations = allLocations.filter(loc =>
-//       loc.toLowerCase().includes(lowerTerm)
-//     );
-//   }
-// }
-
-
-
-
 
 
