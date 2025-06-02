@@ -17,7 +17,11 @@ public enum TrafficSensor {
                 return field;
             }
         }
+        String allowedFields = java.util.Arrays.stream(values())
+                .map(field -> field.fieldName)
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("");
         throw new IllegalArgumentException("Invalid sort field: " + name +
-                ". Allowed fields: trafficDensity, avgSpeed, timestamp.");
+                ". Allowed fields: " + allowedFields + ".");
     }
 }

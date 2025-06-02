@@ -2,7 +2,6 @@ package com.example.dxc_backend.dto;
 
 import com.example.dxc_backend.enums.AlertType;
 import com.example.dxc_backend.enums.SensorType;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 

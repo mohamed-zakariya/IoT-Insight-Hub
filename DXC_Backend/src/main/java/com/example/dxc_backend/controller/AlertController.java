@@ -52,7 +52,7 @@ public class AlertController {
             User user = userRepository.getUserByUsername(username);
 
             if (user != null) {
-                List<Alert> alerts = alertRepository.findAll();
+                List<Alert> alerts = alertRepository.findAllByOrderByTimestampDesc();
 
                 // Map alerts to AlertSummaryDTO
                 List<AlertSummaryDTO> summaries = alerts.stream()

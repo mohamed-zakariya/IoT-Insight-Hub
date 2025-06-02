@@ -1,16 +1,9 @@
 package com.example.dxc_backend.config;
 
-import com.example.dxc_backend.controller.AirPollutionSensorDataController;
-import com.example.dxc_backend.controller.StreetLightSensorDataController;
-import com.example.dxc_backend.controller.TrafficSensorDataController;
 import com.example.dxc_backend.enums.SensorType;
-import com.example.dxc_backend.model.AirPollutionSensorData;
-import com.example.dxc_backend.model.StreetLightSensorData;
-import com.example.dxc_backend.model.TrafficSensorData;
+
 import com.example.dxc_backend.service.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
