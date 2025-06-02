@@ -7,6 +7,7 @@ import { TrafficReading } from '../models/traffic-reading.model';
 import { AirPollutionReading } from '../models/air-pollution-reading.model';
 import { StreetLightReading } from '../models/street-light-reading.model';
 import { PagedResponse } from '../models/paged-response.model';
+import { PagedRequest } from '../models/paged-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,24 +22,20 @@ export class SensorService {
   }
 
 
-getTrafficFiltered(params: {
-  page: string;
-  size: string;
-  sort: string;
-  // (add any additional filters here, e.g. location, date range, etc.)
-}): Observable<PagedResponse<TrafficReading>> {
-  let httpParams = new HttpParams();
-  Object.entries(params).forEach(([key, value]) => {
-    if (value != null) {
-      httpParams = httpParams.set(key, value);
-    }
-  });
+getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReading>> {
+    let httpParams = new HttpParams();
 
-  return this.http.get<PagedResponse<TrafficReading>>(
-    `${this.baseUrl}/traffic-sensors/new`,
-    { params: httpParams }
-  );
-}
+    Object.entries(params).forEach(([key, value]) => {
+      if (value != null && value !== '') {
+        httpParams = httpParams.set(key, value);
+      }
+    });
+
+    return this.http.get<PagedResponse<TrafficReading>>(
+      `${this.baseUrl}/traffic-sensors/new`,
+      { params: httpParams }
+    );
+  }
 
 
 

@@ -98,7 +98,7 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   pageSize = 10;
   currentPage = 0;
   currentSort: Sort = { active: 'timestamp', direction: 'desc' };
-  pageSizeOptions = [5, 10, 25];
+  pageSizeOptions = [5, 10, 25,40];
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -195,6 +195,8 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.sort.sortChange.subscribe(sort => {
       this.currentSort = sort;
+      this.currentPage = 0;
+      this.paginator.pageIndex = 0;
       this.loadData();
     });
 
@@ -210,7 +212,8 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   const params: any = {
     page: this.currentPage,
     size: this.pageSize,
-    sortBy: this.currentSort.active || 'timestamp'
+    sortBy: this.currentSort.active || 'timestamp',
+    sortDirection: this.currentSort.direction || 'asc'   // ← add this line
   };
 
   // Only include congestionLevel if it's selected
@@ -394,8 +397,31 @@ this.sensorService.getTrafficFiltered(params).subscribe({
   }
 
 sortData(field: string): void {
+    console.log('[DEBUG] sortData() called with field:', field);
+
+  if (this.sort.active === field) {
+    this.sort.direction = this.sort.direction === 'asc' ? 'desc' : 'asc';
+  }
+  else {
+    this.sort.active = field;
+    this.sort.direction = 'desc';
+  }
+
+  
     this.dataSource.sortingDataAccessor = (item: any, property: string) => item[property];
-    this.dataSource.sort?.sort({ id: field, start: 'asc', disableClear: false });
+    // this.dataSource.sort?.sort({ id: field, start: 'asc', disableClear: false });
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortData(this.dataSource.data, this.dataSource.sort);
+
+  const sortedItems = this.dataSource.data;
+
+this.chartData = {
+  labels: sortedItems.map(r => new Date(r.timestamp).toLocaleTimeString()),
+  datasets: [
+    { label: 'Traffic Density', data: sortedItems.map(r => r.trafficDensity) },
+    { label: 'Average Speed', data: sortedItems.map(r => r.avgSpeed) }
+  ]
+};
   }
 
   filterLocationList(searchTerm: string | null): void {
