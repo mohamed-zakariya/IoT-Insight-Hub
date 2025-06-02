@@ -3,6 +3,8 @@ import { inject, Inject, Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { OtpMessages } from '../../core/constants/otp-messages.constants';
+
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +24,12 @@ export class OtpPasswordService {
   
         // Since responseType is 'text', response will be a string
         if (typeof response === 'string') {
-          if (response.includes('OTP has been sent')) {
+          if (response.includes(OtpMessages.OTP_SENT)) {
             localStorage.setItem('email', email);
             return { message: 'OTP has been sent to your email.' };
           } else {
             // If unexpected text
-            throw new Error('Unexpected server response.');
+            throw new Error(OtpMessages.UNEXPECTED_RESPONSE);
           }
         }
   
@@ -38,7 +40,7 @@ export class OtpPasswordService {
         console.log("Caught error:", error);
   
         if (typeof error.error === 'string') {
-          if (error.error.includes('User not found')) {
+          if (error.error.includes(OtpMessages.USER_NOT_FOUND )) {
             errorMessage = 'Email does not exist.';
           } else {
             errorMessage = error.error;
@@ -46,9 +48,9 @@ export class OtpPasswordService {
         } else if (error.status === 0) {
           errorMessage = 'Cannot connect to server.';
         } else if (error.status >= 400 && error.status < 500) {
-          errorMessage = 'Invalid email address.';
+          errorMessage = OtpMessages. INVALID_EMAIL;
         } else if (error.status >= 500) {
-          errorMessage = 'Server error, try again later.';
+          errorMessage = OtpMessages.SERVER_ERROR;
         }
   
         return throwError(() => new Error(errorMessage));
@@ -63,15 +65,15 @@ export class OtpPasswordService {
       map(response => {
         console.log('OTP check response:', response);
         if (typeof response === 'string') {
-          if (response.includes('Valid OTP')) {
+          if (response.includes( OtpMessages.VALID_OTP)) {
             localStorage.setItem('otp', otp);
-            return 'Valid OTP';
-          } else if (response.includes('Invalid OTP')) {
-            return 'Invalid OTP';
+            return  OtpMessages.VALID_OTP;
+          } else if (response.includes(OtpMessages.INVALID_OTP )) {
+            return OtpMessages.INVALID_OTP ;
           } else if (response.includes('Expired OTP')) {
             return 'Expired OTP';
           } else {
-            throw new Error('Unexpected OTP verification response.');
+            throw new Error(OtpMessages.UNEXPECTED_OTP_RESPONSE);
           }
         }
         return response;
@@ -85,7 +87,7 @@ export class OtpPasswordService {
         } else if (error.status === 0) {
           errorMessage = 'Cannot connect to server.';
         } else if (error.status >= 400 && error.status < 500) {
-          errorMessage = 'Invalid OTP verification request.';
+          errorMessage = OtpMessages.INVALID_OTP_REQUEST;
         } else if (error.status >= 500) {
           errorMessage = 'Server error while verifying OTP.';
         }
@@ -101,7 +103,7 @@ export class OtpPasswordService {
     const otp = localStorage.getItem('otp');
   
     if (!email || !otp) {
-      return throwError(() => new Error('Missing email or OTP from local storage.'));
+      return throwError(() => new Error(OtpMessages.MISSING_LOCAL_DATA));
     }
   
     const params = new HttpParams()
@@ -113,16 +115,16 @@ export class OtpPasswordService {
       map(response => {
         console.log('Password reset response:', response);
         if (typeof response === 'string') {
-          if (response.includes('Password has been reset successfully.')) {
+          if (response.includes( OtpMessages.PASSWORD_RESET_SUCCESS)) {
             return 'Password reset successful';
           } else {
-            throw new Error('Unexpected password reset response.');
+            throw new Error(OtpMessages.UNEXPECTED_RESET_RESPONSE);
           }
         }
         return response;
       }),
       catchError(error => {
-        let errorMessage = 'An unknown error occurred during password reset.';
+        let errorMessage = OtpMessages.PASSWORD_RESET_ERROR;
         console.log('Caught error:', error);
   
         if (typeof error.error === 'string') {
@@ -130,9 +132,9 @@ export class OtpPasswordService {
         } else if (error.status === 0) {
           errorMessage = 'Cannot connect to server.';
         } else if (error.status >= 400 && error.status < 500) {
-          errorMessage = 'Invalid password reset request.';
+          errorMessage = OtpMessages.INVALID_PASSWORD_RESET;
         } else if (error.status >= 500) {
-          errorMessage = 'Server error while resetting password.';
+          errorMessage =  OtpMessages.SERVER_ERROR_RESET;
         }
   
         return throwError(() => new Error(errorMessage));
