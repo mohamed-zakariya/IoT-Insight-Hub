@@ -4,11 +4,13 @@ package com.example.dxc_backend.controller;
 import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.service.SensorDataUnifiedService;
 import com.example.dxc_backend.service.TokenService;
-import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -23,33 +25,25 @@ public class SensorDataController {
         this.tokenService = tokenService;
     }
 
-    @PostMapping("/{type}")
-    public ResponseEntity<?> createSensorData(
+    @GetMapping("/{type}")
+    public ResponseEntity<?> getFilteredSensorData(
             @PathVariable SensorType type,
-            @RequestBody @Valid Object data,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampStart,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampEnd,
+//            @RequestParam(required = false) List<String> location,
+//            @RequestParam(required = false) List<String> congestionLevel,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "timestamp") String sortBy,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
             @RequestHeader("accessToken") String token
     ) {
         if (!tokenService.isValidAccessToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
         }
-
-        try {
-            Object saved = service.saveSensorData(type, data);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to save sensor data: " + e.getMessage());
-        }
+        Page<?> result = service.getFilteredData(type, timestampStart, timestampEnd, page, size, sortBy, sortDirection);
+        return ResponseEntity.ok(result);
     }
-
-    @GetMapping("/{type}")
-    public ResponseEntity<?> getAllSensorData(
-            @PathVariable SensorType type
-    ) {
-
-        List<?> dataList = service.getAll(type);
-        return ResponseEntity.ok(dataList);
-    }
-
 
     @DeleteMapping("/{type}/{id}")
     public ResponseEntity<?> deleteSensorDataById(

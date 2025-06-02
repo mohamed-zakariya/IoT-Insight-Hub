@@ -17,21 +17,21 @@ import org.springframework.scheduling.annotation.Scheduled;
 @Configuration
 @EnableScheduling
 public class SchedulerConfig {
-
-    private final SensorDataUnifiedService sensorDataService;
-    private final AlertService alertService;
-
-    public SchedulerConfig(SensorDataUnifiedService sensorDataService, AlertService alertService) {
-        this.sensorDataService = sensorDataService;
-        this.alertService = alertService;
-    }
-
-    @Scheduled(fixedRate = 300000) // Every 5 minutes
-    public void runSensorGenerationAndAlertCheck() {
-        for (SensorType type : SensorType.values()) {
-            sensorDataService.generateAndSave(type);
-        }
-
-        alertService.checkAndTriggerAlerts(); // Run once after all types
-    }
+//
+//    private final SensorDataUnifiedService sensorDataService;
+//    private final AlertService alertService;
+//
+//    public SchedulerConfig(SensorDataUnifiedService sensorDataService, AlertService alertService) {
+//        this.sensorDataService = sensorDataService;
+//        this.alertService = alertService;
+//    }
+//
+//    @Scheduled(fixedRate = 300000) // Every 5 minutes
+//    public void runSensorGenerationAndAlertCheck() {
+//        for (SensorType type : SensorType.values()) {
+//            sensorDataService.generateAndSave(type);
+//        }
+//
+//        alertService.checkAndTriggerAlerts(); // Run once after all types
+//    }
 }

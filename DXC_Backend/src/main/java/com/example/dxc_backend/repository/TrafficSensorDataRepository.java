@@ -23,18 +23,27 @@ public interface TrafficSensorDataRepository extends SensorRepositoryProvider<Tr
     }
     // Fetch the latest traffic sensor record
     Optional<TrafficSensorData> findTopByOrderByTimestampDesc();
-
-    // Dynamic filtering with pagination
-    @Query("SELECT t FROM TrafficSensorData t WHERE " +
-            "(:locations IS NULL OR LOWER(t.location) IN :locations) AND " +
-            "(:start IS NULL OR t.timestamp >= :start) AND " +
-            "(:end IS NULL OR t.timestamp <= :end) AND " +
-            "(:congestionLevels IS NULL OR LOWER(t.congestionLevel) IN :congestionLevels)")
-    Page<TrafficSensorData> findFiltered(
-            @Param("locations") List<String> locations,
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end,
-            @Param("congestionLevels") List<String> congestionLevels,
-            Pageable pageable
-    );
+//
+//    // Dynamic filtering with pagination
+//    @Query("SELECT t FROM TrafficSensorData t WHERE " +
+////            "(:locations IS NULL OR LOWER(t.location) IN :locations) AND " +
+//            "(:start IS NULL OR t.timestamp >= :start) AND " +
+//            "(:end IS NULL OR t.timestamp <= :end) AND "
+////            "(:congestionLevels IS NULL OR LOWER(t.congestionLevel) IN :congestionLevels)"
+//    )
+//    Page<TrafficSensorData> findFiltered(
+////            @Param("locations") List<String> locations,
+//            @Param("start") LocalDateTime start,
+//            @Param("end") LocalDateTime end,
+////            @Param("congestionLevels") List<String> congestionLevels,
+//            Pageable pageable
+//    );
+@Query("SELECT t FROM TrafficSensorData t WHERE " +
+        "(:start IS NULL OR t.timestamp >= :start) AND " +
+        "(:end IS NULL OR t.timestamp <= :end)")
+Page<TrafficSensorData> findFiltered(
+        @Param("start") LocalDateTime start,
+        @Param("end") LocalDateTime end,
+        Pageable pageable
+);
 }

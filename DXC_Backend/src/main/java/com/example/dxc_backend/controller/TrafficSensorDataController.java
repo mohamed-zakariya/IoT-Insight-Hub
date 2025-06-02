@@ -28,26 +28,7 @@ public class TrafficSensorDataController {
     }
 
 
-    @GetMapping("/new")
-    public ResponseEntity<?> getFilteredTrafficSensorData(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampStart,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampEnd,
-            @RequestParam(required = false) List<String> location,
-            @RequestParam(required = false) List<String> congestionLevel,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "timestamp") String sortBy,
-            @RequestParam(defaultValue = "DESC") String sortDirection,
-            @RequestHeader("accessToken") String token
-    ) {
-        if (!tokenService.isValidAccessToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
-        }
 
-        Page<TrafficSensorData> result = service.getFilteredData(timestampStart, timestampEnd, location, congestionLevel, page, size, sortBy, sortDirection);
-
-        return ResponseEntity.ok(result);
-    }
 
     @GetMapping
     public List<TrafficSensorData> getAllTrafficSensorData() {

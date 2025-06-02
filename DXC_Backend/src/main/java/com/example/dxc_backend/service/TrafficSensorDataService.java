@@ -46,8 +46,6 @@ public class TrafficSensorDataService extends BaseSensorDataService<TrafficSenso
     public Page<TrafficSensorData> getFilteredData(
             LocalDateTime timestampStart,
             LocalDateTime timestampEnd,
-            List<String> locations,
-            List<String> congestionLevels,
             int page,
             int size,
             String sortBy,
@@ -56,18 +54,9 @@ public class TrafficSensorDataService extends BaseSensorDataService<TrafficSenso
         Sort.Direction sortDirectionEnum = Sort.Direction.fromString(sortDirection);
         Sort sort = Sort.by(sortDirectionEnum, sortBy);
 
-        if (locations != null) {
-            locations = locations.stream()
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
-        }
-        if (congestionLevels != null) {
-            congestionLevels = congestionLevels.stream()
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
-        }
+
 
         Pageable pageable = PageRequest.of(page, size, sort);
-        return repository.findFiltered(locations, timestampStart, timestampEnd, congestionLevels, pageable);
+        return repository.findFiltered(timestampStart, timestampEnd, pageable);
     }
 }
