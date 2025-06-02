@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Repository
 public interface TrafficSensorDataRepository extends SensorRepositoryProvider<TrafficSensorData> {
@@ -21,43 +20,30 @@ public interface TrafficSensorDataRepository extends SensorRepositoryProvider<Tr
 
     Optional<TrafficSensorData> findTopByOrderByTimestampDesc();
 
-    @Override
+    @SuppressWarnings("unchecked")
     default Page<TrafficSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, Map<String, ?> filters) {
-        // Handle congestionLevels - could be String or List<String>
-        List<String> congestionLevels = convertFilterParam(filters.get("congestionLevel"));
+        // Get single congestionLevel string
+        String congestionLevel = filters.containsKey("congestionLevel") ?
+                ((String) filters.get("congestionLevel")).trim().toLowerCase() : null;
 
-        // Handle locations - could be String or List<String>
-        List<String> locations = convertFilterParam(filters.get("locations"));
+        // Get single location string
+        String location = filters.containsKey("locations") ?
+                ((String) filters.get("locations")).trim().toLowerCase() : null;
 
-        return findFilteredCustom(start, end, pageable, locations, congestionLevels);
+        return findFilteredCustom(start, end, pageable, location, congestionLevel);
     }
 
-    // Helper method to handle both single String and List<String> parameters
-    private List<String> convertFilterParam(Object param) {
-        if (param == null) {
-            return null;
-        } else if (param instanceof String) {
-            return Collections.singletonList(((String) param).toLowerCase());
-        } else if (param instanceof List) {
-            return ((List<?>) param).stream()
-                    .filter(Objects::nonNull)
-                    .map(Object::toString)
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
-        }
-        return null;
-    }
     @Query("SELECT t FROM TrafficSensorData t WHERE " +
-            "(COALESCE(:locations, NULL) IS NULL OR LOWER(t.location) IN (:locations)) AND " +
+            "(:location IS NULL OR LOWER(t.location) = :location) AND " +
             "(:start IS NULL OR t.timestamp >= :start) AND " +
             "(:end IS NULL OR t.timestamp <= :end) AND " +
-            "(COALESCE(:congestionLevels, NULL) IS NULL OR LOWER(t.congestionLevel) IN (:congestionLevels))"
+            "(:congestionLevel IS NULL OR LOWER(t.congestionLevel) = :congestionLevel)"
     )
     Page<TrafficSensorData> findFilteredCustom(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             Pageable pageable,
-            @Param("locations") List<String> locations,
-            @Param("congestionLevels") List<String> congestionLevels
+            @Param("location") String location,
+            @Param("congestionLevel") String congestionLevel
     );
 }
