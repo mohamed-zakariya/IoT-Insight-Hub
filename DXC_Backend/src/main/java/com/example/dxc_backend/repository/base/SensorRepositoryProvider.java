@@ -9,22 +9,14 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 
 @NoRepositoryBean
 public interface SensorRepositoryProvider<T> extends JpaRepository<T, UUID> {
     SensorType getSensorType();
-//    Page<TrafficSensorData> findFiltered(
-////            @Param("locations") List<String> locations,
-//            @Param("start") LocalDateTime start,
-//            @Param("end") LocalDateTime end,
-////            @Param("congestionLevels") List<String> congestionLevels,
-//            Pageable pageable
-//    );
 
-    Page<T> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable);
-
+    Page<T> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, Map<String, ?> filters);
 }
-
 

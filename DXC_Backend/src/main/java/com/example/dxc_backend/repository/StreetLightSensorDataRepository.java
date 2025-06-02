@@ -1,6 +1,7 @@
 package com.example.dxc_backend.repository;
 
 import com.example.dxc_backend.enums.SensorType;
+import com.example.dxc_backend.model.AirPollutionSensorData;
 import com.example.dxc_backend.model.StreetLightSensorData;
 import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
@@ -11,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -23,10 +25,15 @@ public interface StreetLightSensorDataRepository extends SensorRepositoryProvide
     // Fetch the latest streetlight sensor record
     Optional<StreetLightSensorData> findTopByOrderByTimestampDesc();
 
+    @Override
+    default Page<StreetLightSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, Map<String, ?> filters) {
+        return findFilteredCustom(start, end, pageable);
+    }
+
     @Query("SELECT t FROM TrafficSensorData t WHERE " +
             "(:start IS NULL OR t.timestamp >= :start) AND " +
             "(:end IS NULL OR t.timestamp <= :end)")
-    Page<StreetLightSensorData> findFiltered(
+    Page<StreetLightSensorData> findFilteredCustom(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             Pageable pageable

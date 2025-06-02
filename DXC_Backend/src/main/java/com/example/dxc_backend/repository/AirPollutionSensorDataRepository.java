@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -23,13 +24,21 @@ public interface AirPollutionSensorDataRepository
     }
 
     Optional<AirPollutionSensorData> findTopByOrderByTimestampDesc();
+
+    @Override
+    default Page<AirPollutionSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, Map<String, ?> filters) {
+        return findFilteredCustom(start, end, pageable);
+    }
+
     @Query("SELECT t FROM TrafficSensorData t WHERE " +
-            "(:start IS NULL OR t.timestamp >= :start) AND " +
-            "(:end IS NULL OR t.timestamp <= :end)")
-    Page<AirPollutionSensorData> findFiltered(
+        "(:start IS NULL OR t.timestamp >= :start) AND " +
+        "(:end IS NULL OR t.timestamp <= :end)")
+    Page<AirPollutionSensorData> findFilteredCustom(
             @Param("start") LocalDateTime start,
             @Param("end") LocalDateTime end,
             Pageable pageable
     );
+
+
 }
 

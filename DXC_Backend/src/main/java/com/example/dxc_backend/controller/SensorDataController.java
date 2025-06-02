@@ -30,8 +30,7 @@ public class SensorDataController {
             @PathVariable SensorType type,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampStart,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampEnd,
-//            @RequestParam(required = false) List<String> location,
-//            @RequestParam(required = false) List<String> congestionLevel,
+            @RequestParam Map<String, String> allRequestParams,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "timestamp") String sortBy,
@@ -41,25 +40,14 @@ public class SensorDataController {
         if (!tokenService.isValidAccessToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
         }
-        Page<?> result = service.getFilteredData(type, timestampStart, timestampEnd, page, size, sortBy, sortDirection);
+
+        // Remove pagination and sorting params before passing filters
+        allRequestParams.remove("page");
+        allRequestParams.remove("size");
+        allRequestParams.remove("sortBy");
+        allRequestParams.remove("sortDirection");
+
+        Page<?> result = service.getFilteredData(type, timestampStart, timestampEnd, allRequestParams, page, size, sortBy, sortDirection);
         return ResponseEntity.ok(result);
-    }
-
-    @DeleteMapping("/{type}/{id}")
-    public ResponseEntity<?> deleteSensorDataById(
-            @PathVariable SensorType type,
-            @PathVariable UUID id,
-            @RequestHeader("accessToken") String token
-    ) {
-        if (!tokenService.isValidAccessToken(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
-        }
-
-        boolean deleted = service.deleteById(type, id);
-        if (deleted) {
-            return ResponseEntity.ok("Deleted sensor data with ID " + id);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sensor data not found.");
-        }
     }
 }

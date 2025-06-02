@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -23,27 +25,35 @@ public interface TrafficSensorDataRepository extends SensorRepositoryProvider<Tr
     }
     // Fetch the latest traffic sensor record
     Optional<TrafficSensorData> findTopByOrderByTimestampDesc();
-//
-//    // Dynamic filtering with pagination
-//    @Query("SELECT t FROM TrafficSensorData t WHERE " +
-////            "(:locations IS NULL OR LOWER(t.location) IN :locations) AND " +
-//            "(:start IS NULL OR t.timestamp >= :start) AND " +
-//            "(:end IS NULL OR t.timestamp <= :end) AND "
-////            "(:congestionLevels IS NULL OR LOWER(t.congestionLevel) IN :congestionLevels)"
-//    )
-//    Page<TrafficSensorData> findFiltered(
-////            @Param("locations") List<String> locations,
-//            @Param("start") LocalDateTime start,
-//            @Param("end") LocalDateTime end,
-////            @Param("congestionLevels") List<String> congestionLevels,
-//            Pageable pageable
-//    );
-@Query("SELECT t FROM TrafficSensorData t WHERE " +
-        "(:start IS NULL OR t.timestamp >= :start) AND " +
-        "(:end IS NULL OR t.timestamp <= :end)")
-Page<TrafficSensorData> findFiltered(
-        @Param("start") LocalDateTime start,
-        @Param("end") LocalDateTime end,
-        Pageable pageable
-);
+
+    @Override
+    default Page<TrafficSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable ,Map<String, ?> filters) {
+        List<String> congestionLevels = (List<String>) filters.get("congestionLevel");
+        List<String> locations = (List<String>) filters.get("locations");
+
+        if (congestionLevels == null || congestionLevels.isEmpty()) {
+            congestionLevels = null;  // Important: pass null to ignore this filter
+        }
+        if (locations == null || locations.isEmpty()) {
+            locations = null;  // Important: pass null to ignore this filter
+        }
+
+        return findFilteredCustom(start, end, pageable, locations, congestionLevels);
+    }
+
+
+    @Query("SELECT t FROM TrafficSensorData t WHERE " +
+            "(:locations IS NULL OR LOWER(t.location) IN :locations) AND " +
+            "(:start IS NULL OR t.timestamp >= :start) AND " +
+            "(:end IS NULL OR t.timestamp <= :end) AND " +
+            "(:congestionLevels IS NULL OR LOWER(t.congestionLevel) IN :congestionLevels)"
+    )
+    Page<TrafficSensorData> findFilteredCustom(
+            @Param("start") LocalDateTime start,
+            @Param("end") LocalDateTime end,
+            Pageable pageable,
+            @Param("locations") List<String> locations,
+            @Param("congestionLevels") List<String> congestionLevels
+    );
+
 }
