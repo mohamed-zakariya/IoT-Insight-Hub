@@ -1,5 +1,6 @@
 package com.example.dxc_backend.model;
 
+import com.example.dxc_backend.enums.CongestionLevel;
 import jakarta.persistence.Column;
 
 import java.time.LocalDateTime;
@@ -8,10 +9,12 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 import lombok.Data;
+import lombok.Getter;
 
 
 @Data
 @Entity
+@Getter
 @Table(name = "traffic_sensors_data")
 public class TrafficSensorData {
 
@@ -33,36 +36,14 @@ public class TrafficSensorData {
     private float avgSpeed;
 
     @Column(nullable = false)
-    private String congestionLevel;
+    @Enumerated(EnumType.STRING)
+    private CongestionLevel congestionLevel;
 
     @PrePersist
     public void prePersist() {
         if (this.id == null) {
             this.id = UUID.randomUUID();   // Generate UUID if it's not already set
         }
-    }
-    public UUID getId() {
-        return id;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public int getTrafficDensity() {
-        return trafficDensity;
-    }
-
-    public float getAvgSpeed() {
-        return avgSpeed;
-    }
-
-    public String getCongestionLevel() {
-        return congestionLevel;
     }
 
 

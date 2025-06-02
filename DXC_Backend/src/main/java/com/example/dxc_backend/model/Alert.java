@@ -1,5 +1,7 @@
 package com.example.dxc_backend.model;
 
+import com.example.dxc_backend.enums.AlertType;
+import com.example.dxc_backend.enums.SensorType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,7 +17,8 @@ public class Alert {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String type; // e.g., "Traffic", "Air_Pollution", "Street_Light"
+    @Enumerated(EnumType.STRING)
+    private SensorType type;
 
     private String metric; // e.g., "avgSpeed", "co", "brightnessLevel"
 
@@ -23,7 +26,8 @@ public class Alert {
 
     private float thresholdValue; // From the Settings table
 
-    private String alertType; // "ABOVE" or "BELOW"
+    @Enumerated(EnumType.STRING)
+    private AlertType alertType;
 
     private String message; // Human-readable explanation
 
