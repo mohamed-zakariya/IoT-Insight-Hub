@@ -95,7 +95,7 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['location', 'timestamp', 'trafficDensity', 'avgSpeed', 'congestionLevel'];
   dataSource = new MatTableDataSource<TrafficReading>([]);
   totalItems = 0;
-  pageSize = 10;
+  pageSize = 5;
   currentPage = 0;
   currentSort: Sort = { active: 'timestamp', direction: 'desc' };
   pageSizeOptions = [5, 10, 25,40];
@@ -246,11 +246,18 @@ this.sensorService.getTrafficFiltered(params).subscribe({
 
     // 1) Pull the array of readings from res.content
     const items: TrafficReading[] = res.content || [];
+
     console.log('items outputs:', items);
 
     // 2) Use res.totalElements instead of res.totalItems
     this.dataSource.data = items;
     this.totalItems = res.totalElements || 0;
+
+    console.log('Total items:', this.totalItems);
+    this.paginator.length    = this.totalItems;
+    this.paginator.pageSize  = this.pageSize;
+    this.paginator.pageIndex = this.currentPage;
+
 
     // 3) Build chart data from `items` as before
     this.chartData = {
@@ -283,6 +290,10 @@ this.sensorService.getTrafficFiltered(params).subscribe({
     this.locationFilter.setValue([]);
     this.congestionFilter.setValue([]);
     this.locationSearch.setValue('');
+     if (this.paginator) {
+    this.paginator.firstPage();
+  }
+
   }
 
 
