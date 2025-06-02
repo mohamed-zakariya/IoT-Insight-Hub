@@ -20,41 +20,49 @@ export class SensorService {
     return this.http.get<TrafficReading[]>(`${this.baseUrl}/traffic-sensors`);
   }
 
+  getTrafficFiltered(
+    timestampStart?: string,
+    timestampEnd?: string,
+    location?: string,
+    congestionLevel?: string,
+    page: number = 0,
+    size: number = 10,
+    sortBy: string = 'timestamp',
+    sortDirection: 'ASC' | 'DESC' = 'DESC'
+  ): Observable<{
+    content: TrafficReading[];
+    totalElements: number;
+    number: number;
+    size: number;
+    // you can add any other Page<T> fields if you need them
+  }> {
+    let params = new HttpParams()
+      .set('page', String(page))
+      .set('size', String(size))
+      .set('sortBy', sortBy)
+      .set('sortDirection', sortDirection);
 
-getTrafficFiltered(params: {
-  page: string;
-  size: string;
-  sort: string;
-  // (add any additional filters here, e.g. location, date range, etc.)
-}): Observable<PagedResponse<TrafficReading>> {
-  let httpParams = new HttpParams();
-  Object.entries(params).forEach(([key, value]) => {
-    if (value != null) {
-      httpParams = httpParams.set(key, value);
+    if (timestampStart) {
+      params = params.set('timestampStart', timestampStart);
     }
-  });
+    if (timestampEnd) {
+      params = params.set('timestampEnd', timestampEnd);
+    }
+    if (location) {
+      params = params.set('location', location);
+    }
+    if (congestionLevel) {
+      params = params.set('congestionLevel', congestionLevel);
+    }
 
-  return this.http.get<PagedResponse<TrafficReading>>(
-    `${this.baseUrl}/traffic-sensors/new`,
-    { params: httpParams }
-  );
-}
+    return this.http.get<{
+      content: TrafficReading[];
+      totalElements: number;
+      number: number;
+      size: number;
+    }>(`${this.baseUrl}/traffic-sensors/new`, { params });
+  }
 
-
-
-  // getTrafficFiltered(params: any): Observable<{
-  //   items: TrafficReading[];
-  //   totalItems: number;
-  //   page: number;
-  //   size: number;
-  // }> {
-  //   return this.http.get<{
-  //     items: TrafficReading[];
-  //     totalItems: number;
-  //     page: number;
-  //     size: number;
-  //   }>(`${this.baseUrl}/traffic-sensors/new`, { params });
-  // }
 
   /** ✅ Add this method */
   // getTrafficLocations(): Observable<string[]> {
