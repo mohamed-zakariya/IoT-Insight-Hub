@@ -1,8 +1,7 @@
 package com.example.dxc_backend.service;
 
-import com.example.dxc_backend.enums.AlertType;
-import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.model.Settings;
+import com.example.dxc_backend.model.User;
 import com.example.dxc_backend.repository.SettingsRepository;
 import com.example.dxc_backend.repository.UserRepository;
 import com.example.dxc_backend.util.Range;
@@ -11,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class SettingsService {
@@ -20,46 +19,49 @@ public class SettingsService {
     @Autowired
     private SettingsRepository settingsRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Transactional
-    public Settings createSetting(SensorType sensorType, String metric,
-                                  Float thresholdValue, AlertType alertType) {
-        // Validate sensor type
-        if (sensorType == null || !SensorMetricValidation.SENSOR_METRIC_MAP.containsKey(sensorType)) {
-            throw new IllegalArgumentException("Sensor type '" + sensorType + "' is not recognized.");
+    public Settings createSetting(String type, String metric,
+                                  Float thresholdValue, String alertType) {
+
+
+
+        // ✅ Validate sensor type
+        if (!SensorMetricValidation.SENSOR_METRIC_MAP.containsKey(type)) {
+            throw new IllegalArgumentException("Sensor type '" + type + "' is not recognized.");
         }
 
-        // Validate metric
-        var validMetrics = SensorMetricValidation.SENSOR_METRIC_MAP.get(sensorType);
-        if (validMetrics == null || !validMetrics.stream().map(Enum::name).toList().contains(metric)) {
-            throw new IllegalArgumentException("Metric '" + metric + "' is not valid for sensor type '" + sensorType + "'");
+        // ✅ Validate alertType
+        if (!alertType.equalsIgnoreCase("ABOVE") && !alertType.equalsIgnoreCase("BELOW")) {
+            throw new IllegalArgumentException("AlertType must be 'ABOVE' or 'BELOW'");
         }
 
-        // Validate threshold range
-        var metricRangeMap = SensorMetricValidation.METRIC_VALID_RANGES.get(sensorType);
-        if (metricRangeMap != null) {
-            var validRange = metricRangeMap.get(
-                    validMetrics.stream()
-                            .filter(e -> e.name().equals(metric))
-                            .findFirst()
-                            .orElseThrow(() -> new IllegalArgumentException("Invalid metric"))
-            );
-            if (validRange != null && !validRange.isValid(thresholdValue)) {
-                throw new IllegalArgumentException("Threshold value for metric '" + metric + "' is out of range. Valid range: "
-                        + validRange.getMin() + " to " + validRange.getMax());
-            }
+        // ✅ Validate metric
+        Set<String> validMetrics = SensorMetricValidation.SENSOR_METRIC_MAP.get(type);
+        if (!validMetrics.contains(metric)) {
+            throw new IllegalArgumentException("Metric '" + metric + "' is not valid for sensor type '" + type + "'");
+        }
+
+        // ✅ Get the valid range for the given metric
+        Range validRange = SensorMetricValidation.METRIC_VALID_RANGES.get(type).get(metric);
+        if (validRange != null && !validRange.isValid(thresholdValue)) {
+            // Include valid range in the exception message
+            throw new IllegalArgumentException("Threshold value for metric '" + metric + "' is out of range. Valid range: "
+                    + validRange.getMin() + " to " + validRange.getMax());
         }
 
         // Remove existing setting (if any)
-        Optional<Settings> existingSetting = settingsRepository.findByTypeAndMetric(sensorType, metric);
-        existingSetting.ifPresent(setting -> settingsRepository.delete(setting));
+        settingsRepository.findByTypeAndMetric(type, metric)
+                .ifPresent(existing -> settingsRepository.deleteByTypeAndMetric(type, metric));
 
         // Create and save new setting
         Settings settings = new Settings();
-        settings.setType(sensorType);
+        settings.setType(type);
         settings.setMetric(metric);
         settings.setThresholdValue(thresholdValue);
         settings.setAlertType(alertType);
-
         return settingsRepository.save(settings);
     }
 
@@ -67,7 +69,9 @@ public class SettingsService {
         return settingsRepository.findAll();
     }
 
-    public List<Settings> getSettingsByType(SensorType type) {
+    public List<Settings> getSettingsByType(String type) {
         return settingsRepository.findAllByType(type);
     }
+
+
 }

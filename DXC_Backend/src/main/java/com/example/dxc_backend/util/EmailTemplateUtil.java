@@ -1,10 +1,8 @@
 package com.example.dxc_backend.util;
 
-import com.example.dxc_backend.enums.SensorType;
-
 public class EmailTemplateUtil {
 
-    public static String buildAlertHtml(SensorType sensorType, String metric, float value, float threshold, String direction) {
+    public static String buildAlertHtml(String type, String metric, float value, float threshold, String direction) {
         return """
         <html>
         <head>
@@ -80,7 +78,7 @@ public class EmailTemplateUtil {
             </div>
         </body>
         </html>
-        """.formatted(sensorType.name(), metric, value, threshold, direction);
+        """.formatted(type, metric, value, threshold, direction);
     }
 
 //    public class EmailTemplateUtil {

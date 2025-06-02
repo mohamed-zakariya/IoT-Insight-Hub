@@ -1,18 +1,12 @@
 package com.example.dxc_backend.model;
 
-import com.example.dxc_backend.enums.PollutionLevel;
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @Entity
-@Getter
-@Setter
 @Table(name = "air_pollution_sensors_data")
 public class AirPollutionSensorData {
 
@@ -41,8 +35,7 @@ public class AirPollutionSensorData {
     private float ozone;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PollutionLevel pollutionLevel;
+    private String pollutionLevel;
 
     @PrePersist
     public void prePersist() {

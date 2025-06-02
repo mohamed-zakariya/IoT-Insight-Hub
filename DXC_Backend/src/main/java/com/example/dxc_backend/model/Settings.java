@@ -1,7 +1,5 @@
 package com.example.dxc_backend.model;
 
-import com.example.dxc_backend.enums.AlertType;
-import com.example.dxc_backend.enums.SensorType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,18 +17,15 @@ public class Settings {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    private String type;
 
     private String metric;
 
     private float thresholdValue;
 
-    @Enumerated(EnumType.STRING)
-    private AlertType alertType;
+    private String alertType;
 
     private LocalDateTime createdAt;
-
-    @Enumerated(EnumType.STRING)
-    private SensorType type;
 
     @PrePersist
     public void prePersist() {

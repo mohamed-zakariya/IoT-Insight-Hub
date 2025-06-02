@@ -56,7 +56,7 @@ public class SettingsController {
             if (user != null) {
                 Settings saved = settingsService.createSetting(
                         dto.getType(),
-                        dto.getMetric().toUpperCase(),
+                        dto.getMetric(),
                         dto.getThresholdValue(),
                         dto.getAlertType()
                 );

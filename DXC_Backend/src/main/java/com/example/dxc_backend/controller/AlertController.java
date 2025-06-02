@@ -1,7 +1,6 @@
 package com.example.dxc_backend.controller;
 
 import com.example.dxc_backend.dto.AlertSummaryDTO;
-import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.model.Alert;
 import com.example.dxc_backend.model.User;
 import com.example.dxc_backend.repository.AlertRepository;
@@ -72,7 +71,7 @@ public class AlertController {
     @PostMapping("/send-test-email")
     @Operation(summary = "Send test alert email")
     public ResponseEntity<?> testEmail() throws MessagingException {
-        String html = EmailTemplateUtil.buildAlertHtml(SensorType.TRAFFIC, "avgSpeed", 110, 90, "Above");
+        String html = EmailTemplateUtil.buildAlertHtml("Traffic", "avgSpeed", 110, 90, "Above");
         emailService.sendAlertEmail(List.of("recipient@example.com"), "Test Sensor Alert", html);
         return ResponseEntity.ok("Email sent");
     }

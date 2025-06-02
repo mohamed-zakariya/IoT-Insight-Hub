@@ -2,7 +2,6 @@ package com.example.dxc_backend.controller;
 
 import com.example.dxc_backend.model.AirPollutionSensorData;
 import com.example.dxc_backend.service.AirPollutionSensorDataService;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +31,7 @@ public class AirPollutionSensorDataController {
     }
 
     @PostMapping
-    public AirPollutionSensorData createSensorData(@RequestBody @Valid AirPollutionSensorData data) {
+    public AirPollutionSensorData createSensorData(@RequestBody AirPollutionSensorData data) {
         return service.saveSensorData(data);
     }
 
