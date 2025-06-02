@@ -81,7 +81,7 @@ public class TrafficSensorDataService {
             String sortBy,
             String sortDirection
     ) {
-        List<String> allowedSortFields = List.of("trafficDensity", "avgSpeed", "timestamp");
+        List<String> allowedSortFields = List.of("trafficDensity", "avgSpeed", "timestamp","congestionLevel");
 
         if (!allowedSortFields.contains(sortBy)) {
             throw new IllegalArgumentException("Invalid sort field: " + sortBy +
