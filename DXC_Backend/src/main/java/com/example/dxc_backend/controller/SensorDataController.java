@@ -45,5 +45,21 @@ public class SensorDataController {
         Page<?> result = service.getFilteredData(type, timestampStart, timestampEnd, allRequestParams, page, size, sortBy, sortDirection);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/{type}/locations")
+    public ResponseEntity<?> getLocations(
+            @PathVariable SensorType type,
+            @RequestParam(defaultValue = "0") int page,            // Added page param, default 0
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "DESC") String sortDirection,
+            @RequestHeader("accessToken") String token
+    ) {
+        if (!tokenService.isValidAccessToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
+        }
+
+        Page<String> result = service.getLocations(page, type, size, sortDirection);
+        return ResponseEntity.ok(result);
+    }
 }
 
