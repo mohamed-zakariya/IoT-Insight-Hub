@@ -50,24 +50,6 @@ public class SensorDataUnifiedService {
     }
 
 
-    public boolean deleteById(SensorType type, UUID id) {
-        JpaRepository<?, UUID> repo = repositoryMap.get(type);
-        if (repo.existsById(id)) {
-            repo.deleteById(id);
-            return true;
-        }
-        return false;
-    }
-
-
-    @SuppressWarnings("unchecked")
-    public Object saveSensorData(SensorType type, Object data) {
-        JpaRepository repository = repositoryMap.get(type);
-        if (repository == null) {
-            throw new IllegalArgumentException("No repository found for sensor type: " + type);
-        }
-        return repository.save(data);
-    }
 
 //
 //    public Page<TrafficSensorData> getFilteredData(
