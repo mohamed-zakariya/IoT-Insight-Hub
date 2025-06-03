@@ -20,14 +20,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
-public interface StreetLightSensorDataRepository extends SensorRepositoryProvider<StreetLightSensorData> {
+public interface  StreetLightSensorDataRepository extends SensorRepositoryProvider<StreetLightSensorData> {
 
 
     default SensorType getSensorType() {
         return SensorType.STREET_LIGHT;
     }
     // Fetch the latest streetlight sensor record
-    Optional<StreetLightSensorData> findTopByOrderByTimestampDesc();
 
     @Query("SELECT DISTINCT t.location FROM StreetLightSensorData t")
     Page<String> getLocations(Pageable pageable);

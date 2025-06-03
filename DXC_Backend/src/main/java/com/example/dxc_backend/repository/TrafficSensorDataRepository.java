@@ -21,7 +21,6 @@ public interface TrafficSensorDataRepository extends SensorRepositoryProvider<Tr
         return SensorType.TRAFFIC;
     }
 
-    Optional<TrafficSensorData> findTopByOrderByTimestampDesc();
 
     @Query("SELECT DISTINCT t.location FROM TrafficSensorData t")   // TODO: this method is the same across all sensors. Needs to be in a higher level
     Page<String> getLocations(Pageable pageable);
