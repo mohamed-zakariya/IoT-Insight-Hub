@@ -41,20 +41,4 @@ public class TrafficSensorDataService extends BaseSensorDataService<TrafficSenso
     public TrafficSensorData generateRandomTrafficSensorData() {
         return trafficSensorDataGenerator.generateRandomSensorData();
     }
-
-
-//    public Page<TrafficSensorData> getFilteredData(
-//            LocalDateTime timestampStart,
-//            LocalDateTime timestampEnd,
-//            int page,
-//            int size,
-//            String sortBy,
-//            String sortDirection
-//    ) {
-//        Sort.Direction sortDirectionEnum = Sort.Direction.fromString(sortDirection);
-//        Sort sort = Sort.by(sortDirectionEnum, sortBy);
-//
-//        Pageable pageable = PageRequest.of(page, size, sort);
-//        return repository.findFiltered(timestampStart, timestampEnd,pageable, filterrs);
-//    }
 }

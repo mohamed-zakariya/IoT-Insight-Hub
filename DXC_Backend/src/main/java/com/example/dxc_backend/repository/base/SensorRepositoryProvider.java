@@ -22,6 +22,5 @@ public interface SensorRepositoryProvider<T> extends JpaRepository<T, UUID> {
 
     Page<T> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, MultiValueMap<String, ?> filters);
 
-    @Query("SELECT DISTINCT t.location FROM #{#entityName} t WHERE t.sensorType = :type")
-    Page<String> getLocations(@Param("type") SensorType type, Pageable pageable);
+    Page<String> getLocations(  Pageable pageable);
 }

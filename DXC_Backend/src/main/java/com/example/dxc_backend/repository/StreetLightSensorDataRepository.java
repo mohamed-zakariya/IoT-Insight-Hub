@@ -29,6 +29,9 @@ public interface StreetLightSensorDataRepository extends SensorRepositoryProvide
     // Fetch the latest streetlight sensor record
     Optional<StreetLightSensorData> findTopByOrderByTimestampDesc();
 
+    @Query("SELECT DISTINCT t.location FROM StreetLightSensorData t")
+    Page<String> getLocations(Pageable pageable);
+
     @SuppressWarnings("unchecked")
     default Page<StreetLightSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, MultiValueMap<String, ?> filters) {
 

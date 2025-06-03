@@ -23,9 +23,12 @@ public interface TrafficSensorDataRepository extends SensorRepositoryProvider<Tr
 
     Optional<TrafficSensorData> findTopByOrderByTimestampDesc();
 
+    @Query("SELECT DISTINCT t.location FROM TrafficSensorData t")   // TODO: this method is the same across all sensors. Needs to be in a higher level
+    Page<String> getLocations(Pageable pageable);
+
     @SuppressWarnings("unchecked")
     default Page<TrafficSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, MultiValueMap<String, ?> filters) {
-        // Handle multiple congestionLevel values
+        // TODO: hardcoded
         List<String> congestionLevels = null;
         if (filters.containsKey("congestionLevel")) {
             Object congestionLevelObj = filters.get("congestionLevel");
@@ -39,8 +42,8 @@ public interface TrafficSensorDataRepository extends SensorRepositoryProvider<Tr
                         .collect(Collectors.toList());
             }
         }
-        // Handle multiple location values
         List<String> locations = null;
+        //TODO: hardcoded
         if (filters.containsKey("location")) {
             Object locationObj = filters.get("location");
             if (locationObj instanceof String) {

@@ -31,7 +31,10 @@ public interface AirPollutionSensorDataRepository
         return findFilteredCustom(start, end, pageable);
     }
 
-    @Query("SELECT t FROM TrafficSensorData t WHERE " +
+    @Query("SELECT DISTINCT t.location FROM AirPollutionSensorData t")
+    Page<String> getLocations(Pageable pageable);
+
+    @Query("SELECT t FROM AirPollutionSensorData t WHERE " +
         "(:start IS NULL OR t.timestamp >= :start) AND " +
         "(:end IS NULL OR t.timestamp <= :end)")
     Page<AirPollutionSensorData> findFilteredCustom(

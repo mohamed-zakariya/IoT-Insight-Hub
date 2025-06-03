@@ -72,40 +72,6 @@ public class SensorDataUnifiedService {
         return repository.save(data);
     }
 
-//
-//    public Page<TrafficSensorData> getFilteredData(
-//            SensorType type,
-//            LocalDateTime timestampStart,
-//            LocalDateTime timestampEnd,
-////            List<String> locations,
-////            List<String> congestionLevels,
-//            int page,
-//            int size,
-//            String sortBy,
-//            String sortDirection
-//    ) {
-////        JpaRepository repository = repositoryMap.get(type);
-////        if (repository == null) {
-////            throw new IllegalArgumentException("No repository found for sensor type: " + type);
-////        }
-//
-//        Sort.Direction sortDirectionEnum = Sort.Direction.fromString(sortDirection);
-//        Sort sort = Sort.by(sortDirectionEnum, sortBy);
-//
-////        if (locations != null) {
-////            locations = locations.stream()
-////                    .map(String::toLowerCase)
-////                    .collect(Collectors.toList());
-////        }
-////        if (congestionLevels != null) {
-////            congestionLevels = congestionLevels.stream()
-////                    .map(String::toLowerCase)
-////                    .collect(Collectors.toList());
-////        }
-//
-//        Pageable pageable = PageRequest.of(page, size, sort);
-//        return repository.findFiltered( timestampStart, timestampEnd, pageable);
-//    }
 
 public <T> Page<T> getFilteredData(
         SensorType type,
@@ -132,7 +98,6 @@ public <T> Page<T> getFilteredData(
             int page,
             SensorType type,
             int size,
-            String sortBy,
             String sortDirection
 
     ) {
@@ -142,8 +107,8 @@ public <T> Page<T> getFilteredData(
         }
 
         Sort.Direction direction = Sort.Direction.fromString(sortDirection);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "location")); // TODO: hardcoded
 
-        return ((SensorRepositoryProvider<?>) repo).getLocations(type, pageable);
+        return ((SensorRepositoryProvider<?>) repo).getLocations(pageable);
     }
 }
