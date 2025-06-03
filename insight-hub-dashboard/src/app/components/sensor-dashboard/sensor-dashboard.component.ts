@@ -109,7 +109,7 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   congestionFilter = new FormControl<string[]>([]);
   locationSearch    = new FormControl<string>('');
   locations: string[] = [];
-  congestionLevels = ['Low', 'Moderate', 'High'];
+  congestionLevels = ['LOW', 'MODERATE', 'HIGH'];
   filteredLocations: string[] = [];
 
   // Chart data

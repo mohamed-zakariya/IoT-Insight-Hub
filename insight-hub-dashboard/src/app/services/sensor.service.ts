@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -17,8 +17,17 @@ export class SensorService {
 
   constructor(private http: HttpClient) {}
 
+
+  private authHeaders(): HttpHeaders {
+    const token = localStorage.getItem('accessToken') || '';
+    return new HttpHeaders().set('accessToken', token);
+  }
+
+
+
   getTraffic(): Observable<TrafficReading[]> {
-    return this.http.get<TrafficReading[]>(`${this.baseUrl}/traffic-sensors`);
+    return this.http.get<TrafficReading[]>(`${this.baseUrl}/traffic-sensors`,
+      { headers: this.authHeaders() });
   }
 
 
@@ -32,8 +41,10 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
     });
 
     return this.http.get<PagedResponse<TrafficReading>>(
-      `${this.baseUrl}/traffic-sensors/new`,
-      { params: httpParams }
+      `${this.baseUrl}/sensors/traffic`,
+      { params: httpParams,
+         headers: this.authHeaders()
+       }
     );
   }
 

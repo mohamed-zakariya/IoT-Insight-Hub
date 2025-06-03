@@ -37,16 +37,16 @@ export class SettingsComponent implements OnInit {
   // 2) Metrics per category
   metricMap: Record<string, MetricDef[]> = {
     'Traffic Sensor': [
-      { key: 'trafficDensity', label: 'Traffic Density', type: 'integer', min: 0,   max: 500 },
-      { key: 'avgSpeed',       label: 'Average Speed',   type: 'float',   min: 0,   max: 120 }
+      { key: 'traffic_density', label: 'Traffic Density', type: 'integer', min: 0,   max: 500 },
+      { key: 'avg_speed',       label: 'Average Speed',   type: 'float',   min: 0,   max: 120 }
     ],
     'Air Pollution Sensor': [
       { key: 'co',    label: 'CO (ppm)',    type: 'float', min: 0,   max: 50 },
       { key: 'ozone', label: 'Ozone (ppb)', type: 'float', min: 0,   max: 300 }
     ],
     'Street Light Sensor': [
-      { key: 'brightnessLevel',  label: 'Brightness Level',  type: 'integer', min: 0,   max: 100 },
-      { key: 'powerConsumption', label: 'Power Consumption', type: 'float',   min: 0,   max: 5000 }
+      { key: 'brightness_level',  label: 'Brightness Level',  type: 'integer', min: 0,   max: 100 },
+      { key: 'power_consumption', label: 'Power Consumption', type: 'float',   min: 0,   max: 5000 }
     ]
   };
 
