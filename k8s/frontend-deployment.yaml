@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: frontend-deployment
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: frontend
+      app: frontend-pod
   template:
     metadata:
       labels:
-        app: frontend
+        app: frontend-pod
     spec:
       containers:
-        - name: frontend
-          image: iotinsighthub/insight-hub-dashboard:latest
-          ports:
-            - containerPort: 80
+      - name: frontend
+        image: iotinsighthub/insight-hub-dashboard:s4-v1
+        ports:
+        - containerPort: 80

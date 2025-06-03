@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backend-pod
+  labels:
+    app: backend-pod
+
+spec:
+  containers:
+    - name: backend
+      image: iotinsighthub/dxc_backend:s4-v1
+      ports:
+        containerPort: 80

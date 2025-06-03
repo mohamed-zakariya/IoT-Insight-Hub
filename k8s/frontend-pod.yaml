@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: frontend-pod
+  labels:
+    name: frontend-pod
+
+spec:
+  containers:
+  - name: fondend
+    image: iotinsighthub/insight-hub-dashboard:s4-v1
+    ports:
+    - containerPort: 80

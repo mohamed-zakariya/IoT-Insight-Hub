@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend-deployment
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-deployment
+  template:
+    metadata:
+      labels:
+        app: backend-deployment
+    spec:
+      containers:
+        - name: backend
+          image: iotinsighthub/dxc_backend:s4-v1
+          ports:
+            - containerPort: 80
+          env:
+            - name: DATASOURCE_URL
+              value: jdbc:mysql://db-service:3306/sql8774445
+            - name: DATASOURCE_USERNAME
+              value: root
+            - name: DATASOURCE_PASSWORD
+              value: Mhdzikoo@123
+            - name: CORS_ALLOWED_ORIGIN
+              value: http://localhost:4200
