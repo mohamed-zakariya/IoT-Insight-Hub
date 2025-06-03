@@ -6,7 +6,7 @@ spec:
   selector:
     app: frontend-pod
   ports:
-    - port: 4200         
-      targetPort: 80     
-      nodePort: 30081    
-  type: NodePort         
+    - port: 80          # service port inside cluster
+      targetPort: 80    # container port
+      nodePort: 30081   # external port on node
+  type: NodePort

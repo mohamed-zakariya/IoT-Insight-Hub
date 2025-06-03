@@ -6,6 +6,7 @@ spec:
   selector:
     app: backend-deployment
   ports:
-    - port: 8080        # external port for service
-      targetPort: 80    # container port
-  type: LoadBalancer
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort
