@@ -4,7 +4,7 @@ metadata:
   name: mysql-pvc
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce # the volume can be mounted by only one node at a time for read-write access
   resources:
     requests:
       storage: 1Gi
