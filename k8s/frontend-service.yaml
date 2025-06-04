@@ -4,7 +4,7 @@ metadata:
   name: frontend-service
 spec:
   selector:
-    app: frontend-pod
+    app: frontend
   ports:
     - port: 80          # service port inside cluster
       targetPort: 80    # container port

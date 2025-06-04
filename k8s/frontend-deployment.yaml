@@ -3,18 +3,18 @@ kind: Deployment
 metadata:
   name: frontend-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: frontend-pod
+      app: frontend
   template:
     metadata:
       labels:
-        app: frontend-pod
+        app: frontend
     spec:
       containers:
       - name: frontend
         image: iotinsighthub/insight-hub-dashboard:s4-v1
-        imagePullPolicy: Always
+        imagePullPolicy: Always # Sometimes you might push a new version of the image with the same tag, so you don't wanna use the cached unupdated image
         ports:
         - containerPort: 80
