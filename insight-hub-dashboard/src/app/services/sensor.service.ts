@@ -17,21 +17,34 @@ export class SensorService {
 
   constructor(private http: HttpClient) {}
 
-
   private authHeaders(): HttpHeaders {
     const token = localStorage.getItem('accessToken') || '';
     return new HttpHeaders().set('accessToken', token);
   }
 
+  // ✅ FIXED: Implement the getLightReadingsFiltered method
+  getLightReadingsFiltered(params: any): Observable<any> {
+    let httpParams = new HttpParams();
+    
+    // Add all parameters to HttpParams
+    Object.entries(params).forEach(([key, value]) => {
+      if (value != null && value !== '') {
+        httpParams = httpParams.set(key, value.toString());
+      }
+    });
 
+    return this.http.get(`${this.baseUrl}/sensors/street_light`, {
+      params: httpParams,
+      headers: this.authHeaders()
+    });
+  }
 
   getTraffic(): Observable<TrafficReading[]> {
     return this.http.get<TrafficReading[]>(`${this.baseUrl}/traffic-sensors`,
       { headers: this.authHeaders() });
   }
 
-
-getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReading>> {
+  getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReading>> {
     let httpParams = new HttpParams();
 
     Object.entries(params).forEach(([key, value]) => {
@@ -42,32 +55,12 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
 
     return this.http.get<PagedResponse<TrafficReading>>(
       `${this.baseUrl}/sensors/traffic`,
-      { params: httpParams,
-         headers: this.authHeaders()
-       }
+      { 
+        params: httpParams,
+        headers: this.authHeaders()
+      }
     );
   }
-
-
-
-  // getTrafficFiltered(params: any): Observable<{
-  //   items: TrafficReading[];
-  //   totalItems: number;
-  //   page: number;
-  //   size: number;
-  // }> {
-  //   return this.http.get<{
-  //     items: TrafficReading[];
-  //     totalItems: number;
-  //     page: number;
-  //     size: number;
-  //   }>(`${this.baseUrl}/traffic-sensors/new`, { params });
-  // }
-
-  /** ✅ Add this method */
-  // getTrafficLocations(): Observable<string[]> {
-  //   return this.http.get<string[]>(`${this.baseUrl}/traffic-sensors/locations`);
-  // }
 
   getAirPollution(): Observable<AirPollutionReading[]> {
     return this.http.get<AirPollutionReading[]>(`${this.baseUrl}/air-pollution-sensors`);

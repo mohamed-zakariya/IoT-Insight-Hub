@@ -15,6 +15,7 @@ import { SensorDashboardComponent } from './components/sensor-dashboard/sensor-d
 
 
 
+
 export const routes: Routes = [
     { path: 'entry', component: EntryPointComponent },
     
@@ -55,5 +56,10 @@ export const routes: Routes = [
       {
     path: 'sensor-dashboard',
     component: SensorDashboardComponent
-    }
+    },
+    {
+  path: 'street-light-management',
+  component: StreetLightManagementComponent
+}
+
 ];
