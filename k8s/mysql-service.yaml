@@ -1,0 +1,17 @@
+# mysql-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-svc
+  namespace: insight-hub
+  labels:
+    app: insight-hub
+    component: database
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+      targetPort: 3306
+  selector:
+    app: insight-hub
+    component: database

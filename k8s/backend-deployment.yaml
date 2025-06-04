@@ -1,0 +1,41 @@
+# backend-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: insight-hub
+  labels:
+    app: insight-hub
+    component: backend
+spec:
+  replicas: 2                              
+  selector:
+    matchLabels:
+      app: insight-hub
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: insight-hub
+        component: backend
+    spec:
+      containers:
+        - name: backend-container
+          image: iotinsighthub/dxc_backend:S4_v2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080        
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://mysql-svc:3306/sql8774445"
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "root"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "GmNgl69ZW9"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "200Mi"
+            limits:
+              cpu: "500m"
+              memory: "500Mi"

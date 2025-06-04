@@ -1,0 +1,17 @@
+# backend-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-svc
+  namespace: insight-hub
+  labels:
+    app: insight-hub
+    component: backend
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: insight-hub
+    component: backend
