@@ -3,17 +3,17 @@ kind: Deployment
 metadata:
   name: db-deployment
   labels:
-    app: db-deployment
+    app: database
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: db-deployment
+      app: database
   template:
     metadata:
       labels:
-        app: db-deployment
+        app: database
 
     spec:
       containers:
@@ -33,5 +33,3 @@ spec:
       - name: mysql-persistent-storage
         persistentVolumeClaim:
           claimName: mysql-pvc
-
-
