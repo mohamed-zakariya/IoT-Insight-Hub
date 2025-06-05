@@ -8,6 +8,8 @@ import { AirPollutionReading } from '../models/air-pollution-reading.model';
 import { StreetLightReading } from '../models/street-light-reading.model';
 import { PagedResponse } from '../models/paged-response.model';
 import { PagedRequest } from '../models/paged-request.model';
+import { map } from 'rxjs/operators';
+
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +32,7 @@ export class SensorService {
       { headers: this.authHeaders() });
   }
 
+  // traffic sensor 
 
 getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReading>> {
     let httpParams = new HttpParams();
@@ -47,6 +50,65 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
        }
     );
   }
+
+
+
+  
+   getTrafficLocations(
+    page: number = 0,
+    size: number = 10,
+    sortDirection: 'ASC' | 'DESC' = 'DESC'
+  ): Observable<PagedResponse<string>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('sortDirection', sortDirection);
+
+    return this.http.get<PagedResponse<string>>(
+      `${this.baseUrl}/sensors/traffic/locations`,
+      {
+        params,
+        headers: this.authHeaders()
+      }
+    );
+  }
+
+
+
+
+  getAirPollution(): Observable<AirPollutionReading[]> {
+    return this.http.get<AirPollutionReading[]>(`${this.baseUrl}/air-pollution-sensors`);
+  }
+
+  getStreetLight(): Observable<StreetLightReading[]> {
+    return this.http.get<StreetLightReading[]>(`${this.baseUrl}/street-light-sensors`);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -69,11 +131,3 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
   //   return this.http.get<string[]>(`${this.baseUrl}/traffic-sensors/locations`);
   // }
 
-  getAirPollution(): Observable<AirPollutionReading[]> {
-    return this.http.get<AirPollutionReading[]>(`${this.baseUrl}/air-pollution-sensors`);
-  }
-
-  getStreetLight(): Observable<StreetLightReading[]> {
-    return this.http.get<StreetLightReading[]>(`${this.baseUrl}/street-light-sensors`);
-  }
-}

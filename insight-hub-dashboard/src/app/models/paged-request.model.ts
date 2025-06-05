@@ -21,7 +21,7 @@ export interface PagedRequest {
   timestampEnd?: string;
 
 
-  location?: string;
+  location?: string[];
 
   
   congestionLevel?: string;

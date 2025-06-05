@@ -189,6 +189,7 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
     this.congestionFilter.valueChanges.subscribe(() => this.loadData());
     this.locationSearch.valueChanges.subscribe(value => this.filterLocationList(value));
     this.loadData();
+    this.loadAvailableLocations();
     // this.loadAvailableLocations();
   }
 
@@ -279,12 +280,14 @@ this.sensorService.getTrafficFiltered(params).subscribe({
 }
 
 
-  // loadAvailableLocations(): void {
-  //   this.sensorService.getTrafficLocations().subscribe(locations => {
-  //     this.locations = locations;
-  //     this.filteredLocations = locations;
-  //   });
-  // }
+loadAvailableLocations(): void {
+  this.sensorService.getTrafficLocations().subscribe(resp => {
+    // resp is PagedResponse<string>, so resp.content is string[]
+    this.locations = resp.content;
+    this.filteredLocations = resp.content;
+  });
+}
+
 
   resetFilters(): void {
     this.locationFilter.setValue([]);
