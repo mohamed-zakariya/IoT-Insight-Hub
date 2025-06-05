@@ -24,5 +24,5 @@ export interface PagedRequest {
   location?: string[];
 
   
-  congestionLevel?: string;
+  congestionLevel?: string[];
 }

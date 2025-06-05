@@ -220,13 +220,13 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   // Only include congestionLevel if it's selected
   const congestion = this.congestionFilter.value?.filter(Boolean);
   if (congestion && congestion.length > 0) {
-    params.congestionLevel = congestion[0]; // assuming single value supported
+    params.congestionLevel = congestion; // assuming single value supported
   }
 
   // Only include location if selected
   const locations = this.locationFilter.value?.filter(Boolean);
   if (locations && locations.length > 0) {
-    params.location = locations[0]; // assuming single value supported
+    params.location =  locations; // assuming single value supported
   }
 
   // Only include date if selected

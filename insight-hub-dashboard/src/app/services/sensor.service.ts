@@ -39,7 +39,18 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
 
     Object.entries(params).forEach(([key, value]) => {
       if (value != null && value !== '') {
-        httpParams = httpParams.set(key, value);
+
+        if (
+        (key === 'location' || key === 'congestionLevel') &&
+        Array.isArray(value)
+      ) {
+        (value as string[]).forEach((oneVal: string) => {
+          httpParams = httpParams.append(key, oneVal);
+        });
+      }
+
+        else{
+        httpParams = httpParams.set(key, value);}
       }
     });
 
