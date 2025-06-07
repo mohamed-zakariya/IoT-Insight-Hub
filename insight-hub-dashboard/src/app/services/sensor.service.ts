@@ -23,20 +23,32 @@ export class SensorService {
     this.baseUrl = `http://${this.configService.domain}:${this.configService.port}/api`;
   }
 
-
   private authHeaders(): HttpHeaders {
     const token = localStorage.getItem('accessToken') || '';
     return new HttpHeaders().set('accessToken', token);
   }
 
+  // ✅ FIXED: Implement the getLightReadingsFiltered method
+  getLightReadingsFiltered(params: any): Observable<any> {
+    let httpParams = new HttpParams();
+    
+    // Add all parameters to HttpParams
+    Object.entries(params).forEach(([key, value]) => {
+      if (value != null && value !== '') {
+        httpParams = httpParams.set(key, value.toString());
+      }
+    });
 
+    return this.http.get(`${this.baseUrl}/sensors/street_light`, {
+      params: httpParams,
+      headers: this.authHeaders()
+    });
+  }
 
   getTraffic(): Observable<TrafficReading[]> {
     return this.http.get<TrafficReading[]>(`${this.baseUrl}/traffic-sensors`,
       { headers: this.authHeaders() });
   }
-
-  // traffic sensor 
 
 getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReading>> {
     let httpParams = new HttpParams();
@@ -60,12 +72,12 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
 
     return this.http.get<PagedResponse<TrafficReading>>(
       `${this.baseUrl}/sensors/traffic`,
-      { params: httpParams,
-         headers: this.authHeaders()
-       }
+      { 
+        params: httpParams,
+        headers: this.authHeaders()
+      }
     );
   }
-
 
 
   
@@ -99,9 +111,7 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
     return this.http.get<StreetLightReading[]>(`${this.baseUrl}/street-light-sensors`);
   }
 }
-
-
-
+}
 
 
 
