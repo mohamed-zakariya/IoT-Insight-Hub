@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-runtime-config
+data:
+  runtime-config.json: |
+    {
+      "domain": "localhost",
+      "port": 8080,
+    }
