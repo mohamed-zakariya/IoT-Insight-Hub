@@ -5,13 +5,16 @@ import { tap, catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { User } from '../../models/user';
 import { isPlatformBrowser } from '@angular/common';
+import { environment } from '../../../environments/environment';
+import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.service';
+
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:8081/api';
+  private apiUrl!: string;
   private http = inject(HttpClient);
   private router = inject(Router);
 
@@ -21,7 +24,10 @@ export class AuthService {
   private platformId = inject(PLATFORM_ID);
   private isBrowser = isPlatformBrowser(this.platformId);
 
-  constructor() {
+  constructor(private configService: RuntimeConfigService) {
+    // Ensure config is loaded before using it
+    this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/api`;
+
     if (this.isBrowser) {
       this.loadUserFromToken();
     }
@@ -149,7 +155,8 @@ export class AuthService {
     }
   
     // Construct the URL with the refreshToken as a query parameter
-    const url = `http://localhost:8080/auth/refresh-token?refreshToken=${refreshToken}`;
+    const url = `http://${this.configService.domain}:${this.configService.port}/refresh-token?refreshToken=${refreshToken}`;
+
   
     return this.http.post<{ accessToken: string }>(url, {}).pipe(
       tap((response) => {

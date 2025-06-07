@@ -3,6 +3,8 @@
 import { Injectable }               from '@angular/core';
 import { HttpClient, HttpHeaders }  from '@angular/common/http';
 import { Observable }               from 'rxjs';
+import { environment } from '../../environments/environment';
+
 
 /**
  * Matches com.example.dxc_backend.dto.SettingsDTO
@@ -16,7 +18,7 @@ export interface SettingsDTO {
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  private baseUrl = 'http://localhost:8081/api/settings';
+  private baseUrl =`${environment.apiUrl}/settings`;
 
   constructor(private http: HttpClient) {}
 
