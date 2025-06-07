@@ -25,7 +25,7 @@ export class AppComponent {
 
   showNavbar = true;
   showAlertButton = true;
-
+  title = 'insight-hub-dashboard';
   constructor(private router: Router) {
     this.router.events
       .pipe(
