@@ -5,6 +5,7 @@ import { User } from '../../models/user';
 import { AuthService } from '../auth_service/auth.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.service';
 
 
 
@@ -12,9 +13,12 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = `${environment.apiUrl}/users`;
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  private apiUrl!: string;
+
+  constructor(private http: HttpClient, private authService: AuthService, private configService: RuntimeConfigService) {
+    this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/api/users`;
+  }
 
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getAuthToken();

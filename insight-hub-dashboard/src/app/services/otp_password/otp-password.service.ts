@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { OtpMessages } from '../../core/constants/otp-messages.constants';
+import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.service';
 
 
 @Injectable({
@@ -11,9 +12,13 @@ import { OtpMessages } from '../../core/constants/otp-messages.constants';
 })
 export class OtpPasswordService {
 
-  private apiUrl = `${environment.authUrl}`;
+  private apiUrl!: string;
+
   http: HttpClient = inject(HttpClient);
 
+  constructor(private configService: RuntimeConfigService){
+    this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/auth`;
+  }
 
   sendOtp(email: string): Observable<any> {
     const params = new HttpParams().set('email', email);

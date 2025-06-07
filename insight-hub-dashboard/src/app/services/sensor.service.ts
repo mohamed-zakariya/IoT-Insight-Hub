@@ -9,15 +9,19 @@ import { StreetLightReading } from '../models/street-light-reading.model';
 import { PagedResponse } from '../models/paged-response.model';
 import { PagedRequest } from '../models/paged-request.model';
 import { map } from 'rxjs/operators';
+import { RuntimeConfigService } from './RuntimeConfigService/runtime-config.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class SensorService {
-  private readonly baseUrl = `${environment.apiUrl}`;
 
-  constructor(private http: HttpClient) {}
+  private readonly baseUrl!: string;
+
+  constructor(private http: HttpClient, private configService: RuntimeConfigService) {
+    this.baseUrl = `http://${this.configService.domain}:${this.configService.port}/api`;
+  }
 
 
   private authHeaders(): HttpHeaders {
