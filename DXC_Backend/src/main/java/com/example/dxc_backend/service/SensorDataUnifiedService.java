@@ -12,6 +12,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -86,15 +89,33 @@ public class SensorDataUnifiedService {
 //        return repository.findFiltered( timestampStart, timestampEnd, pageable);
 //    }
 
-    public <T> Page<T> getFilteredData(
-            SensorType type,
-            LocalDateTime timestampStart,
-            LocalDateTime timestampEnd,
-            MultiValueMap<String, ?> filters,
+public <T> Page<T> getFilteredData(
+        SensorType type,
+        LocalDateTime timestampStart,
+        LocalDateTime timestampEnd,
+        MultiValueMap<String, ?> filters,
+        int page,
+        int size,
+        String sortBy,
+        String sortDirection
+) {
+    SensorRepositoryProvider<?> repo = (SensorRepositoryProvider<?>) repositoryMap.get(type);
+    if (repo == null) {
+        throw new IllegalArgumentException("No repository found for sensor type: " + type);
+    }
+
+    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+    Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+    // Proper cast after adding <T> to method signature
+    return ((SensorRepositoryProvider<T>) repo).findFiltered(timestampStart, timestampEnd, pageable, filters);
+}
+    public Page<String> getLocations(
             int page,
+            SensorType type,
             int size,
-            String sortBy,
             String sortDirection
+
     ) {
         SensorRepositoryProvider<?> repo = (SensorRepositoryProvider<?>) repositoryMap.get(type);
         if (repo == null) {
@@ -102,12 +123,8 @@ public class SensorDataUnifiedService {
         }
 
         Sort.Direction direction = Sort.Direction.fromString(sortDirection);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "location")); // TODO: hardcoded
 
-        // Proper cast after adding <T> to method signature
-        return ((SensorRepositoryProvider<T>) repo).findFiltered(timestampStart, timestampEnd, pageable, filters);
+        return ((SensorRepositoryProvider<?>) repo).getLocations(pageable);
     }
-
-
-
 }

@@ -189,6 +189,7 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
     this.congestionFilter.valueChanges.subscribe(() => this.loadData());
     this.locationSearch.valueChanges.subscribe(value => this.filterLocationList(value));
     this.loadData();
+    this.loadAvailableLocations();
     // this.loadAvailableLocations();
   }
 
@@ -219,13 +220,13 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   // Only include congestionLevel if it's selected
   const congestion = this.congestionFilter.value?.filter(Boolean);
   if (congestion && congestion.length > 0) {
-    params.congestionLevel = congestion[0]; // assuming single value supported
+    params.congestionLevel = congestion; // assuming single value supported
   }
 
   // Only include location if selected
   const locations = this.locationFilter.value?.filter(Boolean);
   if (locations && locations.length > 0) {
-    params.location = locations[0]; // assuming single value supported
+    params.location =  locations; // assuming single value supported
   }
 
   // Only include date if selected
@@ -279,12 +280,14 @@ this.sensorService.getTrafficFiltered(params).subscribe({
 }
 
 
-  // loadAvailableLocations(): void {
-  //   this.sensorService.getTrafficLocations().subscribe(locations => {
-  //     this.locations = locations;
-  //     this.filteredLocations = locations;
-  //   });
-  // }
+loadAvailableLocations(): void {
+  this.sensorService.getTrafficLocations().subscribe(resp => {
+    // resp is PagedResponse<string>, so resp.content is string[]
+    this.locations = resp.content;
+    this.filteredLocations = resp.content;
+  });
+}
+
 
   resetFilters(): void {
     this.locationFilter.setValue([]);

@@ -3,7 +3,7 @@ package com.example.dxc_backend.strategy.generator.impl;
 
 import com.example.dxc_backend.enums.CongestionLevel;
 import com.example.dxc_backend.enums.SensorType;
-import com.example.dxc_backend.strategy.generator.BaseSensorDataGenerator;
+import com.example.dxc_backend.strategy.sensor.BaseSensorDataGenerator;
 import com.example.dxc_backend.strategy.generator.SensorDataGenerator;
 import com.example.dxc_backend.model.TrafficSensorData;
 import org.springframework.stereotype.Component;

@@ -4,12 +4,20 @@ import { Observable, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AlertSummary } from '../models/alert-summary.model';
 import { environment } from '../../environments/environment'
+import { RuntimeConfigService } from './RuntimeConfigService/runtime-config.service';
 
 @Injectable({ providedIn: 'root' })
 export class AlertsService {
-  private url = `${environment.apiUrl}/alerts`;
 
-  constructor(private http: HttpClient) {}
+
+    private url!: string;
+
+  constructor(private http: HttpClient, private configService: RuntimeConfigService) {
+      this.url = `http://${this.configService.domain}:${this.configService.port}/api/alerts`;
+
+  }
+
+
 
   private authHeaders(): HttpHeaders {
     const token = localStorage.getItem('accessToken') || '';
