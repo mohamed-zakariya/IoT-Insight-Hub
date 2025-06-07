@@ -111,7 +111,7 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
     return this.http.get<StreetLightReading[]>(`${this.baseUrl}/street-light-sensors`);
   }
 }
-}
+
 
 
 
