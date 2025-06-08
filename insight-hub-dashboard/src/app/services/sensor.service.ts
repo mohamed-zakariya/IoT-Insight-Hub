@@ -16,11 +16,17 @@ import { RuntimeConfigService } from './RuntimeConfigService/runtime-config.serv
   providedIn: 'root'
 })
 export class SensorService {
+  getStreetLightByStatus(status: string): Observable<StreetLightReading[]> {
+    throw new Error('Method not implemented.');
+  }
+  getStreetLightByLocation(location: string): Observable<StreetLightReading[]> {
+    throw new Error('Method not implemented.');
+  }
 
   private readonly baseUrl!: string;
 
   constructor(private http: HttpClient, private configService: RuntimeConfigService) {
-    this.baseUrl = this.configService.apiUrl;
+    this.baseUrl = `http://${this.configService.domain}:${this.configService.port}/api`;
   }
 
   private authHeaders(): HttpHeaders {
@@ -99,6 +105,24 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
       }
     );
   }
+  getStreetLightLocations(
+  page: number = 0,
+  size: number = 20,
+  sortDirection: 'ASC' | 'DESC' = 'DESC'
+): Observable<PagedResponse<string>> {
+  let params = new HttpParams()
+    .set('page', page.toString())
+    .set('size', size.toString())
+    .set('sortDirection', sortDirection);
+
+  return this.http.get<PagedResponse<string>>(
+    `${this.baseUrl}/sensors/street_light/locations`,
+    {
+      params,
+      headers: this.authHeaders()
+    }
+  );
+}
 
 
 

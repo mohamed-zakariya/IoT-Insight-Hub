@@ -38,6 +38,12 @@ export interface StreetLightReading {
   providedIn: 'root'
 })
 export class SensorService {
+  getStreetLightLocations(arg0: number, arg1: number, arg2: string) {
+    throw new Error('Method not implemented.');
+  }
+  getLightReadingsFiltered(params: any) {
+    throw new Error('Method not implemented.');
+  }
   private readonly baseUrl = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
