@@ -13,7 +13,7 @@ export class AlertsService {
     private url!: string;
 
   constructor(private http: HttpClient, private configService: RuntimeConfigService) {
-      this.url = `http://${this.configService.domain}:${this.configService.port}/api/alerts`;
+      this.url = `${this.configService.apiUrl}/alerts`;
 
   }
 

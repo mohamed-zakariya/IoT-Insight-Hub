@@ -20,7 +20,7 @@ export class SensorService {
   private readonly baseUrl!: string;
 
   constructor(private http: HttpClient, private configService: RuntimeConfigService) {
-    this.baseUrl = `http://${this.configService.domain}:${this.configService.port}/api`;
+    this.baseUrl = this.configService.apiUrl;
   }
 
   private authHeaders(): HttpHeaders {

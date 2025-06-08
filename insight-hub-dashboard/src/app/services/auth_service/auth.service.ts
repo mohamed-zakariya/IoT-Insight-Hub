@@ -26,7 +26,7 @@ export class AuthService {
 
   constructor(private configService: RuntimeConfigService) {
     // Ensure config is loaded before using it
-    this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/api`;
+    this.apiUrl = this.configService.apiUrl;
 
     if (this.isBrowser) {
       this.loadUserFromToken();
