@@ -12,18 +12,18 @@ import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.ser
 })
 export class OtpPasswordService {
 
-  private apiUrl!: string;
+  private authUrl!: string;
 
   http: HttpClient = inject(HttpClient);
 
   constructor(private configService: RuntimeConfigService){
-    this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/auth`;
+    this.authUrl = this.configService.authUrl;
   }
 
   sendOtp(email: string): Observable<any> {
     const params = new HttpParams().set('email', email);
   
-    return this.http.post(`${this.apiUrl}/forgot-password`, null, { params, responseType: 'text' as 'json' }).pipe(
+    return this.http.post(`${this.authUrl}/forgot-password`, null, { params, responseType: 'text' as 'json' }).pipe(
       map(response => {
         console.log('Raw response:', response);
   
@@ -66,7 +66,7 @@ export class OtpPasswordService {
   checkOtp(otp: string): Observable<any> {
     const params = new HttpParams().set('otp', otp);
   
-    return this.http.post(`${this.apiUrl}/check-otp`, null, { params, responseType: 'text' as 'json' }).pipe(
+    return this.http.post(`${this.authUrl}/check-otp`, null, { params, responseType: 'text' as 'json' }).pipe(
       map(response => {
         console.log('OTP check response:', response);
         if (typeof response === 'string') {
@@ -116,7 +116,7 @@ export class OtpPasswordService {
       .set('otp', otp)
       .set('newPassword', newPassword);
   
-    return this.http.post(`${this.apiUrl}/verify-otp`, null, { params, responseType: 'text' as 'json' }).pipe(
+    return this.http.post(`${this.authUrl}/verify-otp`, null, { params, responseType: 'text' as 'json' }).pipe(
       map(response => {
         console.log('Password reset response:', response);
         if (typeof response === 'string') {

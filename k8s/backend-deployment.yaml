@@ -17,9 +17,9 @@ spec:
     spec:
       containers:
         - name: backend
-          image: iotinsighthub/dxc_backend:s4-v3
+          image: iotinsighthub/dxc_backend:s4-v5
           ports:
-            - containerPort: 80
+            - containerPort: 8080
           env:
             - name: DATASOURCE_URL
               valueFrom:

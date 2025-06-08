@@ -14,11 +14,19 @@ export class RuntimeConfigService {
       });
   }
 
-  get domain() {
-    return this.config.domain;
+  get domain(): string {
+    return this.config?.domain;
   }
 
-  get port() {
-    return this.config.port;
+  get port(): string {
+    return this.config?.port;
+  }
+
+  get apiUrl(): string {
+    return `http://${this.domain}:${this.port}/api`;
+  }
+
+  get authUrl(): string {
+    return `http://${this.domain}:${this.port}/auth`;
   }
 }
