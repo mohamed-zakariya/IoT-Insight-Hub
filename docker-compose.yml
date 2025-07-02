@@ -23,7 +23,7 @@ services:
 
   # Backend service
   backend:
-    image: iotinsighthub/dxc_backend:latest
+    image: iotinsighthub/dxc_backend:s4-v5
     container_name: iot_backend
     restart: unless-stopped
     depends_on:
@@ -42,7 +42,7 @@ services:
 
   # Frontend service
   frontend:
-    image: iotinsighthub/insight-hub-dashboard:latest
+    image: iotinsighthub/insight-hub-dashboard:s4-v6
     container_name: iot_frontend
     restart: unless-stopped
     ports:

@@ -5,7 +5,8 @@ import com.example.dxc_backend.model.*;
 import com.example.dxc_backend.repository.*;
 import com.example.dxc_backend.strategy.alert.SensorAlertHandler;
 import com.example.dxc_backend.util.EmailTemplateUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,18 +14,13 @@ import java.util.List;
 @Service
 public class AlertService {
 
-    @Autowired
-    private SettingsRepository settingsRepository;
-    @Autowired
-    private AlertRepository alertRepository;
-    @Autowired
-    private EmailService emailService;
-    @Autowired
-    private UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(AlertService.class);
 
+    private final SettingsRepository settingsRepository;
+    private final AlertRepository alertRepository;
+    private final EmailService emailService;
+    private final UserRepository userRepository;
     private final List<SensorAlertHandler> handlers;
-
-
 
     public AlertService(List<SensorAlertHandler> handlers,
                         AlertRepository alertRepository,
@@ -38,7 +34,6 @@ public class AlertService {
         this.emailService = emailService;
     }
 
-
     public void checkAndTriggerAlerts() {
         List<Settings> allSettings = settingsRepository.findAll();
 
@@ -49,7 +44,7 @@ public class AlertService {
                     .orElse(null);
 
             if (handler == null) {
-                System.err.println("No handler found for sensor type: " + setting.getType());
+                logger.warn("No handler found for sensor type: {}", setting.getType());
                 continue;
             }
 
@@ -73,55 +68,20 @@ public class AlertService {
                             setting.getAlertType().getDisplayText().toLowerCase(),
                             latestValue, setting.getThresholdValue()
                     ));
+
                     alertRepository.save(alert);
 
                     String htmlContent = EmailTemplateUtil.buildAlertHtml(
                             setting.getType(), setting.getMetric(), latestValue,
                             setting.getThresholdValue(), setting.getAlertType().getDisplayText()
                     );
+
                     List<String> emails = userRepository.findAllEmails();
                     emailService.sendAlertEmail(emails, "🚨 Sensor Alert Triggered", htmlContent);
                 }
             } catch (Exception e) {
-                System.err.println("Failed to process alert: " + e.getMessage());
+                logger.error("Failed to process alert for setting {}: {}", setting.getId(), e.getMessage(), e);
             }
         }
     }
-
-//    private float getTrafficMetricValue(TrafficSensorData data, TrafficSensor metric) {
-//        switch (metric) {
-//            case TRAFFIC_DENSITY:
-//                return data.getTrafficDensity();
-//            case AVG_SPEED:
-//                return data.getAvgSpeed();
-//            default:
-//                return 0f;
-//        }
-//    }
-//
-//    private float getAirMetricValue(AirPollutionSensorData data, AirPollutionSensor metric) {
-//        switch (metric) {
-//            case CO:
-//                return data.getCo();
-//            case OZONE:
-//                return data.getOzone();
-//            case NO2:
-//                return data.getNo2();
-//            case SO2:
-//                return data.getSo2();
-//            default:
-//                return 0f;
-//        }
-//    }
-//
-//    private float getStreetLightMetricValue(StreetLightSensorData data, StreetLightSensor metric) {
-//        switch (metric) {
-//            case BRIGHTNESS_LEVEL:
-//                return data.getBrightnessLevel();
-//            case POWER_CONSUMPTION:
-//                return data.getPowerConsumption();
-//            default:
-//                return 0f;
-//        }
-//    }
 }

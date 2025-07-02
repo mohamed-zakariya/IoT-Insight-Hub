@@ -2,7 +2,6 @@ package com.example.dxc_backend.repository;
 
 import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.model.AirPollutionSensorData;
-import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,8 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Optional;
+
 
 @Repository
 public interface AirPollutionSensorDataRepository

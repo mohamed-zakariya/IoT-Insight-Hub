@@ -8,5 +8,5 @@ import java.util.Optional;
 public interface TokenRepository extends JpaRepository<Token, Long> {
     // You can add custom methods to query tokens if necessary
 //    Token findByToken(String token);
-    Optional<Token> findByToken(String token);
+    Optional<Token> findByRefreshToken(String token);
 }

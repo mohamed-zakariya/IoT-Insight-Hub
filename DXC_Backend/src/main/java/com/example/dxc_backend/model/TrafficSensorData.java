@@ -10,11 +10,13 @@ import java.util.UUID;
 
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 
 @Data
 @Entity
 @Getter
+@Setter
 @Table(name = "traffic_sensors_data")
 public class TrafficSensorData {
 

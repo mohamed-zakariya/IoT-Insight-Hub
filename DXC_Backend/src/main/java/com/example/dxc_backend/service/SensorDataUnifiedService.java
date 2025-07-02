@@ -1,8 +1,6 @@
 package com.example.dxc_backend.service;
 
 import com.example.dxc_backend.enums.SensorType;
-import com.example.dxc_backend.model.TrafficSensorData;
-import com.example.dxc_backend.repository.TrafficSensorDataRepository;
 import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
 import com.example.dxc_backend.strategy.generator.SensorDataGenerator;
 import org.springframework.data.domain.Page;
@@ -12,13 +10,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class SensorDataUnifiedService {
@@ -54,41 +48,6 @@ public class SensorDataUnifiedService {
 
 
 
-//
-//    public Page<TrafficSensorData> getFilteredData(
-//            SensorType type,
-//            LocalDateTime timestampStart,
-//            LocalDateTime timestampEnd,
-////            List<String> locations,
-////            List<String> congestionLevels,
-//            int page,
-//            int size,
-//            String sortBy,
-//            String sortDirection
-//    ) {
-////        JpaRepository repository = repositoryMap.get(type);
-////        if (repository == null) {
-////            throw new IllegalArgumentException("No repository found for sensor type: " + type);
-////        }
-//
-//        Sort.Direction sortDirectionEnum = Sort.Direction.fromString(sortDirection);
-//        Sort sort = Sort.by(sortDirectionEnum, sortBy);
-//
-////        if (locations != null) {
-////            locations = locations.stream()
-////                    .map(String::toLowerCase)
-////                    .collect(Collectors.toList());
-////        }
-////        if (congestionLevels != null) {
-////            congestionLevels = congestionLevels.stream()
-////                    .map(String::toLowerCase)
-////                    .collect(Collectors.toList());
-////        }
-//
-//        Pageable pageable = PageRequest.of(page, size, sort);
-//        return repository.findFiltered( timestampStart, timestampEnd, pageable);
-//    }
-
 public <T> Page<T> getFilteredData(
         SensorType type,
         LocalDateTime timestampStart,
@@ -99,32 +58,35 @@ public <T> Page<T> getFilteredData(
         String sortBy,
         String sortDirection
 ) {
-    SensorRepositoryProvider<?> repo = (SensorRepositoryProvider<?>) repositoryMap.get(type);
-    if (repo == null) {
-        throw new IllegalArgumentException("No repository found for sensor type: " + type);
-    }
+    // Single retrieval + cast, throws immediately if no repo found or cast fails
+    SensorRepositoryProvider<T> repo = Optional.ofNullable(repositoryMap.get(type))
+            .filter(r -> r instanceof SensorRepositoryProvider)
+            .map(r -> (SensorRepositoryProvider<T>) r)
+            .orElseThrow(() -> new IllegalArgumentException("No repository found for sensor type: " + type));
 
-    Sort.Direction direction = Sort.Direction.fromString(sortDirection);
+    Sort.Direction direction = Sort.Direction.fromString(sortDirection); // single point of failure
+
     Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
 
-    // Proper cast after adding <T> to method signature
-    return ((SensorRepositoryProvider<T>) repo).findFiltered(timestampStart, timestampEnd, pageable, filters);
+    return repo.findFiltered(timestampStart, timestampEnd, pageable, filters);
 }
+
     public Page<String> getLocations(
             int page,
             SensorType type,
             int size,
             String sortDirection
-
     ) {
-        SensorRepositoryProvider<?> repo = (SensorRepositoryProvider<?>) repositoryMap.get(type);
-        if (repo == null) {
-            throw new IllegalArgumentException("No repository found for sensor type: " + type);
-        }
+        SensorRepositoryProvider<?> repo = Optional.ofNullable(repositoryMap.get(type))
+                .filter(r -> r instanceof SensorRepositoryProvider)
+                .map(r -> (SensorRepositoryProvider<?>) r)
+                .orElseThrow(() -> new IllegalArgumentException("No repository found for sensor type: " + type));
 
         Sort.Direction direction = Sort.Direction.fromString(sortDirection);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "location")); // TODO: hardcoded
 
-        return ((SensorRepositoryProvider<?>) repo).getLocations(pageable);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "location")); // hardcoded
+
+        return repo.getLocations(pageable);
     }
+
 }
