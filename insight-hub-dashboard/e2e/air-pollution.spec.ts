@@ -1,7 +1,6 @@
-import { test, expect } from '@playwright/test';
-
-const FRONTEND_BASE_URL = "http://localhost:4200";
-const AIRPOLLUTION_BASE_URL = FRONTEND_BASE_URL + "/street-light-management";
+import { test, expect, Page } from '@playwright/test';
+import { testSortingByLocation } from './utils';
+import { FRONTEND_BASE_URL, AIRPOLLUTION_BASE_URL } from './config';
 
 test.use({ storageState: 'storageState.json' });
 
@@ -35,22 +34,13 @@ test.describe("Air Pollution Dashboard", () => {
   });
 
   test("Verify sorting by Location in ascending order", async ({ page }) => {
-    await page.goto(AIRPOLLUTION_BASE_URL);
-    const headers = page.locator('.mat-sort-header');
-    headers.first().click()
-    await increaseNumberOfRows(page, 25);
+    await testSortingByLocation(page, false);
+  });
 
-    const locationCells = page.locator('td.cdk-column-location');
-    const count = await locationCells.count();
-    for (let i = 0; i < count-1; i++) {
-      const cellText = await locationCells.nth(i).textContent();
-      const nextCellText = await locationCells.nth(i + 1).textContent();
-      if (cellText !== null && nextCellText !== null) {
-        expect(cellText.localeCompare(nextCellText)).toBeLessThanOrEqual(0);
-      } else {
-        throw new Error(`Cell ${i} or ${i + 1} textContent is null`);
-      }
-    }
+  test("Verify sorting by Location in descending order", async ({ page }) => {
+    await testSortingByLocation(page, true);
   });
 
 });
+
+
