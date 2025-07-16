@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'CiCdPipline', url: 'https://github.com/mohamed-zakariya/IoT-Insight-Hub.git'
+                git branch: 'S5_Devops', url: 'https://github.com/mohamed-zakariya/IoT-Insight-Hub.git'
             }
         }
 
