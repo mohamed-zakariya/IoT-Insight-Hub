@@ -1,22 +1,24 @@
 pipeline {
+  /* 1) Change 'openshift' to the name of your Kubernetes/OpenShift cloud in Jenkins */
   agent {
     kubernetes {
+      cloud 'openshift'
       defaultContainer 'jnlp'
       yaml """
 apiVersion: v1
 kind: Pod
 spec:
   containers:
-  - name: docker
-    image: docker:24.0.2-dind
-    securityContext:
-      privileged: true
-    volumeMounts:
-    - name: docker-sock
-      mountPath: /var/run/docker.sock
+    - name: docker
+      image: docker:24.0.2-dind
+      securityContext:
+        privileged: true
+      volumeMounts:
+        - name: docker-sock
+          mountPath: /var/run/docker.sock
   volumes:
-  - name: docker-sock
-    emptyDir: {}
+    - name: docker-sock
+      emptyDir: {}
 """
     }
   }
@@ -37,13 +39,9 @@ spec:
       steps {
         container('docker') {
           sh '''
-            # start Docker daemon
-            dockerd-entrypoint.sh & 
-            sleep 5
-
-            docker build \
-              -t ${DOCKER_REGISTRY}/dxc_backend:latest \
-              -f DXC_Backend/Dockerfile DXC_Backend
+            dockerd-entrypoint.sh & sleep 5
+            docker build -t ${DOCKER_REGISTRY}/dxc_backend:latest \
+                         -f DXC_Backend/Dockerfile DXC_Backend
           '''
         }
       }
@@ -53,12 +51,9 @@ spec:
       steps {
         container('docker') {
           sh '''
-            dockerd-entrypoint.sh & 
-            sleep 5
-
-            docker build \
-              -t ${DOCKER_REGISTRY}/insight-hub-dashboard:latest \
-              -f insight-hub-dashboard/Dockerfile insight-hub-dashboard
+            dockerd-entrypoint.sh & sleep 5
+            docker build -t ${DOCKER_REGISTRY}/insight-hub-dashboard:latest \
+                         -f insight-hub-dashboard/Dockerfile insight-hub-dashboard
           '''
         }
       }
@@ -74,7 +69,6 @@ spec:
           )]) {
             sh '''
               echo $DOCKERHUB_PSW | docker login --username $DOCKERHUB_USER --password-stdin
-
               docker push ${DOCKER_REGISTRY}/dxc_backend:latest
               docker push ${DOCKER_REGISTRY}/insight-hub-dashboard:latest
             '''
@@ -91,28 +85,23 @@ spec:
         )]) {
           sh '''
             cp "$SECRET_ENV_FILE" .env
-            echo "Environment file prepared. Contents (sanitized):"
+            echo "Environment file prepared. (sanitized view):"
             grep -vE '(PASSWORD|SECRET|KEY|MAIL)' .env || true
           '''
         }
       }
     }
 
-    stage('Deploy Containers with Docker Compose') {
+    stage('Deploy with Docker Compose') {
       steps {
         container('docker') {
           sh '''
-            dockerd-entrypoint.sh & 
-            sleep 5
-
-            # Use the Docker CLI’s built-in compose plugin
+            dockerd-entrypoint.sh & sleep 5
             docker compose down
             docker compose up -d
           '''
         }
-        script {
-          echo 'Deployment completed successfully.'
-        }
+        echo 'Deployment completed successfully.'
       }
     }
 
@@ -120,26 +109,19 @@ spec:
       steps {
         container('docker') {
           sh '''
-            dockerd-entrypoint.sh & 
-            sleep 5
-
-            # build a test image
-            docker build \
-              -t ${DOCKER_REGISTRY}/dxc_backend:test \
-              -f DXC_Backend/dockerfile.test DXC_Backend
-
-            # run tests
-            docker run --rm --network iot-hub-network ${DOCKER_REGISTRY}/dxc_backend:test
+            dockerd-entrypoint.sh & sleep 5
+            docker build -t ${DOCKER_REGISTRY}/dxc_backend:test \
+                         -f DXC_Backend/dockerfile.test DXC_Backend
+            docker run --rm --network iot-hub-network \
+                       ${DOCKER_REGISTRY}/dxc_backend:test
           '''
         }
       }
       post {
+        success { echo 'Backend tests passed.' }
         failure {
-          echo 'Tests failed. Please check the logs for details.'
-          error 'Backend tests failed'
-        }
-        success {
-          echo 'JUnit tests executed successfully.'
+          echo 'Tests failed—see logs.'
+          error 'Failing pipeline due to test errors.'
         }
       }
     }
@@ -155,9 +137,6 @@ spec:
     }
   }
 }
-
-
-
 
 
 
