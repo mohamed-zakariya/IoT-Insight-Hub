@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AlertButtonComponent } from './alert-button.component';
 
 describe('AlertButtonComponent', () => {
@@ -8,7 +8,7 @@ describe('AlertButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AlertButtonComponent]
+      imports: [AlertButtonComponent, HttpClientTestingModule],
     })
     .compileComponents();
 
