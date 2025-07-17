@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-loader
+spec:
+  restartPolicy: Never
+  containers:
+  - name: loader
+    image: busybox
+    command:
+      - sh
+      - -c
+      - sleep infinity
+    volumeMounts:
+    - name: jenkins-home
+      mountPath: /var/jenkins_home
+  volumes:
+  - name: jenkins-home
+    persistentVolumeClaim:
+      claimName: jenkins-data

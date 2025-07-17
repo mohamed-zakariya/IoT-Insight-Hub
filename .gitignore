@@ -1,3 +1,4 @@
 .env
 .idea/workspace.xml
 steps.txt
+jenkins_backup/jenkins_home.tar.gz

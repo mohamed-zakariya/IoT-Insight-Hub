@@ -21,6 +21,7 @@ import { AlertButtonComponent }          from './components/alert-button/alert-b
 })
 export class AppComponent {
   /** Adds/removes the `traffic-page` class on <app-root> */
+  title = 'insight-hub-dashboard';
   @HostBinding('class.traffic-page') isTrafficPage = false;
 
   showNavbar = true;
