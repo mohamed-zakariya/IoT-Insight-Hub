@@ -46,7 +46,7 @@ services:
     container_name: iot_frontend
     restart: unless-stopped
     ports:
-      - "4200:80"
+      - "4200:8080"
     networks:
       - iot_net
 
