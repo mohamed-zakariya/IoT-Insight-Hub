@@ -17,7 +17,7 @@ export class UserService {
   private apiUrl!: string;
 
   constructor(private http: HttpClient, private authService: AuthService, private configService: RuntimeConfigService) {
-    this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/api/users`;
+    this.apiUrl = `https://${this.configService.domain}/api/users`;
   }
 
   private getAuthHeaders(): HttpHeaders {

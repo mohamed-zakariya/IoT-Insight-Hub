@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data: # non-sensetive
+  DATASOURCE_URL: jdbc:mysql://db-service:3306/sql8774445
+  DATASOURCE_USERNAME: root
+  CORS_ALLOWED_ORIGIN: https://frontend-route-hyper288-dev.apps.rm2.thpm.p1.openshiftapps.com
