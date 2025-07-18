@@ -5,7 +5,6 @@ import { tap, catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { User } from '../../models/user';
 import { isPlatformBrowser } from '@angular/common';
-import { environment } from '../../../environments/environment';
 import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.service';
 
 
@@ -14,17 +13,17 @@ import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.ser
 })
 export class AuthService {
 
-  private apiUrl!: string;
-  private http = inject(HttpClient);
-  private router = inject(Router);
+  readonly apiUrl!: string;
+  readonly http = inject(HttpClient);
+  readonly router = inject(Router);
 
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  readonly currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  private platformId = inject(PLATFORM_ID);
-  private isBrowser = isPlatformBrowser(this.platformId);
+  readonly platformId = inject(PLATFORM_ID);
+  readonly isBrowser = isPlatformBrowser(this.platformId);
 
-  constructor(private configService: RuntimeConfigService) {
+  constructor(readonly configService: RuntimeConfigService) {
     // Ensure config is loaded before using it
     this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/api`;
 

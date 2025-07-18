@@ -6,52 +6,54 @@ import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.domain.Pageable;
-import java.time.LocalDateTime;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 public interface TrafficSensorDataRepository extends SensorRepositoryProvider<TrafficSensorData> {
+
+    Logger logger = LoggerFactory.getLogger(TrafficSensorDataRepository.class);
 
     default SensorType getSensorType() {
         return SensorType.TRAFFIC;
     }
 
+    @Query("SELECT DISTINCT t.location FROM TrafficSensorData t")
+    Page<String> getLocations(Pageable pageable); // TODO: Extract to common base if needed
 
-    @Query("SELECT DISTINCT t.location FROM TrafficSensorData t")   // TODO: this method is the same across all sensors. Needs to be in a higher level
-    Page<String> getLocations(Pageable pageable);
-
-    @SuppressWarnings("unchecked")
     default Page<TrafficSensorData> findFiltered(LocalDateTime start, LocalDateTime end, Pageable pageable, MultiValueMap<String, ?> filters) {
-        // TODO: hardcoded
         List<String> congestionLevels = null;
+
         if (filters.containsKey("congestionLevel")) {
-            Object congestionLevelObj = filters.get("congestionLevel");
-            if (congestionLevelObj instanceof String) {
-                congestionLevels = Collections.singletonList(((String) congestionLevelObj).trim().toLowerCase());
-                System.out.println(congestionLevels);
-            } else if (congestionLevelObj instanceof List) {
-                congestionLevels = ((List<String>) congestionLevelObj).stream()
-                        .map(String::trim)
-                        .map(String::toLowerCase)
-                        .collect(Collectors.toList());
+            Object congestionLevelObj = filters.getFirst("congestionLevel");
+
+            if (congestionLevelObj instanceof String s) {
+                congestionLevels = Collections.singletonList(s.trim().toLowerCase());
+                logger.info("Filtered congestion level: {}", congestionLevels);
+            } else if (congestionLevelObj instanceof List<?> list && !list.isEmpty() && list.get(0) instanceof String) {
+                congestionLevels = list.stream()
+                        .map(e -> ((String) e).trim().toLowerCase())
+                        .toList(); // Java 16+
             }
         }
+
         List<String> locations = null;
-        //TODO: hardcoded
         if (filters.containsKey("location")) {
-            Object locationObj = filters.get("location");
-            if (locationObj instanceof String) {
-                locations = Collections.singletonList(((String) locationObj).trim().toLowerCase());
-            } else if (locationObj instanceof List) {
-                locations = ((List<String>) locationObj).stream()
-                        .map(String::trim)
-                        .map(String::toLowerCase)
-                        .collect(Collectors.toList());
+            Object locationObj = filters.getFirst("location");
+
+            if (locationObj instanceof String s) {
+                locations = Collections.singletonList(s.trim().toLowerCase());
+            } else if (locationObj instanceof List<?> list && !list.isEmpty() && list.get(0) instanceof String) {
+                locations = list.stream()
+                        .map(e -> ((String) e).trim().toLowerCase())
+                        .toList(); // Java 16+
             }
         }
 

@@ -39,7 +39,7 @@ export class AlertButtonComponent implements OnInit, OnDestroy {
   toasts: Toast[] = [];
   private alertsSub!: Subscription;
 
-  constructor(private alerts: AlertsService) {}
+  constructor(readonly alerts: AlertsService) {}
 
   ngOnInit() {
     // 1) fetch all alerts

@@ -4,10 +4,7 @@ import com.example.dxc_backend.enums.AlertType;
 import com.example.dxc_backend.enums.SensorType;
 import com.example.dxc_backend.model.Settings;
 import com.example.dxc_backend.repository.SettingsRepository;
-import com.example.dxc_backend.repository.UserRepository;
-import com.example.dxc_backend.util.Range;
 import com.example.dxc_backend.validation.SensorMetricValidation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +14,11 @@ import java.util.Optional;
 @Service
 public class SettingsService {
 
-    @Autowired
-    private SettingsRepository settingsRepository;
+    private final SettingsRepository settingsRepository;
+
+    public SettingsService(SettingsRepository settingsRepository){
+        this.settingsRepository = settingsRepository;
+    }
 
     @Transactional
     public Settings createSetting(SensorType sensorType, String metric,
@@ -51,7 +51,7 @@ public class SettingsService {
 
         // Remove existing setting (if any)
         Optional<Settings> existingSetting = settingsRepository.findByTypeAndMetric(sensorType, metric);
-        existingSetting.ifPresent(setting -> settingsRepository.delete(setting));
+        existingSetting.ifPresent(settingsRepository::delete);
 
         // Create and save new setting
         Settings settings = new Settings();

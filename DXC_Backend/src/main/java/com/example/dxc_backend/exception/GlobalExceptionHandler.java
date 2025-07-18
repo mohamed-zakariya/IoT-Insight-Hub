@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(InvalidFormatException.class)
-    public ResponseEntity<?> handleInvalidEnum(InvalidFormatException ex) {
+    public ResponseEntity<Object> handleInvalidEnum(InvalidFormatException ex) {
         if (ex.getTargetType().isEnum()) {
             String fieldName = ex.getPath().get(0).getFieldName();
             Object[] constants = ex.getTargetType().getEnumConstants();
@@ -48,6 +48,8 @@ public class GlobalExceptionHandler {
         error.put("error", ex.getMessage());
         return ResponseEntity.badRequest().body(error);
     }
+
+
 
 
 }

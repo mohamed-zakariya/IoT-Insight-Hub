@@ -32,7 +32,7 @@ export class ProfileComponent implements OnInit {
     confirmPassword: '',
   };
 
-  constructor(private authService: AuthService, private userService: UserService) {}
+  constructor(readonly authService: AuthService, readonly userService: UserService) {}
 
   ngOnInit(): void {
     const userData = localStorage.getItem('user');
@@ -109,7 +109,8 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         // Check specific error message or fallback to general
-        const errorMsg = err?.error?.message || err?.error || 'An unexpected error occurred.';
+       const errorMsg = err?.error?.message ?? err?.error ?? 'An unexpected error occurred.';
+
         
         if (errorMsg === 'Current password is incorrect.' || errorMsg === 'Old password is incorrect') {
           this.oldPasswordError = true;
@@ -157,7 +158,7 @@ export class ProfileComponent implements OnInit {
         this.originalUser = { ...this.user };
       },
       error: (err) => {
-        this.updateMessage = err.error?.message || 'An error occurred while updating profile.';
+        this.updateMessage = err.error?.message ?? 'An error occurred while updating profile.';
         this.updateError = true;
         this.updateSuccess = false;
       }

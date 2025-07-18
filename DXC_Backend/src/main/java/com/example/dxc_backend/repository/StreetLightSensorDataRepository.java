@@ -1,9 +1,7 @@
 package com.example.dxc_backend.repository;
 
 import com.example.dxc_backend.enums.SensorType;
-import com.example.dxc_backend.model.AirPollutionSensorData;
 import com.example.dxc_backend.model.StreetLightSensorData;
-import com.example.dxc_backend.model.TrafficSensorData;
 import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,11 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.MultiValueMap;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Repository
 public interface  StreetLightSensorDataRepository extends SensorRepositoryProvider<StreetLightSensorData> {
@@ -40,7 +34,7 @@ public interface  StreetLightSensorDataRepository extends SensorRepositoryProvid
             status = ((List<String>) locationObj).stream()
                     .map(String::trim)
                     .map(String::toLowerCase)
-                    .collect(Collectors.toList());
+                    .toList();  // changed here
         }
 
         // Handle multiple location values
@@ -50,11 +44,12 @@ public interface  StreetLightSensorDataRepository extends SensorRepositoryProvid
             locations = ((List<String>) locationObj).stream()
                     .map(String::trim)
                     .map(String::toLowerCase)
-                    .collect(Collectors.toList());
+                    .toList();  // changed here
         }
 
         return findFilteredCustom(start, end, pageable, locations, status);
     }
+
 
 
     @Query("SELECT t FROM StreetLightSensorData t WHERE " +

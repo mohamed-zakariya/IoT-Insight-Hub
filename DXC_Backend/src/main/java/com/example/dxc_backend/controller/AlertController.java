@@ -25,24 +25,28 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Alerts", description = "Retrieve and manage triggered sensor alerts")
 public class AlertController {
 
-    @Autowired
-    private AlertRepository alertRepository;
+    private final AlertRepository alertRepository;
+    private final TokenService tokenService;
+    private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private EmailService emailService;
+    public AlertController(AlertRepository alertRepository,
+                           TokenService tokenService,
+                           UserRepository userRepository,
+                           EmailService emailService ){
+        this.alertRepository = alertRepository;
+        this.tokenService = tokenService;
+        this.userRepository = userRepository;
+        this.emailService = emailService;
+    }
 
     @Operation(
             summary = "Get all alerts (message + timestamp only)",
             description = "Fetches alerts but only returns message and timestamp fields. Requires valid JWT."
     )
     @GetMapping
-    public ResponseEntity<?> getAllAlerts(@RequestHeader("accessToken") String token) {
+    public ResponseEntity<Object> getAllAlerts(@RequestHeader("accessToken") String token) {
         if (!tokenService.isValidAccessToken(token)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired token.");
         }
@@ -54,7 +58,6 @@ public class AlertController {
             if (user != null) {
                 List<Alert> alerts = alertRepository.findAllByOrderByTimestampDesc();
 
-                // Map alerts to AlertSummaryDTO
                 List<AlertSummaryDTO> summaries = alerts.stream()
                         .map(alert -> new AlertSummaryDTO(alert.getMessage(), alert.getTimestamp()))
                         .toList();
@@ -68,10 +71,9 @@ public class AlertController {
         }
     }
 
-
     @PostMapping("/send-test-email")
     @Operation(summary = "Send test alert email")
-    public ResponseEntity<?> testEmail() throws MessagingException {
+    public ResponseEntity<Object> testEmail() throws MessagingException {
         String html = EmailTemplateUtil.buildAlertHtml(SensorType.TRAFFIC, "avgSpeed", 110, 90, "Above");
         emailService.sendAlertEmail(List.of("recipient@example.com"), "Test Sensor Alert", html);
         return ResponseEntity.ok("Email sent");

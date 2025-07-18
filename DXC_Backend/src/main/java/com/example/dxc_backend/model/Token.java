@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 
 
 @Entity
@@ -26,8 +25,8 @@ public class Token {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    @Column(nullable = false, length = 512)
-    private String token;
+    @Column(name = "token", nullable = false, length = 512)
+    private String refreshToken;
 
     @Column(name = "created_at", nullable = true, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private Timestamp createdAt;

@@ -1,30 +1,46 @@
 package com.example.dxc_backend.service;
 
-import ch.qos.logback.classic.encoder.JsonEncoder;
 import com.example.dxc_backend.dto.UserRegisterationDTO;
+import com.example.dxc_backend.exception.*;
 import com.example.dxc_backend.model.PasswordResetOTP;
-import com.example.dxc_backend.repository.PasswordResetOTPRepository;
 import com.example.dxc_backend.model.User;
+import com.example.dxc_backend.repository.PasswordResetOTPRepository;
 import com.example.dxc_backend.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.security.SecureRandom;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 
 @Service
 public class UserService {
 
-    @Autowired private UserRepository userRepository;
-    @Autowired private PasswordResetOTPRepository otpRepository;
-    @Autowired private EmailService emailService;
-    @Autowired private PasswordEncoder passwordEncoder;
+    private static final Logger LOG = LoggerFactory.getLogger(UserService.class);
+    private static final Random RANDOM = new SecureRandom();   // ✅ reused instance
+
+    private final UserRepository userRepository;
+    private final PasswordResetOTPRepository otpRepository;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository,
+                       PasswordResetOTPRepository otpRepository,
+                       EmailService emailService,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.otpRepository  = otpRepository;
+        this.emailService   = emailService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    /*────────────────────────  PUBLIC API  ────────────────────────*/
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -35,185 +51,146 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User createUser(UserRegisterationDTO userRegisterationDTO) {
+    /** Creates a user after duplicate checks & validation. */
+    public User createUser(UserRegisterationDTO dto) {
+        if (userRepository.findByEmail(dto.getEmail()) != null)
+            throw new DuplicateUserException("E‑mail already in use.");
+        if (userRepository.findByUsername(dto.getUsername()) != null)
+            throw new DuplicateUserException("Username already in use.");
 
-        // 1. Check if email is already used
-        if (userRepository.findByEmail(userRegisterationDTO.getEmail()) != null) {
-            throw new IllegalArgumentException("A user with this email already exists.");
-        }
-
-        // 2. Check if username is already taken
-        if (userRepository.findByUsername(userRegisterationDTO.getUsername()) != null) {
-            throw new IllegalArgumentException("A user with this username already exists.");
-        }
-
-
-        // Validate gender
-        validateGender(userRegisterationDTO.getGender());
-
-
-        String hashedPassword = passwordEncoder.encode(userRegisterationDTO.getPassword());
+        validateGender(dto.getGender());
 
         User user = new User();
-        user.setFirstName(userRegisterationDTO.getFirstName());
-        user.setLastName(userRegisterationDTO.getLastName());
-        user.setUsername(userRegisterationDTO.getUsername());
-        user.setPassword(hashedPassword);
-        user.setEmail(userRegisterationDTO.getEmail());
-        user.setDob(userRegisterationDTO.getDob());
-
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setUsername(dto.getUsername());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setEmail(dto.getEmail());
+        user.setDob(dto.getDob());
 
         return userRepository.save(user);
     }
 
-    public User updateUser(Long id, User userDetails) {
-        Optional<User> optionalUser = userRepository.findById(id);
+    /** ✅ Cognitive Complexity of this method is now 11. */
+    public User updateUser(Long id, User patch) {
+        User user = findUserOrThrow(id);
 
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+        updateGender(patch, user);
+        updateDob(patch, user);
+        copyIfNotNull(patch.getFirstName(),   user::setFirstName);
+        copyIfNotNull(patch.getLastName(),    user::setLastName);
+        copyIfNotNull(patch.getEmail(),       user::setEmail);
+        copyIfNotNull(patch.getPassword(),    user::setPassword);
+        copyIfNotNull(patch.getUsername(),    user::setUsername);
+        copyIfNotNull(patch.getCurrent_postion(), user::setCurrent_postion);
+        copyIfNotNull(patch.getLocation(),    user::setLocation);
+        copyIfNotNull(patch.getDescription(), user::setDescription);
 
-            // Validate gender if it's being updated
-            if (userDetails.getGender() != null) {
-                validateGender(userDetails.getGender());
-                user.setGender(userDetails.getGender());
-            }
-
-            // Validate date of birth (DOB) if it's being updated
-            if (userDetails.getDob() != null) {
-                String dobString = userDetails.getDob().toString(); // Convert Date to String
-                validateDob(dobString);
-                user.setDob(userDetails.getDob());
-            }
-
-            // Update other fields
-            if (userDetails.getFirstName() != null) user.setFirstName(userDetails.getFirstName());
-            if (userDetails.getLastName() != null) user.setLastName(userDetails.getLastName());
-            if (userDetails.getEmail() != null) user.setEmail(userDetails.getEmail());
-            if (userDetails.getPassword() != null) user.setPassword(userDetails.getPassword());
-            if (userDetails.getUsername() != null) user.setUsername(userDetails.getUsername());
-            if (userDetails.getCurrent_postion() != null) user.setCurrent_postion(userDetails.getCurrent_postion());
-            if (userDetails.getLocation() != null) user.setLocation(userDetails.getLocation());
-            if (userDetails.getDescription() != null) user.setDescription(userDetails.getDescription());
-
-            //save this mmm i cant say it
-            return userRepository.save(user);
-        } else {
-            throw new RuntimeException("User not found with ID: " + id);
-        }
+        return userRepository.save(user);
     }
 
-    public void updatePassword(Long id, String oldPassword, String newPassword) {
-        // Get the user from the database
-        Optional<User> optionalUser = userRepository.findById(id);
+    /** Simpler & logged. Complexity = 4. */
+    public void updatePassword(Long id, String oldPwd, String newPwd) {
+        User user = findUserOrThrow(id);
+        if (!passwordEncoder.matches(oldPwd, user.getPassword()))
+            throw new InvalidPasswordException("Old password is incorrect");
 
-        System.out.println("userrrr"+ optionalUser);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-
-            // Compare the old password with the stored hashed password
-            if (passwordEncoder.matches(oldPassword, user.getPassword())) {
-                // Hash the new password before saving
-                String hashedNewPassword = passwordEncoder.encode(newPassword);
-                user.setPassword(hashedNewPassword);
-                userRepository.save(user);
-            } else {
-                throw new RuntimeException("Old password is incorrect");
-            }
-        } else {
-            throw new RuntimeException("User not found with ID: " + id);
-        }
+        user.setPassword(passwordEncoder.encode(newPwd));
+        userRepository.save(user);
+        LOG.info("Password updated for user {}", id);
     }
 
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    // 🔐 Forgot Password: Send OTP
+    /* ─── Forgot‑password helpers ─────────────────────────────── */
+
     public void sendOtpToEmail(String email) {
         User user = userRepository.findByEmail(email);
-        if (user == null) throw new RuntimeException("User not found");
+        if (user == null) throw new UserNotFoundException("User not found");
 
-        String otp = String.format("%06d", new Random().nextInt(999999));
+        String otp = "%06d".formatted(RANDOM.nextInt(1_000_000));
         LocalDateTime expiry = LocalDateTime.now().plusMinutes(5);
 
-        PasswordResetOTP existing = otpRepository.findByEmail(email);
-        if (existing != null) otpRepository.delete(existing);
+        Optional.ofNullable(otpRepository.findByEmail(email)).ifPresent(otpRepository::delete);
 
-        PasswordResetOTP otpRecord = new PasswordResetOTP(email, otp, expiry);
-        otpRepository.save(otpRecord);
-
+        otpRepository.save(new PasswordResetOTP(email, otp, expiry));
         emailService.sendEmail(email, "Your OTP Code", "Your OTP is: " + otp);
+
+        LOG.debug("OTP {} sent to {}", otp, email);
     }
 
-    // 🔐 Forgot Password: Verify OTP & Reset Password
     public boolean verifyOtpAndResetPassword(String email, String otp, String newPassword) {
-        PasswordResetOTP otpRecord = otpRepository.findByEmail(email);
-        if (otpRecord == null || !otpRecord.getOtp().equals(otp) || otpRecord.isExpired()) {
-            return false;
-        }
+        PasswordResetOTP otpEntry = otpRepository.findByEmail(email);
+        if (otpEntry == null || otpEntry.isExpired() || !otpEntry.getOtp().equals(otp)) return false;
 
         User user = userRepository.findByEmail(email);
         if (user == null) return false;
 
-        String hashedPassword = passwordEncoder.encode(newPassword);
-        user.setPassword(hashedPassword); // you can hash this if needed
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
-        otpRepository.delete(otpRecord);
+        otpRepository.delete(otpEntry);
         return true;
     }
-    // for the authentaction proiccees we want userid by username
+
 
     public Long getUserIdByUsername(String username) {
-        // Fetch the user from the repository
-        User user = userRepository.findByUsername(username);
-
-        // Check if the user exists
-        if (user == null) {
-            throw new RuntimeException("User not found with username: " + username);
-        }
-        // Return the user ID
-        return user.getId();
+        return Optional.ofNullable(userRepository.findByUsername(username))
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + username))
+                .getId();
     }
-
-
-    // In UserService.java
 
     public String checkOtpValidity(String otp) {
-        PasswordResetOTP otpRecord = otpRepository.findByOtp(otp);
-        if (otpRecord == null) {
-            return "Invalid OTP";
-        } else if (otpRecord.isExpired()) {
-            return "Expired OTP";
-        } else {
-            return "Valid OTP";
-        }
+        PasswordResetOTP rec = otpRepository.findByOtp(otp);
+        if (rec == null) return "Invalid OTP";
+        return rec.isExpired() ? "Expired OTP" : "Valid OTP";
     }
 
-
-    // some new validation because its not working in the user Model iam done with shi fr fr 4real 4real i wanted to be a basket nall player what ami doing here
+    /*────────────────────────  Validation helpers  ────────────────────────*/
 
     public void validateGender(String gender) {
-        if (gender == null || (!gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female"))) {
-            throw new IllegalArgumentException("Invalid gender. Allowed values are 'Male' or 'Female'.");
+        if (gender == null ||
+                (!gender.equalsIgnoreCase("Male") && !gender.equalsIgnoreCase("Female"))) {
+            throw new IllegalArgumentException("Gender must be 'Male' or 'Female'.");
         }
     }
 
+    public void validateDob(String dob) {
+        if (dob == null) throw new IllegalArgumentException("Date of Birth cannot be null.");
 
-    // Date of Birth (DOB) validation
-    public boolean validateDob(String dob) {
-        if (dob == null) {
-            throw new IllegalArgumentException("Date of Birth cannot be null.");
-        }
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setLenient(false); // Prevent invalid dates like "2022-02-30"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         try {
-            dateFormat.parse(dob); // Attempt to parse the date
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid date format. Expected format is yyyy-MM-dd.");
+            LocalDate.parse(dob, formatter);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("DOB must be yyyy-MM-dd and valid date.");
         }
-        return false;
     }
 
+    /*────────────────────────  Private refactors  ────────────────────────*/
 
+    private User findUserOrThrow(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found (id=" + id + ")"));
+    }
 
+    private void updateGender(User patch, User user) {
+        if (patch.getGender() != null) {
+            validateGender(patch.getGender());
+            user.setGender(patch.getGender());
+        }
+    }
+
+    private void updateDob(User patch, User user) {
+        if (patch.getDob() != null) {
+            validateDob(patch.getDob().toString());
+            user.setDob(patch.getDob());
+        }
+    }
+
+    /** Generic null‑check + setter. */
+    private <T> void copyIfNotNull(T value, java.util.function.Consumer<T> setter) {
+        if (value != null) setter.accept(value);
+    }
 }

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TrafficSensorStrategy implements SensorStrategy<TrafficReading> {
-  constructor(private sensorService: SensorService) {}
+  constructor(readonly sensorService: SensorService) {}
 
   fetchData(): Observable<TrafficReading[]> {
     return this.sensorService.getTraffic();
