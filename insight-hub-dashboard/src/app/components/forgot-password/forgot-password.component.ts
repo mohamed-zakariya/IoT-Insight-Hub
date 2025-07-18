@@ -83,8 +83,6 @@ export class ForgotPasswordComponent implements OnInit {
   
         if (err.message === 'Email does not exist.') {
           this.emailNotFound = true;
-        } else {
-          this.emailNotFound = true;
         }
         this.loading = false;
       }

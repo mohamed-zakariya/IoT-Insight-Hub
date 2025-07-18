@@ -23,8 +23,6 @@ import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 
 // RxJS
 import { timer } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-// import { SensorService, TrafficReading } from '../../services/sensor.service';
 import { SensorService } from '../../services/sensor.service';
 import { TrafficReading } from '../../models/traffic-reading.model';
 
@@ -179,7 +177,8 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
   public xAxisScale: number = 1;
   public showAllData: boolean = true;
 
-  constructor(private sensorService: SensorService) {}
+constructor(private readonly sensorService: SensorService) {}
+
 
   ngOnInit(): void {
  
@@ -190,23 +189,29 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
     this.locationSearch.valueChanges.subscribe(value => this.filterLocationList(value));
     this.loadData();
     this.loadAvailableLocations();
-    // this.loadAvailableLocations();
   }
 
-  ngAfterViewInit(): void {
+ngAfterViewInit(): void {
+  if (this.sort) {
     this.sort.sortChange.subscribe(sort => {
       this.currentSort = sort;
       this.currentPage = 0;
-      this.paginator.pageIndex = 0;
+      if (this.paginator) {
+        this.paginator.pageIndex = 0;
+      }
       this.loadData();
     });
+  }
 
+  if (this.paginator) {
     this.paginator.page.subscribe(event => {
       this.currentPage = event.pageIndex;
       this.pageSize = event.pageSize;
       this.loadData();
     });
   }
+}
+
 
 
   loadData(): void {
@@ -345,7 +350,9 @@ loadAvailableLocations(): void {
       return;
     }
 
-    this.locations = [...new Set(data.map(r => r.location))].sort();
+    this.locations = [...new Set(data.map(r => r.location))]
+  .sort((a, b) => a.localeCompare(b));
+
     this.updateTableData(data);
     this.chartData.labels = data.map(r => new Date(r.timestamp).toLocaleTimeString());
     this.chartData.datasets[0].data = data.map(r => r.trafficDensity);
@@ -361,23 +368,24 @@ loadAvailableLocations(): void {
   }
 
 
-  private getSortedData(data: TrafficReading[]): TrafficReading[] {
-    if (!this.sort || !this.sort.active || this.sort.direction === '') {
-      return data;
-    }
-
-    return data.slice().sort((a, b) => {
-      const isAsc = this.sort.direction === 'asc';
-      switch (this.sort.active) {
-        case 'location': return compare(a.location, b.location, isAsc);
-        case 'timestamp': return compare(new Date(a.timestamp).getTime(), new Date(b.timestamp).getTime(), isAsc);
-        case 'trafficDensity': return compare(a.trafficDensity, b.trafficDensity, isAsc);
-        case 'avgSpeed': return compare(a.avgSpeed, b.avgSpeed, isAsc);
-        case 'congestionLevel': return compare(a.congestionLevel, b.congestionLevel, isAsc);
-        default: return 0;
-      }
-    });
+private getSortedData(data: TrafficReading[]): TrafficReading[] {
+  if (!this.sort?.active || this.sort.direction === '') {
+    return data;
   }
+
+  return data.slice().sort((a, b) => {
+    const isAsc = this.sort.direction === 'asc';
+    switch (this.sort.active) {
+      case 'location': return compare(a.location, b.location, isAsc);
+      case 'timestamp': return compare(new Date(a.timestamp).getTime(), new Date(b.timestamp).getTime(), isAsc);
+      case 'trafficDensity': return compare(a.trafficDensity, b.trafficDensity, isAsc);
+      case 'avgSpeed': return compare(a.avgSpeed, b.avgSpeed, isAsc);
+      case 'congestionLevel': return compare(a.congestionLevel, b.congestionLevel, isAsc);
+      default: return 0;
+    }
+  });
+}
+
 
    setVisualization(type: ChartType): void {
     this.currentVisualization = type;
@@ -423,7 +431,6 @@ sortData(field: string): void {
 
   
     this.dataSource.sortingDataAccessor = (item: any, property: string) => item[property];
-    // this.dataSource.sort?.sort({ id: field, start: 'asc', disableClear: false });
     this.dataSource.sort = this.sort;
     this.dataSource.sortData(this.dataSource.data, this.dataSource.sort);
 
@@ -452,7 +459,16 @@ this.chartData = {
 }  
 
 function compare(a: any, b: any, isAsc: boolean): number {
-  return (a < b ? -1 : a > b ? 1 : 0) * (isAsc ? 1 : -1);
+  if (typeof a === 'string' && typeof b === 'string') {
+    return isAsc ? a.localeCompare(b) : b.localeCompare(a);
+  }
+
+  // Handle non-string comparison directly
+  if (a < b) return isAsc ? -1 : 1;
+  if (a > b) return isAsc ? 1 : -1;
+
+  return 0; // Equal case
 }
+
 
 

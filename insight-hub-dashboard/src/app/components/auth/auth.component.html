@@ -117,33 +117,27 @@
             </div>
 
             <div class="input-group gender-group" *ngIf="isSignupMode">
-              <label class="gender-label">Gender:</label>
-              <div class="gender-options">
-                <label class="gender-option">
-                  <input type="radio" formControlName="gender" value="Male" />
-                  <span>
-                    <i class="fas fa-mars" style="color: rgb(5, 92, 205);"></i>
-                  </span>
-                </label>
-                <label class="gender-option">
-                  <input
-                  type="radio"
-                  formControlName="gender"
-                  value="Female"
-                  [ngClass]="{ 'is-invalid': f['gender'].invalid && (submitted) }"
-                  />
-                  <span>
-                    <i class="fas fa-venus" style="color: palevioletred;"></i>
-                  </span>
-                </label>
-              </div>
-            
-              <!-- 🛠️ Add this part to show validation error -->
-              <div class="tooltip-error-left" *ngIf="submitted && f['gender']?.invalid">
-                <span *ngIf="f['gender'].errors?.['required']">Gender is required.</span>
-              </div>
-            </div>
-            
+  <label class="gender-label">Gender:</label>
+  <div class="gender-options">
+    <label class="gender-option">
+      <input type="radio" formControlName="gender" value="Male" />
+      <span>
+        <i class="fas fa-mars" style="color: rgb(5, 92, 205);"></i> Male
+      </span>
+    </label>
+    <label class="gender-option">
+      <input type="radio" formControlName="gender" value="Female" />
+      <span>
+        <i class="fas fa-venus" style="color: palevioletred;"></i> Female
+      </span>
+    </label>
+  </div>
+
+  <div class="tooltip-error-left" *ngIf="submitted && f['gender']?.invalid">
+    <span *ngIf="f['gender'].errors?.['required']">Gender is required.</span>
+  </div>
+</div>
+
             
 
             <!-- Date of Birth input -->
@@ -203,12 +197,18 @@
                 placeholder="Password"
                 [ngClass]="{ 'is-invalid': f['password'].invalid && (f['password'].touched || submitted) }"
               />
-              <i 
-                class="fa-solid toggle-eye" 
-                [class.fa-eye]="!showPassword" 
-                [class.fa-eye-slash]="showPassword" 
-                (click)="togglePasswordVisibility()"
-              ></i>
+<i 
+  class="fa-solid toggle-eye"
+  tabindex="0"
+  role="button"
+  aria-label="Toggle password visibility"
+  (click)="togglePasswordVisibility()"
+  (keydown.enter)="togglePasswordVisibility()"
+  (keydown.space)="togglePasswordVisibility()"
+  [class.fa-eye]="!showPassword"
+  [class.fa-eye-slash]="showPassword"
+></i>
+
               
               <!-- Error Tooltip -->
               <div class="tooltip-error-left" *ngIf="submitted && f['password']?.invalid">

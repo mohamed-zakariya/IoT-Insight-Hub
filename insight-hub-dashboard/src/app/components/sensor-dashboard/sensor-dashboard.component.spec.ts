@@ -121,8 +121,7 @@ describe('SensorDashboardComponent', () => {
   //     })
   //   );
 
-  //   tick();
-  //   fixture.detectChanges();
+
 
   //   expect(component.dataSource.data.length).toBe(2);
   //   expect(component.chartData.labels!.length).toBe(2);
@@ -148,4 +147,93 @@ describe('SensorDashboardComponent', () => {
   //   expect(component.currentSort.direction).toBe('asc');
   //   expect(mockService.getTrafficFiltered).toHaveBeenCalled();
   // });
+
+    it('should update sort and call loadData when sort changes', () => {
+  const sortSpy = spyOn(component, 'loadData');
+  component.sort.sortChange.emit({ active: 'location', direction: 'asc' });
+  expect(component.currentSort.active).toBe('location');
+  expect(component.currentSort.direction).toBe('asc');
+  expect(sortSpy).toHaveBeenCalled();
+});
+
+it('should update pagination and call loadData when page changes', () => {
+  const pageSpy = spyOn(component, 'loadData');
+  component.paginator.page.emit({ pageIndex: 1, pageSize: 10, length: 2 } as any);
+  expect(component.currentPage).toBe(1);
+  expect(component.pageSize).toBe(10);
+  expect(pageSpy).toHaveBeenCalled();
+});
+
+it('should reset all filters and paginator', () => {
+  component.locationFilter.setValue(['A']);
+  component.congestionFilter.setValue(['MODERATE']);
+  component.locationSearch.setValue('search');
+
+  const paginatorSpy = spyOn(component.paginator, 'firstPage');
+
+  component.resetFilters();
+
+  expect(component.locationFilter.value).toEqual([]);
+  expect(component.congestionFilter.value).toEqual([]);
+  expect(component.locationSearch.value).toBe('');
+  expect(paginatorSpy).toHaveBeenCalled();
+});
+
+
+it('should set the visualization type', () => {
+  component.setVisualization('bar');
+  expect(component.currentVisualization).toBe('bar');
+});
+
+
+it('should toggle the showAllData flag', () => {
+  const initial = component.showAllData;
+  component.toggleShowAllData();
+  expect(component.showAllData).toBe(!initial);
+});
+
+
+it('should format the scale label', () => {
+  expect(component.formatScaleLabel(1.23456)).toBe('1.23x');
+});
+
+
+it('should return correct chart title for each type', () => {
+  const types: any = {
+    line: 'Traffic Trends Over Time',
+    bar: 'Traffic Metrics Comparison',
+    pie: 'Congestion Level Distribution',
+    doughnut: 'Congestion Level Breakdown',
+    radar: 'Location Performance Comparison',
+    unknown: 'Traffic Visualization'
+  };
+
+  for (const type in types) {
+    component.currentVisualization = type as any;
+    expect(component.getChartTitle()).toBe(types[type]);
+  }
+});
+
+
+it('should filter location list based on search term', () => {
+  component.locations = ['Downtown', 'Airport', 'Harbor'];
+  component.filterLocationList('air');
+  expect(component.filteredLocations).toEqual(['Airport']);
+});
+
+
+// it('sortData() should toggle sort and re-sort data', () => {
+//   component.dataSource.data = fakePagedResponse.content!;
+//   component.sort = { active: '', direction: '', sortChange: of() } as any;
+
+//   component.sortData('location');
+//   expect(component.sort.active).toBe('location');
+//   expect(component.sort.direction).toBe('desc');
+
+//   component.sortData('location');
+//   expect(component.sort.direction).toBe('asc');
+// });
+
+
+
 });

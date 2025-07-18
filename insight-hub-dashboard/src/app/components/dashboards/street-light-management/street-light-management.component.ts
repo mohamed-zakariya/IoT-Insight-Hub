@@ -306,13 +306,14 @@ this.sensorService.getLightReadingsFiltered(params).subscribe({
   }
 
   // ADDED: Method to update available locations from data
-  private updateAvailableLocations(items: StreetLightReading[]): void {
-    const uniqueLocations = [...new Set(items.map(r => r.location))].sort();
-    if (uniqueLocations.length > 0) {
-      this.locations = uniqueLocations;
-      this.filteredLocations = uniqueLocations;
-    }
+private updateAvailableLocations(items: StreetLightReading[]): void {
+  const uniqueLocations = [...new Set(items.map(r => r.location))].sort((a, b) => a.localeCompare(b));
+  if (uniqueLocations.length > 0) {
+    this.locations = uniqueLocations;
+    this.filteredLocations = uniqueLocations;
   }
+}
+
 
   resetFilters(): void {
     this.locationFilter.setValue([]);
@@ -364,19 +365,19 @@ this.sensorService.getLightReadingsFiltered(params).subscribe({
   }
 
   // CHANGED: Updated method to handle street light data
-  private handleDataUpdate(data: StreetLightReading[]): void {
-    if (!data || data.length === 0) {
-      console.warn('Received empty street light dataset');
-      return;
-    } 
+private handleDataUpdate(data: StreetLightReading[]): void {
+  if (!data || data.length === 0) {
+    console.warn('Received empty street light dataset');
+    return;
+  } 
 
-    this.locations = [...new Set(data.map(r => r.location))].sort();
-    this.updateTableData(data);
-    this.chartData.labels = data.map(r => new Date(r.timestamp).toLocaleTimeString());
-    // CHANGED: Updated to use street light metrics
-    this.chartData.datasets[0].data = data.map(r => r.brightnessLevel);
-    this.chartData.datasets[1].data = data.map(r => r.powerConsumption);
-  }
+  this.locations = [...new Set(data.map(r => r.location))].sort((a, b) => a.localeCompare(b));
+  this.updateTableData(data);
+  this.chartData.labels = data.map(r => new Date(r.timestamp).toLocaleTimeString());
+  this.chartData.datasets[0].data = data.map(r => r.brightnessLevel);
+  this.chartData.datasets[1].data = data.map(r => r.powerConsumption);
+}
+
 
   private updateTableData(data: StreetLightReading[]): void {
     this.dataSource.data = data;
