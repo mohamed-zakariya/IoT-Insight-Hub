@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter,OnInit, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { UserService } from '../../services/user_service/user.service';
 import { OtpPasswordService } from '../../services/otp_password/otp-password.service';
@@ -26,7 +26,7 @@ export class ForgotPasswordComponent implements OnInit {
   verifiedUser: any = null;
   otpControls = ['c0', 'c1', 'c2', 'c3', 'c4', 'c5'];
 
-  constructor(private fb: FormBuilder, private userService: UserService, private otpPasswordService: OtpPasswordService) {}
+  constructor(readonly fb: FormBuilder, readonly userService: UserService, readonly otpPasswordService: OtpPasswordService) {}
 
   ngOnInit(): void {
     this.forgotPasswordForm = this.fb.group({

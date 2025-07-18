@@ -147,7 +147,7 @@ export class SensorDashboardComponent implements OnInit, AfterViewInit {
         intersect: false,
         callbacks: {
           label: (context) => {
-            let label = context.dataset.label || '';
+            let label = context.dataset.label ?? '';
             if (label) label += ': ';
             if (context.parsed.y !== null) {
               label += context.parsed.y.toFixed(1);
@@ -447,7 +447,7 @@ this.chartData = {
 
   filterLocationList(searchTerm: string | null): void {
     const allLocations = this.locations || [];
-    const lowerTerm = searchTerm?.toLowerCase() || '';
+    const lowerTerm = searchTerm?.toLowerCase() ?? '';
     this.filteredLocations = allLocations.filter(loc =>
       loc.toLowerCase().includes(lowerTerm)
     );

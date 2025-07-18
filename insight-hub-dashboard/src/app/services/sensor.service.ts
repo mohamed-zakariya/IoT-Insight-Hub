@@ -22,7 +22,7 @@ export class SensorService {
   }
 
   private authHeaders(): HttpHeaders {
-    const token = localStorage.getItem('accessToken') || '';
+    const token = localStorage.getItem('accessToken') ?? '';
     return new HttpHeaders().set('accessToken', token);
   }
 
