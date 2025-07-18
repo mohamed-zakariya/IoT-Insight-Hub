@@ -1,10 +1,9 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable,  throwError } from 'rxjs';
 import { User } from '../../models/user';
 import { AuthService } from '../auth_service/auth.service';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
 import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.service';
 
 
@@ -14,9 +13,9 @@ import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.ser
 })
 export class UserService {
 
-  private apiUrl!: string;
+  readonly apiUrl!: string;
 
-  constructor(private http: HttpClient, private authService: AuthService, private configService: RuntimeConfigService) {
+  constructor(readonly http: HttpClient, readonly authService: AuthService, readonly configService: RuntimeConfigService) {
     this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/api/users`;
   }
 

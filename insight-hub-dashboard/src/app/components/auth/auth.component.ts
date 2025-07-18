@@ -11,13 +11,11 @@ import {
   FormsModule,
   AbstractControl,
 } from '@angular/forms';
-import { __values } from 'tslib';
 import { AuthService } from '../../services/auth_service/auth.service';
 import { LoadingSpinnerComponent } from '../loading-spinner/loading-spinner.component';
 import { CustomValidators } from '../../shared/validators/custom-validators';
 import { UserService } from '../../services/user_service/user.service';
 import { User } from '../../models/user';
-import { from } from 'rxjs';
 
 @Component({
   selector: 'app-auth',
@@ -50,9 +48,9 @@ export class AuthComponent implements OnInit {
 
 
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute,
-     private router:Router, private authService: AuthService,
-    private userService: UserService
+  constructor(readonly fb: FormBuilder, readonly route: ActivatedRoute,
+     readonly router:Router, readonly authService: AuthService,
+    readonly userService: UserService
   ) {}
 
   forgetPasswordClick() {
@@ -130,11 +128,7 @@ export class AuthComponent implements OnInit {
 
       this.authFormSignup.get('confirmPassword')?.updateValueAndValidity();  // Trigger validation check
       // Apply the group-level validator after the form is created    
-    
-    // this.otpForm = this.fb.group({
-    //   otp: ['', [Validators.required, Validators.minLength(6)]],
-    // });
-      
+
     
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
@@ -260,7 +254,7 @@ export class AuthComponent implements OnInit {
   backToSignIn(){
     this.step = 1;
     this.forgetPassword = false;
-    // this.verifiedUser = null;
+
   }
 
   

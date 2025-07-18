@@ -23,8 +23,6 @@ import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 
 // RxJS
 import { timer } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-// import { SensorService, TrafficReading } from '../../services/sensor.service';
 import { SensorService } from '../../../services/sensor.service';
 import { StreetLightReading  } from '../../../models/street-light-reading.model';
 
@@ -184,7 +182,7 @@ export class StreetLightManagementComponent   implements OnInit, AfterViewInit {
   public xAxisScale: number = 1;
   public showAllData: boolean = true;
 
-  constructor(private sensorService: SensorService) {}
+  constructor(readonly sensorService: SensorService) {}
 
     ngOnInit(): void {
     this.initializeChart();

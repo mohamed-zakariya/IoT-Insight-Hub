@@ -119,12 +119,17 @@
             required
             placeholder="Enter new password"
           />
-          <i
-            class="fa-solid"
-            [class.fa-eye]="!showNewPassword"
-            [class.fa-eye-slash]="showNewPassword"
-            (click)="showNewPassword = !showNewPassword"
-          ></i>
+<i
+  class="fa-solid"
+  [class.fa-eye]="!showNewPassword"
+  [class.fa-eye-slash]="showNewPassword"
+  role="button"
+  tabindex="0"
+  (click)="showNewPassword = !showNewPassword"
+  (keydown.enter)="showNewPassword = !showNewPassword"
+  (keydown.space)="showNewPassword = !showNewPassword"
+></i>
+
         </div>
       </div>
 
@@ -140,12 +145,17 @@
             required
             placeholder="Re-enter new password"
           />
-          <i
-            class="fa-solid"
-            [class.fa-eye]="!showConfirmPassword"
-            [class.fa-eye-slash]="showConfirmPassword"
-            (click)="showConfirmPassword = !showConfirmPassword"
-          ></i>
+<i
+  class="fa-solid"
+  [class.fa-eye]="!showConfirmPassword"
+  [class.fa-eye-slash]="showConfirmPassword"
+  role="button"
+  tabindex="0"
+  (click)="showConfirmPassword = !showConfirmPassword"
+  (keydown.enter)="showConfirmPassword = !showConfirmPassword"
+  (keydown.space)="showConfirmPassword = !showConfirmPassword"
+></i>
+
         </div>
       </div>
     

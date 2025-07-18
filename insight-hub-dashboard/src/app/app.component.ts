@@ -1,7 +1,7 @@
 // src/app/app.component.ts
 import { Component, HostBinding }        from '@angular/core';
 import { CommonModule }                  from '@angular/common';
-import { RouterModule, Router, Event, NavigationEnd } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { filter }                        from 'rxjs/operators';
 
 import { NavbarComponent }               from './components/navbar/navbar.component';
@@ -27,7 +27,7 @@ export class AppComponent {
   showNavbar = true;
   showAlertButton = true;
 
-  constructor(private router: Router) {
+  constructor(readonly router: Router) {
     this.router.events
       .pipe(
         // Only let NavigationEnd events through
