@@ -47,6 +47,8 @@ services:
     restart: unless-stopped
     ports:
       - "4200:8080"
+    volumes:
+      - ./runtime-config.json:/usr/share/nginx/html/assets/runtime-config.json:ro
     networks:
       - iot_net
 
