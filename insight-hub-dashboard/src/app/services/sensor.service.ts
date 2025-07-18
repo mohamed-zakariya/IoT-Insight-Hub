@@ -102,7 +102,24 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
 
 
   getAirPollution(): Observable<AirPollutionReading[]> {
-    return this.http.get<AirPollutionReading[]>(`${this.baseUrl}/air-pollution-sensors`);
+    return this.http.get<AirPollutionReading[]>(`${this.baseUrl}/air-pollution-sensors`, 
+      { headers: this.authHeaders() });
+  }
+
+  getAirPollutionFiltered(params: any): Observable<any> {
+    let httpParams = new HttpParams();
+    
+    // Add all parameters to HttpParams
+    Object.entries(params).forEach(([key, value]) => {
+      if (value != null && value !== '') {
+        httpParams = httpParams.set(key, value.toString());
+      }
+    });
+
+    return this.http.get(`${this.baseUrl}/sensors/AIR_POLLUTION`, {
+      params: httpParams,
+      headers: this.authHeaders()
+    });
   }
 
   getStreetLight(): Observable<StreetLightReading[]> {

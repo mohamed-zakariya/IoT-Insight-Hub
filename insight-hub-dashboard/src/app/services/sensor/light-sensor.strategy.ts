@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class LightSensorStrategy implements SensorStrategy<StreetLightReading> {
+
    readonly apiUrl = 'http://localhost:8081/api/sensors/street_light';
   constructor(readonly sensorService: SensorService) {}
 

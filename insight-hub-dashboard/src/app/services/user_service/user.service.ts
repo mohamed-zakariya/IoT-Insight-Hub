@@ -15,8 +15,10 @@ export class UserService {
 
   readonly apiUrl!: string;
 
+
   constructor(readonly http: HttpClient, readonly authService: AuthService, readonly configService: RuntimeConfigService) {
     this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/api/users`;
+
   }
 
   private getAuthHeaders(): HttpHeaders {

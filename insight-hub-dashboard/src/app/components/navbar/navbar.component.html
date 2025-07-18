@@ -21,13 +21,13 @@
 
       <!-- Only show when on one of the three sensor pages -->
       <div class="sub-nav" *ngIf="showSubMenu">
-        <a routerLink="/traffic"       routerLinkActive="active" (click)="toggleSidebar()">
+        <a routerLink="/traffic-monitoring"       routerLinkActive="active" (click)="toggleSidebar()">
           <i class="fa-solid fa-car"></i> Traffic Sensor
         </a>
-        <a routerLink="/environmental"  routerLinkActive="active" (click)="toggleSidebar()">
+        <a routerLink="/air-pollution-monitoring"  routerLinkActive="active" (click)="toggleSidebar()">
           <i class="fa-solid fa-leaf"></i> Air Pollution Sensor
         </a>
-        <a routerLink="/street-light"   routerLinkActive="active" (click)="toggleSidebar()">
+        <a routerLink="/street-light-management"   routerLinkActive="active" (click)="toggleSidebar()">
           <i class="fa-solid fa-lightbulb"></i> Street Light Sensor
         </a>
       </div>
@@ -45,9 +45,9 @@
       <a routerLink="/settings" routerLinkActive="active" (click)="toggleSidebar()">
         <i class="fa-solid fa-gear"></i> Settings
       </a>
-      <a routerLink="/help" routerLinkActive="active">
+      <!-- <a routerLink="/help" routerLinkActive="active">
         <i class="fa-solid fa-circle-info"></i> Help & Support
-      </a>
+      </a> -->
       <a (click)="signOut()" class="signout-link">
         <i class="fa-solid fa-right-from-bracket"></i> Sign Out
       </a>

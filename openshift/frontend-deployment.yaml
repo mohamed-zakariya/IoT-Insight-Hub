@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: iotinsighthub/insight-hub-dashboard:s4-v6
+          imagePullPolicy: Always
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              # Copy original config to a writable directory
+              cp /etc/nginx/nginx.conf /tmp/nginx.conf
+
+              # Robustly find and replace the PID path, ignoring whitespace differences
+              sed -i 's|pid\s\+/run/nginx.pid.*|pid /tmp/nginx.pid;|' /tmp/nginx.conf
+
+              # Start Nginx using the corrected configuration
+              nginx -c /tmp/nginx.conf -g "daemon off;"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/nginx/html/assets/runtime-config.json
+              subPath: runtime-config.json
+            - name: nginx-cache
+              mountPath: /var/cache/nginx
+      volumes:
+        - name: config-volume
+          configMap:
+            name: frontend-runtime-config
+        - name: nginx-cache
+          emptyDir: {}

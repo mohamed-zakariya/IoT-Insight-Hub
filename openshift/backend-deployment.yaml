@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: iotinsighthub/dxc_backend:s4-v3
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DATASOURCE_URL
+            - name: DATASOURCE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: DATASOURCE_USERNAME
+            - name: CORS_ALLOWED_ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: backend-config
+                  key: CORS_ALLOWED_ORIGIN
+            - name: DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secret
+                  key: DATASOURCE_PASSWORD
+

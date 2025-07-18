@@ -47,12 +47,20 @@ export const routes: Routes = [
     },
     { path: 'alerts', component: AlertsComponent },
       {
+        path: 'traffic-monitoring',
+        component: TrafficMonitoringComponent
+      },
+      {
     path: 'sensor-dashboard',
     component: SensorDashboardComponent
     },
     {
   path: 'street-light-management',
   component: StreetLightManagementComponent
+},
+    {
+  path: 'air-pollution-monitoring',
+  component: AirPollutionMonitoringComponent
 }
 
 ];
