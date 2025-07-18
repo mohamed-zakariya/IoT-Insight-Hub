@@ -22,7 +22,8 @@ mvn --version
 
 ## SonarQube & Performance Testing Sprint Requirements
 
-### 📄 [DXC_Sprint5_Documentation.pdf](https://github.com/user-attachments/files/21316191/DXC_Sprint5.pdf)
+### 📄 [DXC_Sprint5.pdf](https://github.com/user-attachments/files/21317170/DXC_Sprint5.5.pdf)
+
 
 ---
 
