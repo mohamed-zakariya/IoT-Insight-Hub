@@ -42,6 +42,28 @@ iot-insight-hub/
 
 ---
 
+## 🚀 Quick Start
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/mohamed-zakariya/IoT-Insight-Hub.git
+   cd iot-insight-hub
+   ```
+
+2. **Start with Docker Compose:**
+   ```bash
+   docker-compose up --build
+   ```
+
+3. **Access the application:**
+   - Frontend: http://localhost:4200
+   - Backend API: http://localhost:8080
+   - Swagger UI: http://localhost:8080/swagger-ui.html
+
+---
+
+
+
 ## 🗄️ Database Setup (MySQL)
 
 ### Using Docker
@@ -144,26 +166,6 @@ iot-insight-hub/
    ```
    http://localhost:4200
    ```
-
----
-
-## 🚀 Quick Start
-
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd iot-insight-hub
-   ```
-
-2. **Start with Docker Compose:**
-   ```bash
-   docker-compose up --build
-   ```
-
-3. **Access the application:**
-   - Frontend: http://localhost:4200
-   - Backend API: http://localhost:8080
-   - Swagger UI: http://localhost:8080/swagger-ui.html
 
 ---
 
