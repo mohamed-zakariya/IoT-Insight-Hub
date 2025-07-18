@@ -42,7 +42,7 @@ services:
 
   # Frontend service
   frontend:
-    image: iotinsighthub/insight-hub-dashboard:s4-v6
+    image: iotinsighthub/insight-hub-dashboard:s5-v1
     container_name: iot_frontend
     restart: unless-stopped
     ports:
