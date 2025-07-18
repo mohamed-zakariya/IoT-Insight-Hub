@@ -23,7 +23,7 @@ services:
 
   # Backend service
   backend:
-    image: iotinsighthub/dxc_backend:s4-v5
+    image: iotinsighthub/dxc_backend:s5-v1
     container_name: iot_backend
     restart: unless-stopped
     depends_on:

@@ -47,7 +47,7 @@ public class SecurityConfig {
                                 "/api/air-pollution-sensors",
                                 "/api/air-pollution-sensors/{id}",
 
-
+                                "/api/users",
                                 "/api/users/create",
                                 "/api/users/signin/email",
                                 "/api/users/{email}",
