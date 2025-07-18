@@ -23,7 +23,7 @@ services:
 
   # Backend service
   backend:
-    image: iotinsighthub/dxc_backend:latest
+    image: iotinsighthub/dxc_backend:s5-v1
     container_name: iot_backend
     restart: unless-stopped
     depends_on:
@@ -36,13 +36,13 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 30000  # Added connection timeout
     ports:
-      - "8081:8080"
+      - "8080:8080"
     networks:
       - iot_net
 
   # Frontend service
   frontend:
-    image: iotinsighthub/insight-hub-dashboard:latest
+    image: iotinsighthub/insight-hub-dashboard:s5-v1
     container_name: iot_frontend
     restart: unless-stopped
     ports:

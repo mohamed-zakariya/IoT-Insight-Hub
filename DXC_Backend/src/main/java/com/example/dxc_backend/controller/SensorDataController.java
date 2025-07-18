@@ -2,7 +2,6 @@
 package com.example.dxc_backend.controller;
 import org.springframework.util.MultiValueMap;
 import com.example.dxc_backend.enums.SensorType;
-import com.example.dxc_backend.repository.base.SensorRepositoryProvider;
 import com.example.dxc_backend.service.SensorDataUnifiedService;
 import com.example.dxc_backend.service.TokenService;
 import org.springframework.data.domain.Page;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.*;
 
 @RestController
 @RequestMapping("/api/sensors")
@@ -27,7 +25,7 @@ public class SensorDataController {
     }
 
     @GetMapping("/{type}")
-    public ResponseEntity<?> getFilteredSensorData(
+    public ResponseEntity<Object> getFilteredSensorData(
             @PathVariable SensorType type,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampStart,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime timestampEnd,
@@ -43,13 +41,13 @@ public class SensorDataController {
         }
 
         Page<?> result = service.getFilteredData(type, timestampStart, timestampEnd, allRequestParams, page, size, sortBy, sortDirection);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(result); // Still returns Page<?>, but response type is Object
     }
 
     @GetMapping("/{type}/locations")
-    public ResponseEntity<?> getLocations(
+    public ResponseEntity<Object> getLocations(
             @PathVariable SensorType type,
-            @RequestParam(defaultValue = "0") int page,            // Added page param, default 0
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "DESC") String sortDirection,
             @RequestHeader("accessToken") String token
@@ -62,4 +60,3 @@ public class SensorDataController {
         return ResponseEntity.ok(result);
     }
 }
-

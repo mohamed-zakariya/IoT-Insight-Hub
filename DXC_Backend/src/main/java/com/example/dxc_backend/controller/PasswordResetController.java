@@ -1,7 +1,6 @@
 package com.example.dxc_backend.controller;
 
 import com.example.dxc_backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,12 +9,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class PasswordResetController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public PasswordResetController(UserService userService){
+        this.userService = userService;
+    }
 
     // Endpoint to send OTP
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestParam String email) {
+    public ResponseEntity<Object> forgotPassword(@RequestParam String email) {
         try {
             userService.sendOtpToEmail(email);
             return ResponseEntity.ok("OTP has been sent to your email.");
@@ -26,7 +28,7 @@ public class PasswordResetController {
 
     // Endpoint to verify OTP and reset password
     @PostMapping("/verify-otp")
-    public ResponseEntity<?> verifyOtpAndResetPassword(
+    public ResponseEntity<Object> verifyOtpAndResetPassword(
             @RequestParam String email,
             @RequestParam String otp,
             @RequestParam String newPassword
@@ -39,11 +41,9 @@ public class PasswordResetController {
         }
     }
 
-    // In PasswordResetController.java
-
     // Endpoint to check OTP validity
     @PostMapping("/check-otp")
-    public ResponseEntity<?> checkOtpValidity(@RequestParam String otp) {
+    public ResponseEntity<Object> checkOtpValidity(@RequestParam String otp) {
         String result = userService.checkOtpValidity(otp);
         return ResponseEntity.ok(result);
     }

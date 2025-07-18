@@ -83,22 +83,4 @@ public class EmailTemplateUtil {
         """.formatted(sensorType.name(), metric, value, threshold, direction);
     }
 
-//    public class EmailTemplateUtil {
-//        public static String buildAlertHtml(String type, String metric, float value, float threshold, String direction) {
-//            return """
-//            <html>
-//              <body style='font-family: Arial, sans-serif; color: #333;'>
-//                <h2>🚨 Sensor Alert Notification</h2>
-//                <p><strong>Sensor Type:</strong> %s</p>
-//                <p><strong>Metric:</strong> %s</p>
-//                <p><strong>Current Value:</strong> %.2f</p>
-//                <p><strong>Threshold:</strong> %.2f</p>
-//                <p><strong>Status:</strong> %s threshold</p>
-//              </body>
-//            </html>
-//            """.formatted(type, metric, value, threshold, direction);
-//        }
-//    }
-
-
 }

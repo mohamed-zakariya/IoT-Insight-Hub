@@ -6,7 +6,6 @@ import { ForgotPasswordComponent } from './components/forgot-password/forgot-pas
 import { SettingsComponent } from './components/settings/settings.component';
 import { SensorSimulatorComponent } from './components/sensor-simulator/sensor-simulator.component';
 import { AlertsComponent } from './components/alerts/alerts.component';
-import { TrafficDashboardComponent }   from './components/traffic-dashboard/traffic-dashboard.component';
 import { EntryPointComponent } from './components/entry-point/entry-point.component'
 import { TrafficMonitoringComponent } from './components/dashboards/traffic-monitoring/traffic-monitoring.component';
 import { StreetLightManagementComponent } from './components/dashboards/street-light-management/street-light-management.component';
@@ -49,9 +48,9 @@ export const routes: Routes = [
         component: SensorSimulatorComponent
     },
     { path: 'alerts', component: AlertsComponent },
-    {
-        path: 'traffic',
-        component: TrafficDashboardComponent
+      {
+        path: 'traffic-monitoring',
+        component: TrafficMonitoringComponent
       },
       {
     path: 'sensor-dashboard',
@@ -60,6 +59,10 @@ export const routes: Routes = [
     {
   path: 'street-light-management',
   component: StreetLightManagementComponent
+},
+    {
+  path: 'air-pollution-monitoring',
+  component: AirPollutionMonitoringComponent
 }
 
 ];

@@ -66,7 +66,7 @@ export class SettingsComponent implements OnInit {
   form           = {} as Record<string, { alertType: 'ABOVE'|'BELOW'; threshold: number|null }>;
   errors         = {} as Record<string,string>;
 
-  constructor(private settingsService: SettingsService) {}
+  constructor(readonly settingsService: SettingsService) {}
 
   ngOnInit(): void {
     // Load saved settings once
@@ -152,7 +152,7 @@ export class SettingsComponent implements OnInit {
 
     this.settingsService.saveSetting(dto).subscribe({
       next: () => alert(`${m.label} saved!`),
-      error: err => alert(`Save failed: ${err.error || err.message}`)
+      error: err => alert(`Save failed: ${err.error ?? err.message}`)
     });
   }
 }

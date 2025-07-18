@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 import { TrafficReading } from '../models/traffic-reading.model';
 import { AirPollutionReading } from '../models/air-pollution-reading.model';
 import { StreetLightReading } from '../models/street-light-reading.model';
 import { PagedResponse } from '../models/paged-response.model';
 import { PagedRequest } from '../models/paged-request.model';
-import { map } from 'rxjs/operators';
 import { RuntimeConfigService } from './RuntimeConfigService/runtime-config.service';
 
 
@@ -19,12 +17,12 @@ export class SensorService {
 
   private readonly baseUrl!: string;
 
-  constructor(private http: HttpClient, private configService: RuntimeConfigService) {
+  constructor(readonly http: HttpClient, readonly configService: RuntimeConfigService) {
     this.baseUrl = `http://${this.configService.domain}:${this.configService.port}/api`;
   }
 
   private authHeaders(): HttpHeaders {
-    const token = localStorage.getItem('accessToken') || '';
+    const token = localStorage.getItem('accessToken') ?? '';
     return new HttpHeaders().set('accessToken', token);
   }
 
@@ -104,7 +102,24 @@ getTrafficFiltered(params: PagedRequest): Observable<PagedResponse<TrafficReadin
 
 
   getAirPollution(): Observable<AirPollutionReading[]> {
-    return this.http.get<AirPollutionReading[]>(`${this.baseUrl}/air-pollution-sensors`);
+    return this.http.get<AirPollutionReading[]>(`${this.baseUrl}/air-pollution-sensors`, 
+      { headers: this.authHeaders() });
+  }
+
+  getAirPollutionFiltered(params: any): Observable<any> {
+    let httpParams = new HttpParams();
+    
+    // Add all parameters to HttpParams
+    Object.entries(params).forEach(([key, value]) => {
+      if (value != null && value !== '') {
+        httpParams = httpParams.set(key, value.toString());
+      }
+    });
+
+    return this.http.get(`${this.baseUrl}/sensors/AIR_POLLUTION`, {
+      params: httpParams,
+      headers: this.authHeaders()
+    });
   }
 
   getStreetLight(): Observable<StreetLightReading[]> {

@@ -1,10 +1,11 @@
 package com.example.dxc_backend.strategy.sensor;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Random;
 
 public abstract class BaseSensorDataGenerator {
-    protected final Random random = new Random();
+
+    protected final SecureRandom random = new SecureRandom();
 
     protected String generateRandomLocation() {
         return "Location-" + random.nextInt(100);

@@ -1,11 +1,11 @@
 package com.example.dxc_backend.service;
 
+import com.example.dxc_backend.exception.TokenStorageException;
 import com.example.dxc_backend.model.Token;
 import com.example.dxc_backend.repository.TokenRepository;
-import com.example.dxc_backend.repository.UserRepository;
 import com.example.dxc_backend.util.JwtUtil;
-import jakarta.persistence.Id;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -13,94 +13,82 @@ import java.sql.Timestamp;
 @Service
 public class TokenService {
 
-    @Autowired
-    private TokenRepository tokenRepository;
+    private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final TokenRepository tokenRepository;
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
 
-    @Autowired
-    private UserService userService;
+    public TokenService(TokenRepository tokenRepository, JwtUtil jwtUtil, UserService userService){
+        this.tokenRepository = tokenRepository;
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
+    }
 
-    // Generate Access Token
     public String createAccessToken(String username) {
         String token = jwtUtil.generateAccessToken(username);
-
-        System.out.println("Generated Access Token: " + token);
-        String  tempname = jwtUtil.extractUsername(token);
-        System.out.println("user is : " + tempname);
-
+        logger.debug("Generated Access Token for {}: {}", username, token);
         return token;
     }
 
-    // Generate Refresh Token and save in database
     public String createRefreshToken(String username) {
-
-
         String token = jwtUtil.generateRefreshToken(username);
         Long userId = userService.getUserIdByUsername(username);
 
         Token tokenEntity = new Token();
         tokenEntity.setUserId(userId);
-        tokenEntity.setToken(token);
+        tokenEntity.setRefreshToken(token);
         tokenEntity.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        tokenEntity.setExpiresAt(new Timestamp(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 7)));
+        tokenEntity.setExpiresAt(new Timestamp(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 7))); // 7 days
         tokenEntity.setRevoked(false);
-
 
         try {
             tokenRepository.save(tokenEntity);
-            System.out.println("Generated Refresh Token: " + token);
+            logger.debug("Refresh token saved successfully for user ID {}.", userId);
             return token;
+        } catch (Exception e) {
+            String errMsg = String.format("Failed to save refresh token for user '%s' (ID: %d).", username, userId);
+            logger.error(errMsg, e);
+            throw new TokenStorageException(errMsg, e);
         }
-        catch (Exception e) { e.printStackTrace();throw new RuntimeException("Error saving refresh token to the database."); }
-
 
     }
 
-    // Validate Access Token
     public boolean isValidAccessToken(String token) {
         return jwtUtil.validateAccessToken(token);
     }
 
-    // Validate Refresh Token
     public boolean isValidRefreshToken(String token) {
         return jwtUtil.validateRefreshToken(token);
     }
 
-    // Save Refresh Token in Database
     public void saveRefreshToken(Long userId, String refreshToken) {
         Token token = new Token();
         token.setUserId(userId);
-        token.setToken(refreshToken);
+        token.setRefreshToken(refreshToken);
         token.setCreatedAt(new Timestamp(System.currentTimeMillis()));
-        token.setExpiresAt(new Timestamp(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 7)));  // 7 days expiry
-        token.setRevoked(false);  // Initially set to false
+        token.setExpiresAt(new Timestamp(System.currentTimeMillis() + (1000L * 60 * 60 * 24 * 7)));
+        token.setRevoked(false);
 
         try {
             tokenRepository.save(token);
         } catch (Exception e) {
-            // Log error and handle it gracefully
-            e.printStackTrace();
-            throw new RuntimeException("Error saving refresh token to the database.");
+            logger.error("Error saving refresh token: {}", e.getMessage(), e);
+            throw new TokenStorageException("Error saving refresh token to the database.", e);
         }
     }
 
     public Token getRefreshTokenFromDatabase(String refreshToken) {
-        return tokenRepository.findByToken(refreshToken).orElse(null);
+        return tokenRepository.findByRefreshToken(refreshToken).orElse(null);
     }
-
 
     public String Return_username(Token token) {
-        String temp_username = jwtUtil.extractUsername(token.getToken());
-
-        System.out.println("user is : " + temp_username);
-        return temp_username;
+        String tempUsername = jwtUtil.extractUsername(token.getRefreshToken());
+        logger.debug("Extracted username from token: {}", tempUsername);
+        return tempUsername;
     }
-
 
     public String extractUsernameFromToken(String token) {
         return jwtUtil.extractUsername(token);
     }
-
 }
