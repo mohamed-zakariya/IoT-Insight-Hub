@@ -40,30 +40,25 @@
           },
           "configurations": {
             "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "7mb",
+                  "maximumError": "8mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "20kb",
+                  "maximumError": "25kb"
+                }
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "7mb",
-                  "maximumError": "8MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "20kB",
-                  "maximumError": "25kB"
-                }
-              ],
-              "outputHashing": "all",
-              "optimization": true,
-              "sourceMap": false,
-              "extractLicenses": true,
-              "namedChunks": false,
-              "vendorChunk": false
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
@@ -94,6 +89,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "karmaConfig": "karma.conf.js",
             "polyfills": [
               "zone.js",
               "zone.js/testing"

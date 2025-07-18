@@ -18,12 +18,12 @@ export interface SettingsDTO {
 
 @Injectable({ providedIn: 'root' })
 export class SettingsService {
-  private baseUrl =`${environment.apiUrl}/settings`;
+  readonly baseUrl =`${environment.apiUrl}/settings`;
 
-  constructor(private http: HttpClient) {}
+  constructor(readonly http: HttpClient) {}
 
   private authHeaders(): HttpHeaders {
-    const token = localStorage.getItem('accessToken') || '';
+    const token = localStorage.getItem('accessToken') ?? '';
     return new HttpHeaders().set('accessToken', token);
   }
 

@@ -3,16 +3,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AlertSummary } from '../models/alert-summary.model';
-import { environment } from '../../environments/environment'
 import { RuntimeConfigService } from './RuntimeConfigService/runtime-config.service';
 
 @Injectable({ providedIn: 'root' })
 export class AlertsService {
 
 
-    private url!: string;
+    readonly url!: string;
 
-  constructor(private http: HttpClient, private configService: RuntimeConfigService) {
+  constructor(readonly http: HttpClient, readonly configService: RuntimeConfigService) {
       this.url = `http://${this.configService.domain}:${this.configService.port}/api/alerts`;
 
   }
@@ -20,7 +19,7 @@ export class AlertsService {
 
 
   private authHeaders(): HttpHeaders {
-    const token = localStorage.getItem('accessToken') || '';
+    const token = localStorage.getItem('accessToken') ?? '';
     return new HttpHeaders().set('accessToken', token);
   }
 

@@ -7,9 +7,9 @@ import { LightSensorStrategy } from './light-sensor.strategy';
 @Injectable({ providedIn: 'root' })
 export class SensorFactoryService {
   constructor(
-    private traffic: TrafficSensorStrategy,
-    private air: AirSensorStrategy,
-    private light: LightSensorStrategy
+    readonly traffic: TrafficSensorStrategy,
+    readonly air: AirSensorStrategy,
+    readonly light: LightSensorStrategy
   ) {}
 
   getStrategy(sensorType: string): SensorStrategy<any> {

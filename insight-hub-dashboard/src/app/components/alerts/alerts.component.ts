@@ -18,10 +18,10 @@ export class AlertsComponent implements OnInit {
   filtered$!: Observable<AlertSummary[]>;
 
   /** form-like filter controls */
-  private typeFilter$  = new BehaviorSubject<string>('');
-  private sinceFilter$ = new BehaviorSubject<string>('');
+  readonly typeFilter$  = new BehaviorSubject<string>('');
+  readonly sinceFilter$ = new BehaviorSubject<string>('');
 
-  constructor(private alertsSvc: AlertsService) {}
+  constructor(readonly alertsSvc: AlertsService) {}
 
   ngOnInit() {
     // 1) start polling AlertsService

@@ -1,8 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { inject, Inject, Injectable } from '@angular/core';
+import { inject,Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { environment } from '../../../environments/environment';
 import { OtpMessages } from '../../core/constants/otp-messages.constants';
 import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.service';
 
@@ -12,11 +11,11 @@ import { RuntimeConfigService } from '../RuntimeConfigService/runtime-config.ser
 })
 export class OtpPasswordService {
 
-  private apiUrl!: string;
+  readonly apiUrl!: string;
 
   http: HttpClient = inject(HttpClient);
 
-  constructor(private configService: RuntimeConfigService){
+  constructor(readonly configService: RuntimeConfigService){
     this.apiUrl = `http://${this.configService.domain}:${this.configService.port}/auth`;
   }
 
