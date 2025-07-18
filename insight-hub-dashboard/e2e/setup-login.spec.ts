@@ -23,7 +23,7 @@ test('Login and save storage state', async ({ page }) => {
   await page.waitForURL(FRONTEND_BASE_URL + "/home");
 
   await page.context().storageState({ path: 'storageState.json' }); // Export the current browser context’s storage state (cookies + localStorage + sessionStorage) into a JSON file
-  // Cookies = server knows who you are
-  // LocalStorage/sessionStorage = frontend knows who you are
+  // Cookies = backend server knows who you are
+  // LocalStorage/sessionStorage = frontend browser knows who you are
   // storageState saves them all → so your tests can skip login UI and be instantly authenticated.
 });

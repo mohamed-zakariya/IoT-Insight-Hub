@@ -7,6 +7,7 @@ test.use({ storageState: 'storageState.json' });
 test.describe("Air Pollution Dashboard", () => {
   test("Filter works correctly", async ({ page }) => {
     await page.goto(AIRPOLLUTION_BASE_URL);
+    await page.pause();
     await openLocationFilter(page);
     const optionText = await selectFirstLocationOption(page);
     await verifyAllRowsMatch(page, optionText);
@@ -21,5 +22,3 @@ test.describe("Air Pollution Dashboard", () => {
   });
 
 });
-
-

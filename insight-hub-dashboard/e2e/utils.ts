@@ -7,12 +7,12 @@ async function increaseNumberOfRows(page: any, numberOfRows: number) {
 }
 
 export async function testSortingByLocation(page: any, isDesc: boolean){
-    await page.goto(AIRPOLLUTION_BASE_URL);
+  await page.goto(AIRPOLLUTION_BASE_URL);
     const headers = page.locator('.mat-sort-header');
     await page.pause();
     await headers.first().click()
     if (isDesc) {
-        await headers.first().click()
+      await headers.first().click()
     }
     await increaseNumberOfRows(page, 25);
 
@@ -23,10 +23,8 @@ export async function testSortingByLocation(page: any, isDesc: boolean){
       const nextCellText = await locationCells.nth(i + 1).textContent();
       if (cellText !== null && nextCellText !== null) {
         if (isDesc) {
-        // current cell should be >= next cell → so a > b = 1, a === b = 0 → expect result >= 0
         expect(cellText.localeCompare(nextCellText)).toBeGreaterThanOrEqual(0);
         } else {
-        // ascending: a <= b → expect result <= 0
         expect(cellText.localeCompare(nextCellText)).toBeLessThanOrEqual(0);
         }
       } else {
